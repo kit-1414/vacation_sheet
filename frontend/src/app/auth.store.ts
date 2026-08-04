@@ -1,0 +1,34 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+
+export interface CurrentUser {
+  id: string;
+  email: string;
+  displayName: string | null;
+}
+
+@Injectable({ providedIn: 'root' })
+export class AuthStore {
+  private readonly http = inject(HttpClient);
+
+  readonly user = signal<CurrentUser | null>(null);
+  readonly loading = signal(true);
+
+  load(): void {
+    this.http.get('/api/auth/csrf').subscribe();
+    this.http.get<CurrentUser>('/api/auth/me').subscribe({
+      next: (user) => {
+        this.user.set(user);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.user.set(null);
+        this.loading.set(false);
+      },
+    });
+  }
+
+  logout(): void {
+    this.http.post<void>('/api/auth/logout', {}).subscribe(() => this.user.set(null));
+  }
+}

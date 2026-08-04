@@ -1,0 +1,35 @@
+<mat-toolbar>
+  <span class="brand">Vacation Sheet</span>
+  <span class="toolbar-spacer"></span>
+  @if (auth.user(); as user) {
+    <span class="user-email">{{ user.email }}</span>
+    <button mat-button type="button" (click)="auth.logout()">Выйти</button>
+  }
+</mat-toolbar>
+
+<main>
+  <mat-card appearance="outlined">
+    @if (auth.loading()) {
+      <mat-spinner diameter="44" aria-label="Загрузка"></mat-spinner>
+    } @else if (auth.user(); as user) {
+      <mat-card-header>
+        <mat-card-title>Добро пожаловать</mat-card-title>
+        <mat-card-subtitle>{{ user.displayName || user.email }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Каркас приложения готов. Функции учёта отпусков будут добавлены на следующем этапе.</p>
+      </mat-card-content>
+    } @else {
+      <mat-card-header>
+        <mat-card-title>Учёт отпусков без лишних таблиц</mat-card-title>
+        <mat-card-subtitle>Войдите с рабочей почтой Яндекса</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p>Планируйте отпуска команды в одном понятном пространстве.</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <a mat-flat-button href="/oauth2/authorization/yandex">Войти через Яндекс</a>
+      </mat-card-actions>
+    }
+  </mat-card>
+</main>

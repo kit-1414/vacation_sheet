@@ -1,0 +1,8 @@
+CREATE TABLE user_accounts (
+    id UUID PRIMARY KEY,
+    yandex_id VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(320) NOT NULL UNIQUE,
+    display_name VARCHAR(255),
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+);

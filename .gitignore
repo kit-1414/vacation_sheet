@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+*.iml
+*.log
+backend/.gradle/
+backend/build/
+frontend/.angular/
+frontend/dist/
+frontend/node_modules/
