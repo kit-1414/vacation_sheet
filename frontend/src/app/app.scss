@@ -13,9 +13,22 @@ mat-toolbar {
 }
 
 .brand {
+  color: inherit;
   font: var(--mat-sys-title-large);
   font-weight: 700;
   letter-spacing: -0.03em;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  margin-left: clamp(1rem, 4vw, 3rem);
+  gap: 0.25rem;
+}
+
+nav .active {
+  background: var(--mat-sys-secondary-container);
+  color: var(--mat-sys-on-secondary-container);
 }
 
 .toolbar-spacer {
@@ -27,7 +40,7 @@ mat-toolbar {
   font: var(--mat-sys-body-medium);
 }
 
-main {
+.centered {
   display: grid;
   min-height: calc(100vh - 64px);
   place-items: center;
@@ -35,24 +48,24 @@ main {
   box-sizing: border-box;
 }
 
-mat-card {
+.login-card {
   width: min(100%, 38rem);
   padding: clamp(1.25rem, 4vw, 2.5rem);
   box-shadow: var(--mat-sys-level2);
 }
 
-mat-card-title {
+.login-card mat-card-title {
   font: var(--mat-sys-headline-medium);
   font-weight: 650;
   letter-spacing: -0.035em;
 }
 
-mat-card-content {
+.login-card mat-card-content {
   padding-top: 1.5rem;
   color: var(--mat-sys-on-surface-variant);
 }
 
-mat-card-actions {
+.login-card mat-card-actions {
   padding-top: 1rem;
 }
 
@@ -60,12 +73,31 @@ mat-spinner {
   margin: 2rem auto;
 }
 
+.workspace {
+  width: min(100% - 2rem, 76rem);
+  margin-inline: auto;
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+
 @media (max-width: 600px) {
   .user-email {
     display: none;
   }
 
-  main {
+  mat-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 64px;
+  }
+
+  nav {
+    order: 3;
+    width: 100%;
+    margin: 0;
+    padding-bottom: 0.5rem;
+  }
+
+  .centered {
     min-height: calc(100vh - 56px);
     align-items: start;
     padding-top: 3rem;

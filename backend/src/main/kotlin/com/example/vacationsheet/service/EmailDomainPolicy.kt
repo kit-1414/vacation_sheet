@@ -1,4 +1,4 @@
-package com.example.vacationsheet.security
+package com.example.vacationsheet.service
 
 import com.example.vacationsheet.config.SecurityProperties
 import org.springframework.stereotype.Component

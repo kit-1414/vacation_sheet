@@ -1,6 +1,10 @@
-package com.example.vacationsheet.web
+package com.example.vacationsheet.controller
 
-import com.example.vacationsheet.user.UserAccountRepository
+import com.example.vacationsheet.dto.CsrfTokenResponse
+import com.example.vacationsheet.dto.UserResponse
+import com.example.vacationsheet.service.UserService
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.core.user.OAuth2User
@@ -9,36 +13,22 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
-import java.util.UUID
 
-data class CurrentUserResponse(
-	val id: UUID,
-	val email: String,
-	val displayName: String?,
-)
-
-data class CsrfTokenResponse(
-	val token: String,
-)
-
+@Tag(name = "Authentication")
 @RestController
 @RequestMapping("/api/auth")
 class AuthController(
-	private val userAccountRepository: UserAccountRepository,
+	private val userService: UserService,
 ) {
+	@Operation(summary = "Get the current authenticated user")
 	@GetMapping("/me")
-	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): CurrentUserResponse {
+	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): UserResponse {
 		val yandexId = principal.getAttribute<Any>("id")?.toString()
 			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-		val account = userAccountRepository.findByYandexId(yandexId)
-			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
-		return CurrentUserResponse(
-			id = requireNotNull(account.id),
-			email = account.email,
-			displayName = account.displayName,
-		)
+		return userService.findCurrent(yandexId)
 	}
 
+	@Operation(summary = "Initialize the CSRF cookie")
 	@GetMapping("/csrf")
 	fun csrf(csrfToken: CsrfToken) = CsrfTokenResponse(csrfToken.token)
 }

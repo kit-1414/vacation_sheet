@@ -1,101 +1,101 @@
-# Vacation Sheet Development Guide
+# Руководство по разработке Vacation Sheet
 
-## Project Overview
+## Обзор проекта
 
-Vacation Sheet is a local-first web application for vacation management. The repository is a monorepo with an Angular SPA, a Kotlin/Spring Boot backend, and PostgreSQL.
+Vacation Sheet — локальное веб-приложение для управления отпусками. Репозиторий представляет собой монорепозиторий с Angular SPA, бэкендом на Kotlin и Spring Boot и базой данных PostgreSQL.
 
-## Repository Structure
+## Структура репозитория
 
-- `frontend/`: Angular SPA served by Nginx in Docker
-- `backend/`: Kotlin and Spring Boot REST API
-- `compose.yml`: complete local environment
-- `README.md`: developer-facing setup instructions
+- `frontend/`: Angular SPA, обслуживаемое Nginx в Docker
+- `backend/`: REST API на Kotlin и Spring Boot
+- `compose.yml`: полное локальное окружение
+- `README.md`: инструкции по настройке для разработчиков
 
-## Technology Stack
+## Технологический стек
 
-Use the latest stable compatible versions unless a version is already pinned by the project.
+Использовать последние стабильные совместимые версии, если конкретная версия уже не зафиксирована в проекте.
 
-### Frontend
+### Фронтенд
 
 - Angular 22
 - TypeScript 6
 - Angular Material 3
-- Standalone components
-- Angular Signals for state management
+- Standalone-компоненты
+- Angular Signals для управления состоянием
 - Angular HttpClient
 - SCSS
-- Vitest-based Angular unit tests
+- Unit-тесты Angular на базе Vitest
 - npm
-- SPA only; do not add SSR
+- Только SPA; не добавлять SSR
 
-### Backend
+### Бэкенд
 
 - Java 21
 - Kotlin 2.2
 - Spring Boot 3.5
 - Gradle Kotlin DSL
 - Spring MVC REST API
-- Spring Data JPA and Hibernate
+- Spring Data JPA и Hibernate
 - PostgreSQL 18
-- Flyway migrations
+- Миграции Flyway
 - Spring Security OAuth2 Client
 - Yandex OAuth2
 - Springdoc Swagger UI
 - Spring Boot Actuator
-- JUnit 5, MockK, and Testcontainers
+- JUnit 5, MockK и Testcontainers
 
-### Infrastructure
+### Инфраструктура
 
-- Docker Compose starts PostgreSQL, backend, and frontend
-- Nginx serves the Angular build and proxies backend requests
-- The browser uses one origin for frontend and backend
-- The application is exposed on port `4200`
-- Backend and PostgreSQL are available only inside the Compose network
+- Docker Compose запускает PostgreSQL, бэкенд и фронтенд
+- Nginx раздаёт сборку Angular и проксирует запросы к бэкенду
+- Браузер использует единый origin для фронтенда и бэкенда
+- Приложение доступно через порт `4200`
+- Бэкенд и PostgreSQL доступны только внутри сети Compose
 
-## Architecture Rules
+## Архитектурные правила
 
-- REST endpoints must use the `/api` prefix.
-- Keep controllers thin and move business logic into services.
-- Use request and response DTOs at the API boundary.
-- Map DTOs manually; do not add MapStruct unless requirements change.
-- Return API errors using Spring `ProblemDetail`.
-- Validate incoming data with Jakarta Bean Validation.
-- Keep changes small and avoid abstractions without a demonstrated need.
-- Do not add OpenAPI contract files or generated TypeScript clients.
-- Springdoc may generate the OpenAPI document used by Swagger UI.
+- REST endpoints должны использовать префикс `/api`.
+- Контроллеры должны оставаться тонкими, бизнес-логику размещать в сервисах.
+- На границе API использовать DTO запросов и ответов.
+- Преобразовывать DTO вручную; не добавлять MapStruct без изменения требований.
+- Возвращать ошибки API через Spring `ProblemDetail`.
+- Проверять входные данные с помощью Jakarta Bean Validation.
+- Делать изменения небольшими и не создавать абстракции без доказанной необходимости.
+- Не добавлять отдельные файлы OpenAPI-контракта и сгенерированные TypeScript-клиенты.
+- Springdoc может автоматически генерировать OpenAPI-документ для Swagger UI.
 
-## Persistence Rules
+## Правила работы с данными
 
-- Use Spring Data JPA repositories for persistence.
-- Prefer derived repository methods and JPQL/HQL queries.
-- Do not use the Criteria API.
-- Do not use Hibernate schema generation for database changes.
-- `spring.jpa.hibernate.ddl-auto` must remain `validate`.
-- Every schema change must be implemented as a new Flyway migration.
-- Never edit an applied migration; add the next versioned migration instead.
-- Keep `spring.jpa.open-in-view` disabled.
+- Для доступа к данным использовать репозитории Spring Data JPA.
+- Предпочитать производные методы репозиториев и запросы JPQL/HQL.
+- Не использовать Criteria API.
+- Не использовать генерацию схемы Hibernate для изменения базы данных.
+- Значение `spring.jpa.hibernate.ddl-auto` должно оставаться `validate`.
+- Каждое изменение схемы оформлять новой миграцией Flyway.
+- Никогда не изменять уже применённую миграцию; добавлять следующую версионированную миграцию.
+- Значение `spring.jpa.open-in-view` должно оставаться отключённым.
 
-## Security Model
+## Модель безопасности
 
-- Authentication uses Yandex OAuth2 Authorization Code flow.
-- Spring Boot is the OAuth2 client and stores authentication in an in-memory HTTP session.
-- The Angular application must never receive Yandex access tokens.
-- The session cookie must remain `HttpOnly` with `SameSite=Lax`.
-- CSRF protection must remain enabled.
-- Angular uses the `XSRF-TOKEN` cookie and `X-XSRF-TOKEN` header.
-- `/api/auth/csrf` initializes the CSRF token.
-- Unauthenticated `/api/**` requests must return HTTP `401`, not redirect to login.
-- OAuth login begins at `/oauth2/authorization/yandex`.
-- Logout uses `POST /api/auth/logout`.
-- Swagger endpoints are intentionally public:
+- Для аутентификации используется Yandex OAuth2 Authorization Code flow.
+- Spring Boot выступает OAuth2-клиентом и хранит аутентификацию в HTTP-сессии в памяти.
+- Angular-приложение никогда не должно получать access token Яндекса.
+- Session cookie должна оставаться `HttpOnly` с `SameSite=Lax`.
+- CSRF-защита должна оставаться включённой.
+- Angular использует cookie `XSRF-TOKEN` и заголовок `X-XSRF-TOKEN`.
+- `/api/auth/csrf` инициализирует CSRF-токен.
+- Неаутентифицированные запросы к `/api/**` должны возвращать HTTP `401`, а не перенаправлять на вход.
+- OAuth-вход начинается через `/oauth2/authorization/yandex`.
+- Для выхода используется `POST /api/auth/logout`.
+- Endpoints Swagger намеренно доступны без авторизации:
   - `/swagger-ui.html`
   - `/swagger-ui/**`
   - `/v3/api-docs/**`
-- `/actuator/health/**` is public for container health checks.
+- `/actuator/health/**` доступен без авторизации для health checks контейнеров.
 
-## Email Domain Access
+## Ограничение по домену email
 
-The allowed Yandex email domain is configured with:
+Разрешённый домен Yandex email настраивается следующим образом:
 
 ```yaml
 app:
@@ -103,29 +103,37 @@ app:
     allowed-email-domain: ""
 ```
 
-- An empty value permits every email domain.
-- A non-empty value requires an exact, case-insensitive domain match.
-- Subdomains are not accepted unless explicitly configured.
+- Пустое значение разрешает любой домен email.
+- Непустое значение требует точного совпадения домена без учёта регистра.
+- Поддомены не принимаются, если они не указаны явно.
 
-## User Accounts And Roles
+## Пользователи и роли
 
-- Save a user in PostgreSQL on the first successful OAuth2 login.
-- Update email, display name, and update timestamp on subsequent logins.
-- The Yandex user ID is the external identity key.
-- The application will have three roles, but their names and authorization model have not been decided.
-- Do not invent or implement role semantics until requirements are agreed.
+- При первом успешном OAuth2-входе сохранять пользователя в PostgreSQL.
+- При последующих входах обновлять email, отображаемое имя и время обновления.
+- Внешним ключом идентификации служит Yandex user ID.
+- В приложении будет три роли, но их названия и модель авторизации ещё не определены.
+- Не придумывать и не реализовывать семантику ролей до согласования требований.
 
-## Configuration
+## Проекты
 
-Main backend configuration is in `backend/src/main/resources/application.yml`.
+- Сущность `Project` содержит название, необязательное описание и даты создания и обновления.
+- `Project` связан с `UserAccount` отношением many-to-many через таблицу `project_members`.
+- Проекты можно создавать, изменять и удалять.
+- Привязка пользователя к проекту выполняется идемпотентным `PUT`, отвязка — `DELETE`.
+- Не возвращать JPA-сущности через API; использовать DTO.
 
-Before testing real OAuth login, replace the placeholder Yandex `client-id` and `client-secret`. Do not commit real production secrets. The Yandex redirect URI for Docker is:
+## Конфигурация
+
+Основная конфигурация бэкенда находится в `backend/src/main/resources/application.yml`.
+
+Перед проверкой реального OAuth-входа заменить заглушки Yandex `client-id` и `client-secret`. Не добавлять реальные production-секреты в Git. Yandex redirect URI для Docker:
 
 ```text
 http://localhost:4200/login/oauth2/code/yandex
 ```
 
-The local database defaults are:
+Стандартные параметры локальной базы данных:
 
 ```text
 Database: vacation_sheet
@@ -133,68 +141,80 @@ Username: vacation_sheet
 Password: vacation_sheet
 ```
 
-Compose overrides the JDBC URL so the backend connects to the `database` service.
+Compose переопределяет JDBC URL, чтобы бэкенд подключался к сервису `database`.
 
-## Existing API
+## Существующее API
 
-- `GET /api/auth/csrf`: initializes and returns a CSRF token
-- `GET /api/auth/me`: returns the authenticated persisted user
-- `POST /api/auth/logout`: invalidates the current session
-- `GET /actuator/health`: container health check
-- `GET /v3/api-docs`: generated API description
-- `GET /swagger-ui.html`: Swagger UI entry point
+- `GET /api/auth/csrf`: инициализация и получение CSRF-токена
+- `GET /api/auth/me`: получение текущего аутентифицированного пользователя
+- `POST /api/auth/logout`: завершение текущей сессии
+- `GET /api/users`: получение списка зарегистрированных пользователей
+- `GET /api/projects`: получение проектов с участниками
+- `POST /api/projects`: создание проекта
+- `PUT /api/projects/{id}`: изменение проекта
+- `DELETE /api/projects/{id}`: удаление проекта
+- `PUT /api/projects/{projectId}/users/{userId}`: привязка пользователя к проекту
+- `DELETE /api/projects/{projectId}/users/{userId}`: отвязка пользователя от проекта
+- `GET /actuator/health`: health check контейнера
+- `GET /v3/api-docs`: сгенерированное описание API
+- `GET /swagger-ui.html`: страница Swagger UI
 
-## Frontend Rules
+## Правила фронтенда
 
-- Use standalone Angular components.
-- Use Signals and services for application state.
-- Do not add NgRx unless state complexity demonstrates a concrete need.
-- Use Angular Material components and preserve the existing visual language.
-- Use the modern Angular template control flow (`@if`, `@for`).
-- Use relative `/api` URLs; do not hard-code backend hosts in application code.
-- Keep the UI responsive for desktop and mobile.
-- Add unit tests for new stores, services, and non-trivial components.
+- Использовать standalone-компоненты Angular.
+- Для состояния приложения использовать Signals и сервисы.
+- Не добавлять NgRx, пока сложность состояния не покажет конкретную необходимость.
+- Использовать компоненты Angular Material и сохранять существующий визуальный стиль.
+- Использовать современный control flow шаблонов Angular: `@if`, `@for`.
+- Использовать относительные URL `/api`; не прописывать адрес бэкенда в коде приложения.
+- Поддерживать адаптивность интерфейса для desktop и mobile.
+- Добавлять unit-тесты для новых stores, сервисов и нетривиальных компонентов.
 
-## Backend Package Layout
+## Структура пакетов бэкенда
 
-The base package is `com.example.vacationsheet`.
+Базовый пакет: `com.example.vacationsheet`.
 
-- `config`: application and security configuration
-- `security`: OAuth2 and access policies
-- `user`: user persistence
-- `web`: REST controllers, DTOs, and exception handling
+Бэкенд использует Packaging by Layer. Каждый класс должен находиться в соответствующем пакете:
 
-Organize new business features by domain when they are introduced. Keep related controller, service, repository, entity, and DTO code close together instead of creating broad global layers.
+- `config`: конфигурация приложения и безопасности
+- `controller`: REST-контроллеры
+- `dto`: DTO запросов и ответов
+- `entity`: JPA-сущности
+- `exception`: исключения и обработка ошибок REST API
+- `repository`: репозитории Spring Data JPA
+- `service`: бизнес-логика, загрузка OAuth2-пользователей и политики доступа
 
-## Development Commands
+Не вводить Packaging by Feature/Domain без явного изменения архитектуры проекта.
 
-Run the complete environment from the repository root:
+## Команды разработки
+
+Запуск полного окружения из корня репозитория:
 
 ```shell
 docker compose up --build
 ```
 
-Stop containers without deleting PostgreSQL data:
+Остановка контейнеров без удаления данных PostgreSQL:
 
 ```shell
 docker compose down
 ```
 
-Backend checks on Windows:
+Проверка бэкенда в Windows:
 
 ```shell
 cd backend
 gradlew.bat clean test bootJar
 ```
 
-Backend checks on Unix-like systems:
+Проверка бэкенда в Unix-подобных системах:
 
 ```shell
 cd backend
 ./gradlew clean test bootJar
 ```
 
-Frontend checks:
+Проверка фронтенда:
 
 ```shell
 cd frontend
@@ -203,21 +223,21 @@ npm test -- --watch=false
 npm run build
 ```
 
-Validate Compose configuration:
+Проверка конфигурации Compose:
 
 ```shell
 docker compose config --quiet
 ```
 
-## Definition Of Done
+## Критерии готовности
 
-Before completing a change:
+Перед завершением изменения:
 
-1. Add a Flyway migration for every database schema change.
-2. Add or update focused tests for changed behavior.
-3. Run backend tests and `bootJar` when backend code changes.
-4. Run frontend unit tests and production build when frontend code changes.
-5. Validate `docker compose config` when container configuration changes.
-6. Verify protected endpoints still return `401` without a session.
-7. Verify Swagger exclusions and CSRF behavior after security changes.
-8. Do not commit OAuth secrets, generated build output, or dependency directories.
+1. Добавить миграцию Flyway для каждого изменения схемы базы данных.
+2. Добавить или обновить целевые тесты изменённого поведения.
+3. При изменении бэкенда запустить тесты и задачу `bootJar`.
+4. При изменении фронтенда запустить unit-тесты и production-сборку.
+5. При изменении контейнеров проверить `docker compose config`.
+6. Убедиться, что защищённые endpoints без сессии по-прежнему возвращают `401`.
+7. После изменения безопасности проверить исключения Swagger из авторизации и работу CSRF.
+8. Не добавлять в Git OAuth-секреты, сгенерированные результаты сборки и каталоги зависимостей.

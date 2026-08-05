@@ -1,5 +1,11 @@
 <mat-toolbar>
-  <span class="brand">Vacation Sheet</span>
+  <a class="brand" routerLink="/projects">Vacation Sheet</a>
+  @if (auth.user()) {
+    <nav aria-label="Основная навигация">
+      <a mat-button routerLink="/projects" routerLinkActive="active">Проекты</a>
+      <a mat-button routerLink="/users" routerLinkActive="active">Пользователи</a>
+    </nav>
+  }
   <span class="toolbar-spacer"></span>
   @if (auth.user(); as user) {
     <span class="user-email">{{ user.email }}</span>
@@ -7,19 +13,17 @@
   }
 </mat-toolbar>
 
-<main>
-  <mat-card appearance="outlined">
-    @if (auth.loading()) {
-      <mat-spinner diameter="44" aria-label="Загрузка"></mat-spinner>
-    } @else if (auth.user(); as user) {
-      <mat-card-header>
-        <mat-card-title>Добро пожаловать</mat-card-title>
-        <mat-card-subtitle>{{ user.displayName || user.email }}</mat-card-subtitle>
-      </mat-card-header>
-      <mat-card-content>
-        <p>Каркас приложения готов. Функции учёта отпусков будут добавлены на следующем этапе.</p>
-      </mat-card-content>
-    } @else {
+@if (auth.loading()) {
+  <main class="centered">
+    <mat-spinner diameter="44" aria-label="Загрузка"></mat-spinner>
+  </main>
+} @else if (auth.user()) {
+  <main class="workspace">
+    <router-outlet />
+  </main>
+} @else {
+  <main class="centered">
+    <mat-card appearance="outlined" class="login-card">
       <mat-card-header>
         <mat-card-title>Учёт отпусков без лишних таблиц</mat-card-title>
         <mat-card-subtitle>Войдите с рабочей почтой Яндекса</mat-card-subtitle>
@@ -30,6 +34,6 @@
       <mat-card-actions>
         <a mat-flat-button href="/oauth2/authorization/yandex">Войти через Яндекс</a>
       </mat-card-actions>
-    }
-  </mat-card>
-</main>
+    </mat-card>
+  </main>
+}

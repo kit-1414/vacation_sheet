@@ -1,4 +1,4 @@
-package com.example.vacationsheet.user
+package com.example.vacationsheet.entity
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity

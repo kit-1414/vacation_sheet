@@ -1,6 +1,6 @@
 package com.example.vacationsheet.config
 
-import com.example.vacationsheet.security.YandexOAuth2UserService
+import com.example.vacationsheet.service.YandexOAuth2UserService
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

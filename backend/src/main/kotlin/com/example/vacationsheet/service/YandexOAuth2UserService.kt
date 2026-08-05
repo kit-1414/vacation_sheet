@@ -1,7 +1,7 @@
-package com.example.vacationsheet.security
+package com.example.vacationsheet.service
 
-import com.example.vacationsheet.user.UserAccount
-import com.example.vacationsheet.user.UserAccountRepository
+import com.example.vacationsheet.entity.UserAccount
+import com.example.vacationsheet.repository.UserAccountRepository
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService
