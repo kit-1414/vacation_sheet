@@ -9,8 +9,8 @@ export interface Project {
   name: string;
   description: string | null;
   members: UserAccount[];
-  createdAt: string;
-  updatedAt: string;
+  ctime: string | null;
+  utime: string | null;
 }
 
 export interface ProjectRequest {

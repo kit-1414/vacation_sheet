@@ -182,17 +182,20 @@ Compose переопределяет JDBC URL, чтобы бэкенд подк�
 
 ## Структура пакетов бэкенда
 
-Базовый пакет: `com.example.vacationsheet`.
+Базовый пакет: `com.example.vacationsheet.mainapp`.
 
 Бэкенд использует Packaging by Layer. Каждый класс должен находиться в соответствующем пакете:
 
 - `config`: конфигурация приложения и безопасности
 - `controller`: REST-контроллеры
-- `dto`: DTO запросов и ответов
-- `entity`: JPA-сущности
+- `dto`: DTO запросов и ответов, не связанных напрямую с JPA-моделями
 - `exception`: исключения и обработка ошибок REST API
-- `repository`: репозитории Spring Data JPA
 - `service`: бизнес-логика, загрузка OAuth2-пользователей и политики доступа
+- `hql.model`: JPA-сущности с суффиксом `Entity`
+- `hql.repository`: репозитории Spring Data JPA с суффиксом `Repository`
+- `hql.dto`: DTO для JPA-моделей с суффиксом `Dto`
+- `hql.mapper`: ручные преобразования JPA-моделей и DTO в классах с суффиксом `Mapper`
+- `hql.handler`: обработчики жизненного цикла JPA
 
 Не вводить Packaging by Feature/Domain без явного изменения архитектуры проекта.
 

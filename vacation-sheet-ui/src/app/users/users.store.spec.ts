@@ -22,7 +22,13 @@ describe('UsersStore', () => {
     store.load();
 
     http.expectOne('/api/users').flush([
-      { id: 'user-1', email: 'user@example.com', displayName: 'Test User' },
+      {
+        id: 'user-1',
+        email: 'user@example.com',
+        displayName: 'Test User',
+        ctime: '2026-08-05T00:00:00Z',
+        utime: '2026-08-05T00:00:00Z',
+      },
     ]);
 
     expect(store.users()).toHaveLength(1);

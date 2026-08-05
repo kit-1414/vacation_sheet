@@ -5,6 +5,8 @@ export interface UserAccount {
   id: string;
   email: string;
   displayName: string | null;
+  ctime: string | null;
+  utime: string | null;
 }
 
 @Injectable({ providedIn: 'root' })

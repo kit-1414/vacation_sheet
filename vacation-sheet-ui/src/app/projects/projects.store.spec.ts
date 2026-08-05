@@ -13,8 +13,8 @@ describe('ProjectsStore', () => {
     name: 'Vacation Sheet',
     description: null,
     members: [],
-    createdAt: '2026-08-05T00:00:00Z',
-    updatedAt: '2026-08-05T00:00:00Z',
+    ctime: '2026-08-05T00:00:00Z',
+    utime: '2026-08-05T00:00:00Z',
   };
 
   beforeEach(() => {
@@ -32,7 +32,13 @@ describe('ProjectsStore', () => {
 
     http.expectOne('/api/projects').flush([project]);
     http.expectOne('/api/users').flush([
-      { id: 'user-1', email: 'user@example.com', displayName: null },
+      {
+        id: 'user-1',
+        email: 'user@example.com',
+        displayName: null,
+        ctime: '2026-08-05T00:00:00Z',
+        utime: '2026-08-05T00:00:00Z',
+      },
     ]);
 
     expect(store.projects()).toEqual([project]);

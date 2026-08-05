@@ -2,8 +2,8 @@ CREATE TABLE projects (
     id UUID PRIMARY KEY,
     name VARCHAR(120) NOT NULL,
     description VARCHAR(2000),
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL
+    ctime TIMESTAMP WITH TIME ZONE NOT NULL,
+    utime TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE project_members (
