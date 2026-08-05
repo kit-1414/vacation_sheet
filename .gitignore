@@ -2,7 +2,7 @@
 .vscode/
 *.iml
 *.log
-backend/.gradle/
+.gradle/
 backend/build/
 frontend/.angular/
 frontend/dist/

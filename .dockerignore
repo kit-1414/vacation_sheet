@@ -1,0 +1,7 @@
+.git
+.gradle
+.idea
+backend/build
+frontend/.angular
+frontend/dist
+frontend/node_modules

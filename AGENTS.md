@@ -7,7 +7,8 @@ Vacation Sheet — локальное веб-приложение для упр�
 ## Структура репозитория
 
 - `frontend/`: Angular SPA, обслуживаемое Nginx в Docker
-- `backend/`: REST API на Kotlin и Spring Boot
+- `backend/`: модуль Gradle с REST API на Kotlin и Spring Boot
+- `settings.gradle.kts`, `build.gradle.kts`, `gradlew`: корневая мультимодульная Gradle-сборка
 - `compose.yml`: полное локальное окружение
 - `README.md`: инструкции по настройке для разработчиков
 
@@ -203,15 +204,13 @@ docker compose down
 Проверка бэкенда в Windows:
 
 ```shell
-cd backend
-gradlew.bat clean test bootJar
+gradlew.bat :backend:clean :backend:test :backend:bootJar
 ```
 
 Проверка бэкенда в Unix-подобных системах:
 
 ```shell
-cd backend
-./gradlew clean test bootJar
+./gradlew :backend:clean :backend:test :backend:bootJar
 ```
 
 Проверка фронтенда:

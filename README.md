@@ -23,10 +23,9 @@ docker compose up --build
 ## Проверки
 
 ```shell
-cd backend
-./gradlew test
+./gradlew :backend:test :backend:bootJar
 
-cd ../frontend
+cd frontend
 npm test -- --watch=false
 npm run build
 ```

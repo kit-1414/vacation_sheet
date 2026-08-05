@@ -1,22 +1,15 @@
 plugins {
-	kotlin("jvm") version "2.2.21"
-	kotlin("plugin.spring") version "2.2.21"
-	id("org.springframework.boot") version "3.5.16"
-	id("io.spring.dependency-management") version "1.1.7"
-	kotlin("plugin.jpa") version "2.2.21"
+	kotlin("jvm")
+	kotlin("plugin.spring")
+	kotlin("plugin.jpa")
+	id("org.springframework.boot")
+	id("io.spring.dependency-management")
 }
-
-group = "com.example"
-version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(21)
 	}
-}
-
-repositories {
-	mavenCentral()
 }
 
 dependencies {

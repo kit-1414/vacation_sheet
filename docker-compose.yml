@@ -15,7 +15,8 @@ services:
 
   backend:
     build:
-      context: backend
+      context: .
+      dockerfile: backend/Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/vacation_sheet
     depends_on:
