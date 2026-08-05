@@ -1,6 +1,6 @@
 spring:
   application:
-    name: vacation-sheet
+    name: vacation-sheet-service
   datasource:
     url: jdbc:postgresql://localhost:5432/vacation_sheet
     username: vacation_sheet

@@ -1,7 +1,8 @@
 .git
 .gradle
 .idea
-backend/build
-frontend/.angular
-frontend/dist
-frontend/node_modules
+build
+vacation-sheet-service/build
+vacation-sheet-ui/.angular
+vacation-sheet-ui/dist
+vacation-sheet-ui/node_modules

@@ -6,11 +6,14 @@ Vacation Sheet — локальное веб-приложение для упр�
 
 ## Структура репозитория
 
-- `frontend/`: Angular SPA, обслуживаемое Nginx в Docker
-- `backend/`: модуль Gradle с REST API на Kotlin и Spring Boot
+- `vacation-sheet-ui/`: Angular SPA, обслуживаемое Nginx в Docker
+- `vacation-sheet-service/`: модуль Gradle с REST API на Kotlin и Spring Boot. MODULE_ROOT_PACKAGE = com.example.vacationsheet
 - `settings.gradle.kts`, `build.gradle.kts`, `gradlew`: корневая мультимодульная Gradle-сборка
-- `compose.yml`: полное локальное окружение
+- `docker-compose.yml`: полное локальное окружение
 - `README.md`: инструкции по настройке для разработчиков
+
+## Структура моулей бэкенда
+ - все пакеты бэкенда прилоэения имеют корневой пакет MODULE_ROOT_PACKAGE внутри которого уже лежат пакеты по слоям
 
 ## Технологический стек
 
@@ -127,7 +130,7 @@ app:
 
 ## Конфигурация
 
-Основная конфигурация бэкенда находится в `backend/src/main/resources/application.yml`.
+Основная конфигурация бэкенда находится в `vacation-sheet-service/src/main/resources/application.yml`.
 
 Перед проверкой реального OAuth-входа заменить заглушки Yandex `client-id` и `client-secret`. Не добавлять реальные production-секреты в Git. Yandex redirect URI для Docker:
 
@@ -205,19 +208,19 @@ docker compose down
 Проверка бэкенда в Windows:
 
 ```shell
-gradlew.bat :backend:clean :backend:test :backend:bootJar
+gradlew.bat :vacation-sheet-service:clean :vacation-sheet-service:test :vacation-sheet-service:bootJar
 ```
 
 Проверка бэкенда в Unix-подобных системах:
 
 ```shell
-./gradlew :backend:clean :backend:test :backend:bootJar
+./gradlew :vacation-sheet-service:clean :vacation-sheet-service:test :vacation-sheet-service:bootJar
 ```
 
 Проверка фронтенда:
 
 ```shell
-cd frontend
+cd vacation-sheet-ui
 npm ci
 npm test -- --watch=false
 npm run build

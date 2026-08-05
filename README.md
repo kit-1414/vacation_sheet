@@ -2,13 +2,13 @@
 
 Монорепозиторий приложения для учёта отпусков:
 
-- `frontend`: Angular SPA, Angular Material и Signals
-- `backend`: Kotlin, Spring Boot 3, Spring Data JPA, Flyway и PostgreSQL
+- `vacation-sheet-ui`: Angular SPA, Angular Material и Signals
+- `vacation-sheet-service`: Kotlin, Spring Boot 3, Spring Data JPA, Flyway и PostgreSQL
 - авторизация: серверная OAuth2-сессия через Яндекс
 
 ## Локальный запуск
 
-Укажите Yandex OAuth `client-id` и `client-secret` в `backend/src/main/resources/application.yml`, затем запустите:
+Укажите Yandex OAuth `client-id` и `client-secret` в `vacation-sheet-service/src/main/resources/application.yml`, затем запустите:
 
 ```shell
 docker compose up --build
@@ -23,9 +23,9 @@ docker compose up --build
 ## Проверки
 
 ```shell
-./gradlew :backend:test :backend:bootJar
+./gradlew :vacation-sheet-service:test :vacation-sheet-service:bootJar
 
-cd frontend
+cd vacation-sheet-ui
 npm test -- --watch=false
 npm run build
 ```

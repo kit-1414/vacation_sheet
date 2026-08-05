@@ -1,3 +1,3 @@
 rootProject.name = "vacation-sheet"
 
-include("backend")
+include("vacation-sheet-service")
