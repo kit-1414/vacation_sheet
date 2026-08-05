@@ -6,8 +6,13 @@ Vacation Sheet — локальное веб-приложение для упр�
 
 ## Структура репозитория
 
-- `vacation-sheet-ui/`: Angular SPA, обслуживаемое Nginx в Docker
-- `vacation-sheet-service/`: модуль Gradle с REST API на Kotlin и Spring Boot. MODULE_ROOT_PACKAGE = com.example.vacationsheet
+- `vacation-sheet-ui/`
+   - Angular SPA, обслуживаемое Nginx в Docker. 
+   - Внешний порт 4200 
+- `vacation-sheet-service 
+    - модуль Gradle с REST API на Kotlin и Spring Boot. 
+    - MODULE_ROOT_PACKAGE = com.example.vacationsheet
+    - Внешний порт 8081
 - `settings.gradle.kts`, `build.gradle.kts`, `gradlew`: корневая мультимодульная Gradle-сборка
 - `docker-compose.yml`: полное локальное окружение
 - `README.md`: инструкции по настройке для разработчиков
