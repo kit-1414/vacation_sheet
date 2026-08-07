@@ -16,6 +16,10 @@ class RestExceptionHandler {
 	fun handleProjectNameConflict(exception: ProjectNameAlreadyExistsException): ProblemDetail =
 		ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.message ?: "Project name already exists")
 
+	@ExceptionHandler(UserEmailAlreadyExistsException::class)
+	fun handleUserEmailConflict(exception: UserEmailAlreadyExistsException): ProblemDetail =
+		ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.message ?: "User email already exists")
+
 	@ExceptionHandler(MethodArgumentNotValidException::class)
 	fun handleValidation(exception: MethodArgumentNotValidException): ProblemDetail {
 		val problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed")

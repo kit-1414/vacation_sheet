@@ -3,7 +3,10 @@
     <p class="eyebrow">Команда</p>
     <h1>Пользователи</h1>
   </div>
-  <span class="count">{{ store.users().length }} зарегистрировано</span>
+  <div class="page-actions">
+    <span class="count">{{ store.users().length }} зарегистрировано</span>
+    <a mat-flat-button routerLink="/users/new">Добавить пользователя</a>
+  </div>
 </header>
 
 <mat-card appearance="outlined">
@@ -33,6 +36,12 @@
         <ng-container matColumnDef="utime">
           <th mat-header-cell *matHeaderCellDef>Изменён</th>
           <td mat-cell *matCellDef="let user">{{ (user.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="edit">
+          <th mat-header-cell *matHeaderCellDef>Редактирование</th>
+          <td mat-cell *matCellDef="let user">
+            <a mat-button [routerLink]="['/users', user.id, 'edit']">Редактировать</a>
+          </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns"></tr>
         <tr mat-row *matRowDef="let row; columns: columns"></tr>

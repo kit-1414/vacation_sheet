@@ -1,5 +1,6 @@
 package com.example.vacationsheet.mainapp.service
 
+import com.example.vacationsheet.mainapp.dto.UserAccountRequestDto
 import com.example.vacationsheet.mainapp.hql.mapper.UserAccountMapper
 import com.example.vacationsheet.mainapp.hql.model.UserAccountEntity
 import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
@@ -27,5 +28,20 @@ class UserServiceTest {
 
 		assertEquals(account.id, result.id)
 		verify(exactly = 1) { userAccountRepository.findByEmail("user@example.com") }
+	}
+
+	@Test
+	fun `create normalizes email and names`() {
+		every { userAccountRepository.findByEmail("user@example.com") } returns null
+		every { userAccountRepository.save(any()) } answers {
+			val user = firstArg<UserAccountEntity>()
+			UserAccountEntity(user.email, user.firstName, user.lastName, id = 1L)
+		}
+
+		val result = service.create(UserAccountRequestDto(" User@Example.COM ", " Test ", " User "))
+
+		assertEquals("user@example.com", result.email)
+		assertEquals("Test", result.firstName)
+		assertEquals("User", result.lastName)
 	}
 }

@@ -42,4 +42,23 @@ describe('UsersStore', () => {
     });
     expect(store.loading()).toBe(false);
   });
+
+  it('creates a user', () => {
+    const onSuccess = vi.fn();
+    store.create({ email: 'user@example.com', firstName: 'Test', lastName: 'User' }, onSuccess);
+
+    const request = http.expectOne('/api/users');
+    expect(request.request.method).toBe('POST');
+    request.flush({
+      id: 1,
+      email: 'user@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      ctime: null,
+      utime: null,
+    });
+
+    expect(store.users()).toHaveLength(1);
+    expect(onSuccess).toHaveBeenCalledOnce();
+  });
 });

@@ -21,6 +21,14 @@ export const routes: Routes = [
     path: 'users',
     loadComponent: () => import('./users/users-page').then((module) => module.UsersPage),
   },
+  {
+    path: 'users/new',
+    loadComponent: () => import('./users/user-editor-page').then((module) => module.UserEditorPage),
+  },
+  {
+    path: 'users/:id/edit',
+    loadComponent: () => import('./users/user-editor-page').then((module) => module.UserEditorPage),
+  },
   { path: '', pathMatch: 'full', redirectTo: 'projects' },
   { path: '**', redirectTo: 'projects' },
 ];

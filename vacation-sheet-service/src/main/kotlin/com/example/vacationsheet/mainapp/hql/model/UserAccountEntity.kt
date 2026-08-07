@@ -14,14 +14,14 @@ import java.time.OffsetDateTime
 @Table(name = "user_accounts")
 @EntityListeners(JpaTimeHandler::class)
 class UserAccountEntity(
-	@Column(nullable = false, unique = true, length = 320, updatable = false)
-	val email: String,
+	@Column(nullable = false, unique = true, length = 320)
+	var email: String,
 
-	@Column(name = "first_name", updatable = false)
-	val firstName: String?,
+	@Column(name = "first_name")
+	var firstName: String?,
 
-	@Column(name = "last_name", updatable = false)
-	val lastName: String?,
+	@Column(name = "last_name")
+	var lastName: String?,
 
 	@Column(nullable = false, updatable = false)
 	var ctime: OffsetDateTime? = null,
