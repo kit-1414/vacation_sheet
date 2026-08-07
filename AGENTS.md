@@ -12,7 +12,7 @@ Vacation Sheet — локальное веб-приложение для упр�
 - `vacation-sheet-service 
     - модуль Gradle с REST API на Kotlin и Spring Boot. 
     - MODULE_ROOT_PACKAGE = com.example.vacationsheet.mainapp
-    - Внешний порт 8081
+    - Внешний порт 8055
 - `settings.gradle.kts`, `build.gradle.kts`, `gradlew`: корневая мультимодульная Gradle-сборка
 - `docker-compose.yml`: полное локальное окружение
 - `README.md`: инструкции по настройке для разработчиков

@@ -19,11 +19,15 @@ services:
       dockerfile: vacation-sheet-service/Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/vacation_sheet
+      SPRING_DATASOURCE_USERNAME: vacation_sheet
+      SPRING_DATASOURCE_PASSWORD: vacation_sheet
+    ports:
+      - "8055:8055"
     depends_on:
       database:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "curl", "--fail", "--silent", "http://localhost:8055/actuator/health"]
       interval: 10s
       timeout: 5s
       retries: 12
