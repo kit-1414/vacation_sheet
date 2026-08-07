@@ -1,3 +1,4 @@
+
 spring:
   application:
     name: vacation-sheet-service
@@ -16,10 +17,12 @@ spring:
       client:
         registration:
           yandex:
-            client-id: change-me
-            client-secret: change-me
+            client-id: 2e08121a2d624f80b793ead6eeb9a365
+            client-secret: 09e6fc1c4bcd43b69aaa1f427ef31d0f
+#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://localhost:8055/login/oauth2/code/yandex"
             authorization-grant-type: authorization_code
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            client-authentication-method: client_secret_basic
             scope:
               - login:email
               - login:info
@@ -31,6 +34,8 @@ spring:
             user-name-attribute: id
 
 server:
+  port: 8055
+
   forward-headers-strategy: framework
   servlet:
     session:
