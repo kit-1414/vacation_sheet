@@ -2,9 +2,9 @@ spring:
   application:
     name: vacation-sheet-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/vacation_sheet
-    username: vacation_sheet
-    password: vacation_sheet
+    url: jdbc:postgresql://localhost:5432/vacation_sheet_db
+    username: postgres
+    password: postgres
   jpa:
     open-in-view: false
     hibernate:
