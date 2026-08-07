@@ -1,6 +1,5 @@
 package com.example.vacationsheet.mainapp.controller
 
-import com.example.vacationsheet.mainapp.dto.CsrfTokenResponse
 import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
 import com.example.vacationsheet.mainapp.service.UserService
 import io.swagger.v3.oas.annotations.Operation
@@ -9,7 +8,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.security.oauth2.core.user.OAuth2User
-import org.springframework.security.web.csrf.CsrfToken
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
@@ -32,7 +30,4 @@ class AuthController(
 		return userService.findCurrent(email)
 	}
 
-	@Operation(summary = "Initialize the CSRF cookie")
-	@GetMapping("/api/auth/csrf")
-	fun csrf(csrfToken: CsrfToken) = CsrfTokenResponse(csrfToken.token)
 }

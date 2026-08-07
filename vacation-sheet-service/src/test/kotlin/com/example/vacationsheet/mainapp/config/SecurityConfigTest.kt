@@ -15,8 +15,10 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login
 
 @WebMvcTest(controllers = [AuthController::class, LoginController::class, ProjectController::class, UserController::class])
 @Import(SecurityConfig::class)
@@ -63,8 +65,8 @@ class SecurityConfigTest {
 	}
 
 	@Test
-	fun `csrf is available without authentication`() {
-		mockMvc.perform(get("/api/auth/csrf"))
-			.andExpect(status().isOk)
+	fun `authenticated post does not require csrf token`() {
+		mockMvc.perform(post("/api/auth/logout").with(oauth2Login()))
+			.andExpect(status().isNoContent)
 	}
 }

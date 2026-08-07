@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 
 export interface CurrentUser {
@@ -18,13 +18,16 @@ export class AuthStore {
   readonly loading = signal(true);
 
   load(): void {
-    this.http.get('/api/auth/csrf').subscribe();
     this.http.get<CurrentUser>('/api/auth/me').subscribe({
       next: (user) => {
         this.user.set(user);
         this.loading.set(false);
       },
-      error: () => {
+      error: (error: HttpErrorResponse) => {
+        if (error.status === 403) {
+          window.location.assign('/login');
+          return;
+        }
         this.user.set(null);
         this.loading.set(false);
       },

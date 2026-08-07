@@ -9,7 +9,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository
 import org.springframework.security.web.util.matcher.RequestMatcher
 
 @Configuration
@@ -28,15 +27,12 @@ class SecurityConfig {
 					"/swagger-ui/**",
 					"/v3/api-docs/**",
 					"/actuator/health/**",
-					"/api/auth/csrf",
 					"/error",
 				).permitAll()
 					.requestMatchers("/api/**").authenticated()
 					.anyRequest().permitAll()
 			}
-			.csrf {
-				it.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-			}
+			.csrf { it.disable() }
 			.sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) }
 			.oauth2Login {
 				it.userInfoEndpoint { endpoint -> endpoint.userService(yandexOAuth2UserService) }

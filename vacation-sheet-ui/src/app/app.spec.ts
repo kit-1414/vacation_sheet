@@ -18,17 +18,21 @@ describe('App', () => {
     expect(app).toBeTruthy();
   });
 
-  it('should show login action for an unauthenticated user', async () => {
+  it('should load the authenticated user', () => {
     const fixture = TestBed.createComponent(App);
     fixture.detectChanges();
 
     const http = TestBed.inject(HttpTestingController);
-    http.expectOne('/api/auth/csrf').flush({ token: 'test-token' });
-    http.expectOne('/api/auth/me').flush(null, { status: 403, statusText: 'Forbidden' });
-    await fixture.whenStable();
+    http.expectOne('/api/auth/me').flush({
+      id: 'user-1',
+      email: 'user@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+      ctime: null,
+      utime: null,
+    });
     fixture.detectChanges();
 
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('a[href="/login"]')?.textContent).toContain('Войти');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('user@example.com');
   });
 });
