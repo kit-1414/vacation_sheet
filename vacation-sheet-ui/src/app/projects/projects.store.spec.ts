@@ -9,7 +9,7 @@ describe('ProjectsStore', () => {
   let http: HttpTestingController;
 
   const project: Project = {
-    id: 'project-1',
+    id: 1,
     name: 'Vacation Sheet',
     description: null,
     members: [],

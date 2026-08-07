@@ -39,9 +39,11 @@ export class ProjectEditorPage implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) return;
+    const projectId = Number(id);
+    if (!Number.isSafeInteger(projectId)) return;
 
     this.loading.set(true);
-    this.store.loadOne(id).subscribe({
+    this.store.loadOne(projectId).subscribe({
       next: (project) => {
         this.project.set(project);
         this.form.setValue({ name: project.name, description: project.description ?? '' });

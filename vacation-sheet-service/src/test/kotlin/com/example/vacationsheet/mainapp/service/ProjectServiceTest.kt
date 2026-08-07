@@ -11,7 +11,6 @@ import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -25,7 +24,7 @@ class ProjectServiceTest {
 
 	@Test
 	fun `create trims values and saves project`() {
-		val projectId = UUID.randomUUID()
+		val projectId = 1L
 		every { projectRepository.findByNameIgnoreCase("Project") } returns null
 		every { projectRepository.save(any()) } answers {
 			val project = firstArg<ProjectEntity>()
@@ -42,7 +41,7 @@ class ProjectServiceTest {
 
 	@Test
 	fun `create rejects duplicate project name ignoring case`() {
-		val existing = ProjectEntity(name = "Project", description = null, id = UUID.randomUUID())
+		val existing = ProjectEntity(name = "Project", description = null, id = 1L)
 		every { projectRepository.findByNameIgnoreCase("project") } returns existing
 
 		assertFailsWith<ProjectNameAlreadyExistsException> {
@@ -53,8 +52,8 @@ class ProjectServiceTest {
 
 	@Test
 	fun `add member attaches user once`() {
-		val projectId = UUID.randomUUID()
-		val userId = UUID.randomUUID()
+		val projectId = 1L
+		val userId = 2L
 		val project = ProjectEntity(name = "Project", description = null, id = projectId)
 		val user = UserAccountEntity(
 			email = "user@example.com",

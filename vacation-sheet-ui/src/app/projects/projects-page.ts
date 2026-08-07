@@ -24,18 +24,18 @@ import { ProjectsStore } from './projects.store';
 })
 export class ProjectsPage implements OnInit {
   protected readonly store = inject(ProjectsStore);
-  protected readonly selectedIds = signal(new Set<string>());
+  protected readonly selectedIds = signal(new Set<number>());
   protected readonly columns = ['select', 'name', 'ctime', 'teamSize', 'description', 'edit'];
 
   ngOnInit(): void {
     this.store.load();
   }
 
-  protected isSelected(id: string): boolean {
+  protected isSelected(id: number): boolean {
     return this.selectedIds().has(id);
   }
 
-  protected toggle(id: string): void {
+  protected toggle(id: number): void {
     this.selectedIds.update((selectedIds) => {
       const updated = new Set(selectedIds);
       updated.has(id) ? updated.delete(id) : updated.add(id);

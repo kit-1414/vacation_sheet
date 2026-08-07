@@ -25,7 +25,7 @@ describe('UsersStore', () => {
     expect(request.request.method).toBe('GET');
     request.flush([
       {
-        id: 'user-1',
+        id: 1,
         email: 'user@example.com',
         firstName: 'Test',
         lastName: 'User',

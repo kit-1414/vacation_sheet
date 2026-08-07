@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
-import java.util.UUID
 
 @Tag(name = "Projects")
 @RestController
@@ -30,7 +29,7 @@ class ProjectController(
 
 	@Operation(summary = "Get a project with its members")
 	@GetMapping("/{id}")
-	fun findById(@PathVariable id: UUID): ProjectDto = projectService.findById(id)
+	fun findById(@PathVariable id: Long): ProjectDto = projectService.findById(id)
 
 	@Operation(summary = "Create a project")
 	@PostMapping
@@ -39,21 +38,21 @@ class ProjectController(
 
 	@Operation(summary = "Update a project")
 	@PutMapping("/{id}")
-	fun update(@PathVariable id: UUID, @Valid @RequestBody request: ProjectRequestDto): ProjectDto =
+	fun update(@PathVariable id: Long, @Valid @RequestBody request: ProjectRequestDto): ProjectDto =
 		projectService.update(id, request)
 
 	@Operation(summary = "Delete a project")
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.NO_CONTENT)
-	fun delete(@PathVariable id: UUID) = projectService.delete(id)
+	fun delete(@PathVariable id: Long) = projectService.delete(id)
 
 	@Operation(summary = "Attach a user to a project")
 	@PutMapping("/{projectId}/users/{userId}")
-	fun addMember(@PathVariable projectId: UUID, @PathVariable userId: UUID): ProjectDto =
+	fun addMember(@PathVariable projectId: Long, @PathVariable userId: Long): ProjectDto =
 		projectService.addMember(projectId, userId)
 
 	@Operation(summary = "Detach a user from a project")
 	@DeleteMapping("/{projectId}/users/{userId}")
-	fun removeMember(@PathVariable projectId: UUID, @PathVariable userId: UUID): ProjectDto =
+	fun removeMember(@PathVariable projectId: Long, @PathVariable userId: Long): ProjectDto =
 		projectService.removeMember(projectId, userId)
 }

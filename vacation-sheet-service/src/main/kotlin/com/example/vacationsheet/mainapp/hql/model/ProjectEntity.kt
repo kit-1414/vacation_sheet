@@ -12,7 +12,6 @@ import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "projects")
@@ -39,6 +38,6 @@ class ProjectEntity(
 	val members: MutableSet<UserAccountEntity> = linkedSetOf(),
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	val id: UUID? = null,
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	val id: Long? = null,
 )

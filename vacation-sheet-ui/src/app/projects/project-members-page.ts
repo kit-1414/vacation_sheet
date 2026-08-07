@@ -55,9 +55,14 @@ export class ProjectMembersPage implements OnInit {
       this.loading.set(false);
       return;
     }
+    const projectId = Number(id);
+    if (!Number.isSafeInteger(projectId)) {
+      this.loading.set(false);
+      return;
+    }
 
     this.usersStore.load();
-    this.projectsStore.loadOne(id).subscribe({
+    this.projectsStore.loadOne(projectId).subscribe({
       next: (project) => {
         this.project.set(project);
         this.loading.set(false);
@@ -66,7 +71,7 @@ export class ProjectMembersPage implements OnInit {
     });
   }
 
-  protected isMember(userId: string): boolean {
+  protected isMember(userId: number): boolean {
     return this.project()?.members.some((member) => member.id === userId) ?? false;
   }
 

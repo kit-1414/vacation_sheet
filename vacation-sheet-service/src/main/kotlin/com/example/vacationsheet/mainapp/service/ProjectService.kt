@@ -10,7 +10,6 @@ import com.example.vacationsheet.mainapp.hql.repository.ProjectRepository
 import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-import java.util.UUID
 
 @Service
 class ProjectService(
@@ -22,7 +21,7 @@ class ProjectService(
 	fun findAll(): List<ProjectDto> = projectRepository.findAllWithMembers().map(projectMapper::toDto)
 
 	@Transactional(readOnly = true)
-	fun findById(id: UUID): ProjectDto = projectMapper.toDto(getProject(id))
+	fun findById(id: Long): ProjectDto = projectMapper.toDto(getProject(id))
 
 	@Transactional
 	fun create(request: ProjectRequestDto): ProjectDto {
@@ -32,7 +31,7 @@ class ProjectService(
 	}
 
 	@Transactional
-	fun update(id: UUID, request: ProjectRequestDto): ProjectDto {
+	fun update(id: Long, request: ProjectRequestDto): ProjectDto {
 		val project = getProject(id)
 		ensureNameAvailable(request.name.trim(), id)
 		projectMapper.updateEntity(request, project)
@@ -40,12 +39,12 @@ class ProjectService(
 	}
 
 	@Transactional
-	fun delete(id: UUID) {
+	fun delete(id: Long) {
 		projectRepository.delete(getProject(id))
 	}
 
 	@Transactional
-	fun addMember(projectId: UUID, userId: UUID): ProjectDto {
+	fun addMember(projectId: Long, userId: Long): ProjectDto {
 		val project = getProject(projectId)
 		val user = userAccountRepository.findById(userId).orElseThrow {
 			ResourceNotFoundException("User $userId was not found")
@@ -55,16 +54,16 @@ class ProjectService(
 	}
 
 	@Transactional
-	fun removeMember(projectId: UUID, userId: UUID): ProjectDto {
+	fun removeMember(projectId: Long, userId: Long): ProjectDto {
 		val project = getProject(projectId)
 		project.members.removeIf { it.id == userId }
 		return projectMapper.toDto(project)
 	}
 
-	private fun getProject(id: UUID): ProjectEntity = projectRepository.findByIdWithMembers(id)
+	private fun getProject(id: Long): ProjectEntity = projectRepository.findByIdWithMembers(id)
 		?: throw ResourceNotFoundException("Project $id was not found")
 
-	private fun ensureNameAvailable(name: String, currentId: UUID? = null) {
+	private fun ensureNameAvailable(name: String, currentId: Long? = null) {
 		val existing = projectRepository.findByNameIgnoreCase(name)
 		if (existing != null && existing.id != currentId) {
 			throw ProjectNameAlreadyExistsException(name)

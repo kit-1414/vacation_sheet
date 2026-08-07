@@ -9,7 +9,6 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import java.time.OffsetDateTime
-import java.util.UUID
 
 @Entity
 @Table(name = "user_accounts")
@@ -31,6 +30,6 @@ class UserAccountEntity(
 	var utime: OffsetDateTime? = null,
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	val id: UUID? = null,
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	val id: Long? = null,
 )

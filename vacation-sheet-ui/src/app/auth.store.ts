@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 
 export interface CurrentUser {
-  id: string;
+  id: number;
   email: string;
   firstName: string | null;
   lastName: string | null;

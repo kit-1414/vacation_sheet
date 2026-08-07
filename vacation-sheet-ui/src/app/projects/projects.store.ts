@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { UserAccount } from '../users/users.store';
 
 export interface Project {
-  id: string;
+  id: number;
   name: string;
   description: string | null;
   members: UserAccount[];
@@ -50,7 +50,7 @@ export class ProjectsStore {
     });
   }
 
-  update(id: string, request: ProjectRequest): void {
+  update(id: number, request: ProjectRequest): void {
     this.saving.set(true);
     this.http.put<Project>(`/api/projects/${id}`, request).subscribe({
       next: (project) => this.replace(project),
@@ -58,18 +58,18 @@ export class ProjectsStore {
     });
   }
 
-  loadOne(id: string): Observable<Project> {
+  loadOne(id: number): Observable<Project> {
     return this.http.get<Project>(`/api/projects/${id}`);
   }
 
-  delete(id: string): void {
+  delete(id: number): void {
     this.http.delete<void>(`/api/projects/${id}`).subscribe({
       next: () => this.projects.update((projects) => projects.filter((project) => project.id !== id)),
       error: () => this.fail('Не удалось удалить проект'),
     });
   }
 
-  addMember(projectId: string, userId: string, onSuccess?: (project: Project) => void): void {
+  addMember(projectId: number, userId: number, onSuccess?: (project: Project) => void): void {
     this.http.put<Project>(`/api/projects/${projectId}/users/${userId}`, {}).subscribe({
       next: (project) => {
         this.replace(project);
@@ -79,7 +79,7 @@ export class ProjectsStore {
     });
   }
 
-  removeMember(projectId: string, userId: string, onSuccess?: (project: Project) => void): void {
+  removeMember(projectId: number, userId: number, onSuccess?: (project: Project) => void): void {
     this.http.delete<Project>(`/api/projects/${projectId}/users/${userId}`).subscribe({
       next: (project) => {
         this.replace(project);

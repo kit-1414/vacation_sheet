@@ -1,10 +1,9 @@
 package com.example.vacationsheet.mainapp.hql.dto
 
 import java.time.OffsetDateTime
-import java.util.UUID
 
 data class ProjectDto(
-	val id: UUID,
+	val id: Long,
 	val name: String,
 	val description: String?,
 	val members: List<UserAccountDto>,

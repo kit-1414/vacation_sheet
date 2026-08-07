@@ -6,7 +6,6 @@ import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -20,7 +19,7 @@ class UserServiceTest {
 			email = "user@example.com",
 			firstName = "Test",
 			lastName = "User",
-			id = UUID.randomUUID(),
+			id = 1L,
 		)
 		every { userAccountRepository.findByEmail("user@example.com") } returns account
 

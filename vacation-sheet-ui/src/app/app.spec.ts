@@ -24,7 +24,7 @@ describe('App', () => {
 
     const http = TestBed.inject(HttpTestingController);
     http.expectOne('/api/auth/me').flush({
-      id: 'user-1',
+      id: 1,
       email: 'user@example.com',
       firstName: 'Test',
       lastName: 'User',
