@@ -35,7 +35,8 @@ describe('ProjectsStore', () => {
       {
         id: 'user-1',
         email: 'user@example.com',
-        displayName: null,
+        firstName: null,
+        lastName: null,
         ctime: '2026-08-05T00:00:00Z',
         utime: '2026-08-05T00:00:00Z',
       },

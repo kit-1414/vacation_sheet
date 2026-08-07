@@ -23,9 +23,9 @@ class AuthController(
 	@Operation(summary = "Get the current authenticated user")
 	@GetMapping("/me")
 	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): UserAccountDto {
-		val yandexId = principal.getAttribute<Any>("id")?.toString()
+		val email = principal.getAttribute<Any>("default_email")?.toString()
 			?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
-		return userService.findCurrent(yandexId)
+		return userService.findCurrent(email)
 	}
 
 	@Operation(summary = "Initialize the CSRF cookie")

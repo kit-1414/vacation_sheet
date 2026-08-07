@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
+import { UserAccount } from '../users/users.store';
 import { Project, ProjectsStore } from './projects.store';
 
 @Component({
@@ -66,5 +67,9 @@ export class ProjectsPage implements OnInit {
   protected availableUsers(project: Project) {
     const memberIds = new Set(project.members.map((member) => member.id));
     return this.store.users().filter((user) => !memberIds.has(user.id));
+  }
+
+  protected userName(user: UserAccount): string {
+    return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email;
   }
 }

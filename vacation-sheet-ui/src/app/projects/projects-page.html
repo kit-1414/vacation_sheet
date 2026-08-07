@@ -55,7 +55,7 @@
           <div class="members">
             @for (member of project.members; track member.id) {
               <span class="member">
-                {{ member.displayName || member.email }}
+                {{ userName(member) }}
                 <button
                   type="button"
                   aria-label="Удалить пользователя из проекта"
@@ -71,7 +71,7 @@
               <mat-label>Добавить участника</mat-label>
               <mat-select (selectionChange)="store.addMember(project.id, $event.value)">
                 @for (user of availableUsers(project); track user.id) {
-                  <mat-option [value]="user.id">{{ user.displayName || user.email }}</mat-option>
+                  <mat-option [value]="user.id">{{ userName(user) }}</mat-option>
                 }
               </mat-select>
             </mat-form-field>

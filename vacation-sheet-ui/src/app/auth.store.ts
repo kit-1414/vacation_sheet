@@ -4,7 +4,8 @@ import { Injectable, inject, signal } from '@angular/core';
 export interface CurrentUser {
   id: string;
   email: string;
-  displayName: string | null;
+  firstName: string | null;
+  lastName: string | null;
   ctime: string | null;
   utime: string | null;
 }

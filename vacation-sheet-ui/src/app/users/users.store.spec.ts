@@ -21,17 +21,25 @@ describe('UsersStore', () => {
   it('loads registered users', () => {
     store.load();
 
-    http.expectOne('/api/users').flush([
+    const request = http.expectOne('/api/users');
+    expect(request.request.method).toBe('GET');
+    request.flush([
       {
         id: 'user-1',
         email: 'user@example.com',
-        displayName: 'Test User',
+        firstName: 'Test',
+        lastName: 'User',
         ctime: '2026-08-05T00:00:00Z',
         utime: '2026-08-05T00:00:00Z',
       },
     ]);
 
     expect(store.users()).toHaveLength(1);
+    expect(store.users()[0]).toMatchObject({
+      email: 'user@example.com',
+      firstName: 'Test',
+      lastName: 'User',
+    });
     expect(store.loading()).toBe(false);
   });
 });

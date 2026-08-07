@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository
 import java.util.UUID
 
 interface UserAccountRepository : JpaRepository<UserAccountEntity, UUID> {
-	fun findByYandexId(yandexId: String): UserAccountEntity?
+	fun findByEmail(email: String): UserAccountEntity?
 
-	fun findAllByOrderByDisplayNameAscEmailAsc(): List<UserAccountEntity>
+	fun findAllByOrderByLastNameAscFirstNameAscEmailAsc(): List<UserAccountEntity>
 }

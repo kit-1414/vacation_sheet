@@ -43,9 +43,9 @@ class ProjectServiceTest {
 		val userId = UUID.randomUUID()
 		val project = ProjectEntity(name = "Project", description = null, id = projectId)
 		val user = UserAccountEntity(
-			yandexId = "yandex-id",
 			email = "user@example.com",
-			displayName = "User",
+			firstName = "Test",
+			lastName = "User",
 			id = userId,
 		)
 		every { projectRepository.findByIdWithMembers(projectId) } returns project

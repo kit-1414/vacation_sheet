@@ -15,14 +15,14 @@ import java.util.UUID
 @Table(name = "user_accounts")
 @EntityListeners(JpaTimeHandler::class)
 class UserAccountEntity(
-	@Column(name = "yandex_id", nullable = false, unique = true)
-	val yandexId: String,
+	@Column(nullable = false, unique = true, length = 320, updatable = false)
+	val email: String,
 
-	@Column(nullable = false, unique = true, length = 320)
-	var email: String,
+	@Column(name = "first_name", updatable = false)
+	val firstName: String?,
 
-	@Column(name = "display_name")
-	var displayName: String?,
+	@Column(name = "last_name", updatable = false)
+	val lastName: String?,
 
 	@Column(nullable = false, updatable = false)
 	var ctime: OffsetDateTime? = null,

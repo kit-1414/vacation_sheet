@@ -22,8 +22,6 @@ class YandexOAuth2UserService(
 	@Transactional
 	override fun loadUser(userRequest: OAuth2UserRequest): OAuth2User {
 		val oauthUser = delegate.loadUser(userRequest)
-		val yandexId = oauthUser.attributes["id"]?.toString()
-			?: authenticationError("Yandex response does not contain an id")
 		val email = oauthUser.attributes["default_email"]?.toString()?.trim()?.lowercase()
 			?: authenticationError("Yandex response does not contain an email")
 
@@ -34,13 +32,14 @@ class YandexOAuth2UserService(
 			)
 		}
 
-		val displayName = oauthUser.attributes["display_name"]?.toString()
-		val account = userAccountRepository.findByYandexId(yandexId)
-		if (account == null) {
-			userAccountRepository.save(UserAccountEntity(yandexId = yandexId, email = email, displayName = displayName))
-		} else {
-			account.email = email
-			account.displayName = displayName
+		if (userAccountRepository.findByEmail(email) == null) {
+			userAccountRepository.save(
+				UserAccountEntity(
+					email = email,
+					firstName = oauthUser.optionalTextAttribute("first_name"),
+					lastName = oauthUser.optionalTextAttribute("last_name"),
+				),
+			)
 		}
 
 		return DefaultOAuth2User(oauthUser.authorities, oauthUser.attributes, "id")
@@ -48,4 +47,7 @@ class YandexOAuth2UserService(
 
 	private fun authenticationError(message: String): Nothing =
 		throw OAuth2AuthenticationException(OAuth2Error("invalid_user_info"), message)
+
+	private fun OAuth2User.optionalTextAttribute(name: String): String? =
+		attributes[name]?.toString()?.trim()?.takeIf(String::isNotEmpty)
 }

@@ -14,9 +14,9 @@ class UserService(
 ) {
 	@Transactional(readOnly = true)
 	fun findAll(): List<UserAccountDto> =
-		userAccountRepository.findAllByOrderByDisplayNameAscEmailAsc().map(userAccountMapper::toDto)
+		userAccountRepository.findAllByOrderByLastNameAscFirstNameAscEmailAsc().map(userAccountMapper::toDto)
 
 	@Transactional(readOnly = true)
-	fun findCurrent(yandexId: String): UserAccountDto = userAccountRepository.findByYandexId(yandexId)?.let(userAccountMapper::toDto)
+	fun findCurrent(email: String): UserAccountDto = userAccountRepository.findByEmail(email.trim().lowercase())?.let(userAccountMapper::toDto)
 		?: throw ResourceNotFoundException("Authenticated user was not found")
 }

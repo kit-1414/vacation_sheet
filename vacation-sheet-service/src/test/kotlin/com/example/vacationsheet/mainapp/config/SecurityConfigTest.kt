@@ -3,6 +3,7 @@ package com.example.vacationsheet.mainapp.config
 import com.example.vacationsheet.mainapp.controller.AuthController
 import com.example.vacationsheet.mainapp.controller.LoginController
 import com.example.vacationsheet.mainapp.controller.ProjectController
+import com.example.vacationsheet.mainapp.controller.UserController
 import com.example.vacationsheet.mainapp.service.ProjectService
 import com.example.vacationsheet.mainapp.service.UserService
 import com.example.vacationsheet.mainapp.service.YandexOAuth2UserService
@@ -17,7 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@WebMvcTest(controllers = [AuthController::class, LoginController::class, ProjectController::class])
+@WebMvcTest(controllers = [AuthController::class, LoginController::class, ProjectController::class, UserController::class])
 @Import(SecurityConfig::class)
 class SecurityConfigTest {
 
@@ -39,6 +40,12 @@ class SecurityConfigTest {
 	@Test
 	fun `unauthenticated API request returns 403`() {
 		mockMvc.perform(get("/api/projects"))
+			.andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `unauthenticated users request returns 403`() {
+		mockMvc.perform(get("/api/users"))
 			.andExpect(status().isForbidden)
 	}
 
