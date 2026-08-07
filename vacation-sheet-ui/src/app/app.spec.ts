@@ -24,13 +24,11 @@ describe('App', () => {
 
     const http = TestBed.inject(HttpTestingController);
     http.expectOne('/api/auth/csrf').flush({ token: 'test-token' });
-    http.expectOne('/api/auth/me').flush(null, { status: 401, statusText: 'Unauthorized' });
+    http.expectOne('/api/auth/me').flush(null, { status: 403, statusText: 'Forbidden' });
     await fixture.whenStable();
     fixture.detectChanges();
 
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('a[href="/oauth2/authorization/yandex"]')?.textContent).toContain(
-      'Войти через Яндекс',
-    );
+    expect(compiled.querySelector('a[href="/login"]')?.textContent).toContain('Войти');
   });
 });

@@ -24,7 +24,7 @@ class AuthController(
 	@GetMapping("/me")
 	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): UserAccountDto {
 		val yandexId = principal.getAttribute<Any>("id")?.toString()
-			?: throw ResponseStatusException(HttpStatus.UNAUTHORIZED)
+			?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
 		return userService.findCurrent(yandexId)
 	}
 

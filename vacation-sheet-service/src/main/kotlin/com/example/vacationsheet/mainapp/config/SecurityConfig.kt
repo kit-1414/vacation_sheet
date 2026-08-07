@@ -22,6 +22,8 @@ class SecurityConfig {
 		http
 			.authorizeHttpRequests {
 				it.requestMatchers(
+					"/login",
+					"/login/start",
 					"/swagger-ui.html",
 					"/swagger-ui/**",
 					"/v3/api-docs/**",
@@ -38,6 +40,7 @@ class SecurityConfig {
 			.sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED) }
 			.oauth2Login {
 				it.userInfoEndpoint { endpoint -> endpoint.userService(yandexOAuth2UserService) }
+				it.loginPage("/login/start")
 				it.defaultSuccessUrl("/", true)
 			}
 			.logout {
@@ -46,7 +49,7 @@ class SecurityConfig {
 			}
 			.exceptionHandling {
 				it.defaultAuthenticationEntryPointFor(
-					HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED),
+					HttpStatusEntryPoint(HttpStatus.FORBIDDEN),
 					RequestMatcher { request -> request.servletPath.startsWith("/api/") },
 				)
 			}
