@@ -69,16 +69,22 @@ export class ProjectsStore {
     });
   }
 
-  addMember(projectId: string, userId: string): void {
+  addMember(projectId: string, userId: string, onSuccess?: (project: Project) => void): void {
     this.http.put<Project>(`/api/projects/${projectId}/users/${userId}`, {}).subscribe({
-      next: (project) => this.replace(project),
+      next: (project) => {
+        this.replace(project);
+        onSuccess?.(project);
+      },
       error: () => this.fail('Не удалось добавить пользователя'),
     });
   }
 
-  removeMember(projectId: string, userId: string): void {
+  removeMember(projectId: string, userId: string, onSuccess?: (project: Project) => void): void {
     this.http.delete<Project>(`/api/projects/${projectId}/users/${userId}`).subscribe({
-      next: (project) => this.replace(project),
+      next: (project) => {
+        this.replace(project);
+        onSuccess?.(project);
+      },
       error: () => this.fail('Не удалось удалить пользователя из проекта'),
     });
   }
