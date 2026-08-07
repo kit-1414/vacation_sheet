@@ -1,21 +1,20 @@
 import { DatePipe, SlicePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
-import { UserAccount } from '../users/users.store';
-import { Project, ProjectsStore } from './projects.store';
+import { ProjectsStore } from './projects.store';
 
 @Component({
   selector: 'app-projects-page',
   imports: [
     MatButtonModule,
-    MatCardModule,
+    MatCheckboxModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
+    MatTableModule,
     DatePipe,
     SlicePipe,
     RouterLink,
@@ -25,17 +24,35 @@ import { Project, ProjectsStore } from './projects.store';
 })
 export class ProjectsPage implements OnInit {
   protected readonly store = inject(ProjectsStore);
+  protected readonly selectedIds = signal(new Set<string>());
+  protected readonly columns = ['select', 'name', 'ctime', 'teamSize', 'description', 'edit'];
 
   ngOnInit(): void {
     this.store.load();
   }
 
-  protected availableUsers(project: Project) {
-    const memberIds = new Set(project.members.map((member) => member.id));
-    return this.store.users().filter((user) => !memberIds.has(user.id));
+  protected isSelected(id: string): boolean {
+    return this.selectedIds().has(id);
   }
 
-  protected userName(user: UserAccount): string {
-    return [user.firstName, user.lastName].filter(Boolean).join(' ') || user.email;
+  protected toggle(id: string): void {
+    this.selectedIds.update((selectedIds) => {
+      const updated = new Set(selectedIds);
+      updated.has(id) ? updated.delete(id) : updated.add(id);
+      return updated;
+    });
+  }
+
+  protected allSelected(): boolean {
+    return this.store.projects().length > 0 && this.selectedIds().size === this.store.projects().length;
+  }
+
+  protected toggleAll(): void {
+    this.selectedIds.set(this.allSelected() ? new Set() : new Set(this.store.projects().map((project) => project.id)));
+  }
+
+  protected deleteSelected(): void {
+    this.selectedIds().forEach((id) => this.store.delete(id));
+    this.selectedIds.set(new Set());
   }
 }

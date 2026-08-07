@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable } from 'rxjs';
 
 import { UserAccount } from '../users/users.store';
 
@@ -23,7 +23,6 @@ export class ProjectsStore {
   private readonly http = inject(HttpClient);
 
   readonly projects = signal<Project[]>([]);
-  readonly users = signal<UserAccount[]>([]);
   readonly loading = signal(false);
   readonly saving = signal(false);
   readonly error = signal<string | null>(null);
@@ -31,13 +30,9 @@ export class ProjectsStore {
   load(): void {
     this.loading.set(true);
     this.error.set(null);
-    forkJoin({
-      projects: this.http.get<Project[]>('/api/projects'),
-      users: this.http.get<UserAccount[]>('/api/users'),
-    }).subscribe({
-      next: ({ projects, users }) => {
+    this.http.get<Project[]>('/api/projects').subscribe({
+      next: (projects) => {
         this.projects.set(projects);
-        this.users.set(users);
         this.loading.set(false);
       },
       error: () => this.fail('Не удалось загрузить проекты'),

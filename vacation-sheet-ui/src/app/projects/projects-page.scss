@@ -20,8 +20,7 @@ h1 {
   letter-spacing: -0.04em;
 }
 
-.count,
-.muted {
+.count {
   color: var(--mat-sys-on-surface-variant);
 }
 
@@ -31,59 +30,15 @@ h1 {
   gap: 0.5rem;
 }
 
-.project-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr));
-  gap: 1rem;
-}
-
-.project-card {
-  min-height: 22rem;
-}
-
-.project-card mat-card-content {
-  flex: 1;
-  padding-top: 1rem;
-}
-
-.description {
-  min-height: 3rem;
-  color: var(--mat-sys-on-surface-variant);
-}
-
-h2 {
-  margin: 1.5rem 0 0.75rem;
-  font: var(--mat-sys-title-small);
-}
-
-.members {
-  display: flex;
-  min-height: 2rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.member {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.35rem 0.5rem 0.35rem 0.75rem;
-  border-radius: 999px;
-  background: var(--mat-sys-secondary-container);
-  color: var(--mat-sys-on-secondary-container);
-}
-
-.member button {
-  border: 0;
-  margin-left: 0.35rem;
-  background: transparent;
-  color: inherit;
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.member-select {
+.table-wrap {
   width: 100%;
-  margin-top: 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--mat-sys-outline-variant);
+  border-radius: 1rem;
+}
+
+table {
+  width: 100%;
 }
 
 .delete,
@@ -113,5 +68,9 @@ mat-spinner {
     align-items: start;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .page-actions {
+    flex-wrap: wrap;
   }
 }

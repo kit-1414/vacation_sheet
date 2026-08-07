@@ -27,23 +27,12 @@ describe('ProjectsStore', () => {
 
   afterEach(() => http.verify());
 
-  it('loads projects and users together', () => {
+  it('loads projects', () => {
     store.load();
 
     http.expectOne('/api/projects').flush([project]);
-    http.expectOne('/api/users').flush([
-      {
-        id: 'user-1',
-        email: 'user@example.com',
-        firstName: null,
-        lastName: null,
-        ctime: '2026-08-05T00:00:00Z',
-        utime: '2026-08-05T00:00:00Z',
-      },
-    ]);
 
     expect(store.projects()).toEqual([project]);
-    expect(store.users()).toHaveLength(1);
   });
 
   it('creates a project', () => {
