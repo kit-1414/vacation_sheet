@@ -12,12 +12,12 @@ class ProjectMapper(
 ) {
 	fun toEntity(dto: ProjectRequestDto) = ProjectEntity(
 		name = dto.name.trim(),
-		description = dto.description?.trim()?.ifEmpty { null },
+		description = dto.description?.ifEmpty { null },
 	)
 
 	fun updateEntity(dto: ProjectRequestDto, entity: ProjectEntity) {
 		entity.name = dto.name.trim()
-		entity.description = dto.description?.trim()?.ifEmpty { null }
+		entity.description = dto.description?.ifEmpty { null }
 	}
 
 	fun toDto(entity: ProjectEntity) = ProjectDto(

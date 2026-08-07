@@ -12,6 +12,10 @@ class RestExceptionHandler {
 	fun handleNotFound(exception: ResourceNotFoundException): ProblemDetail =
 		ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, exception.message ?: "Resource not found")
 
+	@ExceptionHandler(ProjectNameAlreadyExistsException::class)
+	fun handleProjectNameConflict(exception: ProjectNameAlreadyExistsException): ProblemDetail =
+		ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.message ?: "Project name already exists")
+
 	@ExceptionHandler(MethodArgumentNotValidException::class)
 	fun handleValidation(exception: MethodArgumentNotValidException): ProblemDetail {
 		val problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed")

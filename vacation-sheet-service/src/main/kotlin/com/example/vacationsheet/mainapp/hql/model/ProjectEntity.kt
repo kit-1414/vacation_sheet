@@ -18,10 +18,10 @@ import java.util.UUID
 @Table(name = "projects")
 @EntityListeners(JpaTimeHandler::class)
 class ProjectEntity(
-	@Column(nullable = false, length = 120)
+	@Column(nullable = false, length = 100)
 	var name: String,
 
-	@Column(length = 2000)
+	@Column(length = 1000)
 	var description: String?,
 
 	@Column(nullable = false, updatable = false)

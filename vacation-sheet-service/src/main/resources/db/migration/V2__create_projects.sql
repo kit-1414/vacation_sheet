@@ -1,10 +1,12 @@
 CREATE TABLE projects (
     id UUID PRIMARY KEY,
-    name VARCHAR(120) NOT NULL,
-    description VARCHAR(2000),
+    name VARCHAR(100) NOT NULL CHECK (name = btrim(name) AND name ~ '^[A-Za-z0-9]+$'),
+    description VARCHAR(1000),
     ctime TIMESTAMP WITH TIME ZONE NOT NULL,
     utime TIMESTAMP WITH TIME ZONE NOT NULL
 );
+
+CREATE UNIQUE INDEX projects_name_lower_uq ON projects (lower(name));
 
 CREATE TABLE project_members (
     project_id UUID NOT NULL REFERENCES projects(id) ON DELETE CASCADE,

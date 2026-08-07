@@ -3,37 +3,11 @@
     <p class="eyebrow">Рабочее пространство</p>
     <h1>Проекты</h1>
   </div>
-  <span class="count">{{ store.projects().length }} всего</span>
+  <div class="page-actions">
+    <span class="count">{{ store.projects().length }} всего</span>
+    <a mat-flat-button routerLink="/projects/new">Создать проект</a>
+  </div>
 </header>
-
-<mat-card appearance="outlined" class="editor-card">
-  <mat-card-header>
-    <mat-card-title>{{ editingId() ? 'Редактирование проекта' : 'Новый проект' }}</mat-card-title>
-  </mat-card-header>
-  <mat-card-content>
-    <form [formGroup]="form" (ngSubmit)="submit()">
-      <mat-form-field appearance="outline">
-        <mat-label>Название</mat-label>
-        <input matInput formControlName="name" maxlength="120" />
-        @if (form.controls.name.hasError('required')) {
-          <mat-error>Укажите название</mat-error>
-        }
-      </mat-form-field>
-      <mat-form-field appearance="outline">
-        <mat-label>Описание</mat-label>
-        <textarea matInput formControlName="description" maxlength="2000" rows="3"></textarea>
-      </mat-form-field>
-      <div class="form-actions">
-        <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">
-          {{ editingId() ? 'Сохранить' : 'Создать' }}
-        </button>
-        @if (editingId()) {
-          <button mat-button type="button" (click)="cancelEdit()">Отмена</button>
-        }
-      </div>
-    </form>
-  </mat-card-content>
-</mat-card>
 
 @if (store.error(); as error) {
   <p class="error">{{ error }}</p>
@@ -47,10 +21,12 @@
       <mat-card appearance="outlined" class="project-card">
         <mat-card-header>
           <mat-card-title>{{ project.name }}</mat-card-title>
-          <mat-card-subtitle>{{ project.members.length }} участников</mat-card-subtitle>
+          <mat-card-subtitle>
+            Добавлен: {{ project.ctime | date: 'dd.MM.yyyy HH:mm' }} · {{ project.members.length }} участников
+          </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p class="description">{{ project.description || 'Описание не добавлено' }}</p>
+          <p class="description">{{ project.description ? (project.description | slice: 0:40) : 'Описание не добавлено' }}</p>
           <h2>Команда</h2>
           <div class="members">
             @for (member of project.members; track member.id) {
@@ -78,7 +54,7 @@
           }
         </mat-card-content>
         <mat-card-actions align="end">
-          <button mat-button type="button" (click)="edit(project)">Редактировать</button>
+          <a mat-button [routerLink]="['/projects', project.id, 'edit']">Редактировать</a>
           <button mat-button type="button" class="delete" (click)="store.delete(project.id)">Удалить</button>
         </mat-card-actions>
       </mat-card>

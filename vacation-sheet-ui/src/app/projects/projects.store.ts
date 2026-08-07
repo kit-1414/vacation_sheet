@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 import { UserAccount } from '../users/users.store';
 
@@ -61,6 +61,10 @@ export class ProjectsStore {
       next: (project) => this.replace(project),
       error: () => this.fail('Не удалось обновить проект'),
     });
+  }
+
+  loadOne(id: string): Observable<Project> {
+    return this.http.get<Project>(`/api/projects/${id}`);
   }
 
   delete(id: string): void {

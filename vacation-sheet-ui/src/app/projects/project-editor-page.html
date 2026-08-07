@@ -1,0 +1,44 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Проекты</p>
+    <h1>{{ project() ? 'Редактировать проект' : 'Создать проект' }}</h1>
+  </div>
+  <a mat-button routerLink="/projects">К списку проектов</a>
+</header>
+
+@if (loading()) {
+  <mat-spinner diameter="40" aria-label="Загрузка проекта"></mat-spinner>
+} @else {
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Название</mat-label>
+          <input matInput formControlName="name" maxlength="100" />
+          @if (form.controls.name.hasError('required')) {
+            <mat-error>Укажите название</mat-error>
+          } @else if (form.controls.name.hasError('pattern')) {
+            <mat-error>Используйте только латинские буквы и цифры</mat-error>
+          } @else if (form.controls.name.hasError('maxlength')) {
+            <mat-error>Не более 100 символов</mat-error>
+          }
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Комментарий</mat-label>
+          <textarea matInput formControlName="description" maxlength="1000" rows="6"></textarea>
+          @if (form.controls.description.hasError('maxlength')) {
+            <mat-error>Не более 1000 символов</mat-error>
+          }
+        </mat-form-field>
+        <div class="form-actions">
+          <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">Сохранить</button>
+          <a mat-button routerLink="/projects">Отмена</a>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}
+
+@if (store.error(); as error) {
+  <p class="error">{{ error }}</p>
+}

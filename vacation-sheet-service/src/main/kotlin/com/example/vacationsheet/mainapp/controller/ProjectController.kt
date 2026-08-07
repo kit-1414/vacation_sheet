@@ -28,6 +28,10 @@ class ProjectController(
 	@GetMapping
 	fun findAll(): List<ProjectDto> = projectService.findAll()
 
+	@Operation(summary = "Get a project with its members")
+	@GetMapping("/{id}")
+	fun findById(@PathVariable id: UUID): ProjectDto = projectService.findById(id)
+
 	@Operation(summary = "Create a project")
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)

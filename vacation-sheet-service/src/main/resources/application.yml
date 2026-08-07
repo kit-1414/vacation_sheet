@@ -58,5 +58,7 @@ springdoc:
       header-name: X-XSRF-TOKEN
 
 app:
+  frontend:
+    url: http://localhost:4200
   security:
     allowed-email-domain: ""

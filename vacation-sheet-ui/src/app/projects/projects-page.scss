@@ -25,23 +25,10 @@ h1 {
   color: var(--mat-sys-on-surface-variant);
 }
 
-.editor-card {
-  margin-bottom: 2rem;
-  background: var(--mat-sys-surface-container-lowest);
-}
-
-.editor-card form {
-  display: grid;
-  grid-template-columns: minmax(14rem, 1fr) minmax(18rem, 2fr) auto;
-  align-items: start;
-  gap: 1rem;
-  padding-top: 1rem;
-}
-
-.form-actions {
+.page-actions {
   display: flex;
+  align-items: center;
   gap: 0.5rem;
-  padding-top: 0.25rem;
 }
 
 .project-grid {
@@ -122,10 +109,6 @@ mat-spinner {
 }
 
 @media (max-width: 800px) {
-  .editor-card form {
-    grid-template-columns: 1fr;
-  }
-
   .page-header {
     align-items: start;
     flex-direction: column;

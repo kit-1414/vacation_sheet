@@ -1,6 +1,7 @@
 package com.example.vacationsheet.mainapp.service
 
 import com.example.vacationsheet.mainapp.dto.ProjectRequestDto
+import com.example.vacationsheet.mainapp.exception.ProjectNameAlreadyExistsException
 import com.example.vacationsheet.mainapp.exception.ResourceNotFoundException
 import com.example.vacationsheet.mainapp.hql.dto.ProjectDto
 import com.example.vacationsheet.mainapp.hql.mapper.ProjectMapper
@@ -20,8 +21,12 @@ class ProjectService(
 	@Transactional(readOnly = true)
 	fun findAll(): List<ProjectDto> = projectRepository.findAllWithMembers().map(projectMapper::toDto)
 
+	@Transactional(readOnly = true)
+	fun findById(id: UUID): ProjectDto = projectMapper.toDto(getProject(id))
+
 	@Transactional
 	fun create(request: ProjectRequestDto): ProjectDto {
+		ensureNameAvailable(request.name.trim())
 		val project = projectRepository.save(projectMapper.toEntity(request))
 		return projectMapper.toDto(project)
 	}
@@ -29,6 +34,7 @@ class ProjectService(
 	@Transactional
 	fun update(id: UUID, request: ProjectRequestDto): ProjectDto {
 		val project = getProject(id)
+		ensureNameAvailable(request.name.trim(), id)
 		projectMapper.updateEntity(request, project)
 		return projectMapper.toDto(project)
 	}
@@ -57,4 +63,11 @@ class ProjectService(
 
 	private fun getProject(id: UUID): ProjectEntity = projectRepository.findByIdWithMembers(id)
 		?: throw ResourceNotFoundException("Project $id was not found")
+
+	private fun ensureNameAvailable(name: String, currentId: UUID? = null) {
+		val existing = projectRepository.findByNameIgnoreCase(name)
+		if (existing != null && existing.id != currentId) {
+			throw ProjectNameAlreadyExistsException(name)
+		}
+	}
 }
