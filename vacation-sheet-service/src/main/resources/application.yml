@@ -1,3 +1,6 @@
+logging:
+  level:
+    com.example.vacationsheet: DEBUG
 
 spring:
   application:
