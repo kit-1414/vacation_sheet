@@ -3,6 +3,7 @@ package com.example.vacationsheet.mainapp.controller
 import com.example.vacationsheet.mainapp.dto.ProjectRequestDto
 import com.example.vacationsheet.mainapp.hql.dto.ProjectDto
 import com.example.vacationsheet.mainapp.service.ProjectService
+import com.example.vacationsheet.mainapp.utils.logaspect.LogPublicMethods
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Projects")
 @RestController
 @RequestMapping("/api/projects")
+@LogPublicMethods
 class ProjectController(
 	private val projectService: ProjectService,
 ) {

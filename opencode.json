@@ -3,6 +3,7 @@
   "instructions": [
     "AGENTS.md",
     ".agents/bakend-tables.md",
-    ".agents/git.md"
+    ".agents/git.md",
+    ".agents/backend-common.md"
   ]
 }

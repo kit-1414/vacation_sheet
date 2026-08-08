@@ -2,6 +2,7 @@ package com.example.vacationsheet.mainapp.controller
 
 import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
 import com.example.vacationsheet.mainapp.service.UserService
+import com.example.vacationsheet.mainapp.utils.logaspect.LogPublicMethods
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.beans.factory.annotation.Value
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.view.RedirectView
 
 @Tag(name = "Authentication")
 @RestController
+@LogPublicMethods
 class AuthController(
 	private val userService: UserService,
 	@Value("\${app.frontend.url}") private val frontendUrl: String,
