@@ -70,4 +70,20 @@ class ProjectServiceTest {
 		assertEquals(1, firstResponse.members.size)
 		assertEquals(1, secondResponse.members.size)
 	}
+
+	@Test
+	fun `add manager attaches user once`() {
+		val projectId = 1L
+		val userId = 2L
+		val project = ProjectEntity(name = "Project", description = null, id = projectId)
+		val user = UserAccountEntity("user@example.com", "Test", "User", id = userId)
+		every { projectRepository.findByIdWithMembers(projectId) } returns project
+		every { userAccountRepository.findById(userId) } returns Optional.of(user)
+
+		val firstResponse = service.addManager(projectId, userId)
+		val secondResponse = service.addManager(projectId, userId)
+
+		assertEquals(1, firstResponse.managers.size)
+		assertEquals(1, secondResponse.managers.size)
+	}
 }

@@ -48,10 +48,12 @@
           <td mat-cell *matCellDef="let project">{{ project.ctime | date: 'dd.MM.yyyy HH:mm' }}</td>
         </ng-container>
         <ng-container matColumnDef="teamSize">
-          <th mat-header-cell *matHeaderCellDef>Размер команды</th>
-          <td mat-cell *matCellDef="let project">
-            <a [routerLink]="['/projects', project.id, 'members']">{{ project.members.length }}</a>
-          </td>
+          <th mat-header-cell *matHeaderCellDef>Команда</th>
+          <td mat-cell *matCellDef="let project">{{ project.members.length }}</td>
+        </ng-container>
+        <ng-container matColumnDef="managerCount">
+          <th mat-header-cell *matHeaderCellDef>Руководители</th>
+          <td mat-cell *matCellDef="let project">{{ project.managers.length }}</td>
         </ng-container>
         <ng-container matColumnDef="description">
           <th mat-header-cell *matHeaderCellDef>Комментарий</th>
@@ -61,6 +63,12 @@
           <th mat-header-cell *matHeaderCellDef>Редактирование</th>
           <td mat-cell *matCellDef="let project">
             <a mat-button [routerLink]="['/projects', project.id, 'edit']">Редактировать</a>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="relations">
+          <th mat-header-cell *matHeaderCellDef>Связи проекта</th>
+          <td mat-cell *matCellDef="let project">
+            <a mat-button [routerLink]="['/projects', project.id, 'relations']">Участники/Руководители</a>
           </td>
         </ng-container>
         <tr mat-header-row *matHeaderRowDef="columns"></tr>

@@ -25,7 +25,16 @@ import { ProjectsStore } from './projects.store';
 export class ProjectsPage implements OnInit {
   protected readonly store = inject(ProjectsStore);
   protected readonly selectedIds = signal(new Set<number>());
-  protected readonly columns = ['select', 'name', 'ctime', 'teamSize', 'description', 'edit'];
+  protected readonly columns = [
+    'select',
+    'name',
+    'ctime',
+    'teamSize',
+    'managerCount',
+    'description',
+    'edit',
+    'relations',
+  ];
 
   ngOnInit(): void {
     this.store.load();

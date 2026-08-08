@@ -14,7 +14,7 @@ export const routes: Routes = [
     loadComponent: () => import('./projects/project-editor-page').then((module) => module.ProjectEditorPage),
   },
   {
-    path: 'projects/:id/members',
+    path: 'projects/:id/relations',
     loadComponent: () => import('./projects/project-members-page').then((module) => module.ProjectMembersPage),
   },
   {

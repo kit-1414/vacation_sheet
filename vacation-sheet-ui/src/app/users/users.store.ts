@@ -71,6 +71,13 @@ export class UsersStore {
     });
   }
 
+  delete(id: number): void {
+    this.http.delete<void>(`/api/users/${id}`).subscribe({
+      next: () => this.users.update((users) => users.filter((user) => user.id !== id)),
+      error: () => this.fail('Не удалось удалить пользователя'),
+    });
+  }
+
   private fail(message: string): void {
     this.error.set(message);
     this.loading.set(false);

@@ -46,9 +46,7 @@ class ProjectService(
 	@Transactional
 	fun addMember(projectId: Long, userId: Long): ProjectDto {
 		val project = getProject(projectId)
-		val user = userAccountRepository.findById(userId).orElseThrow {
-			ResourceNotFoundException("User $userId was not found")
-		}
+		val user = getUser(userId)
 		project.members.add(user)
 		return projectMapper.toDto(project)
 	}
@@ -60,8 +58,26 @@ class ProjectService(
 		return projectMapper.toDto(project)
 	}
 
+	@Transactional
+	fun addManager(projectId: Long, userId: Long): ProjectDto {
+		val project = getProject(projectId)
+		project.managers.add(getUser(userId))
+		return projectMapper.toDto(project)
+	}
+
+	@Transactional
+	fun removeManager(projectId: Long, userId: Long): ProjectDto {
+		val project = getProject(projectId)
+		project.managers.removeIf { it.id == userId }
+		return projectMapper.toDto(project)
+	}
+
 	private fun getProject(id: Long): ProjectEntity = projectRepository.findByIdWithMembers(id)
 		?: throw ResourceNotFoundException("Project $id was not found")
+
+	private fun getUser(id: Long) = userAccountRepository.findById(id).orElseThrow {
+		ResourceNotFoundException("User $id was not found")
+	}
 
 	private fun ensureNameAvailable(name: String, currentId: Long? = null) {
 		val existing = projectRepository.findByNameIgnoreCase(name)

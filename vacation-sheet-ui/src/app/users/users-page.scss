@@ -53,6 +53,10 @@ mat-spinner {
   color: var(--mat-sys-error);
 }
 
+.delete {
+  color: var(--mat-sys-error);
+}
+
 @media (max-width: 600px) {
   .page-header {
     align-items: start;

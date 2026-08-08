@@ -9,6 +9,7 @@ export interface Project {
   name: string;
   description: string | null;
   members: UserAccount[];
+  managers: UserAccount[];
   ctime: string | null;
   utime: string | null;
 }
@@ -86,6 +87,26 @@ export class ProjectsStore {
         onSuccess?.(project);
       },
       error: () => this.fail('Не удалось удалить пользователя из проекта'),
+    });
+  }
+
+  addManager(projectId: number, userId: number, onSuccess?: (project: Project) => void): void {
+    this.http.put<Project>(`/api/projects/${projectId}/managers/${userId}`, {}).subscribe({
+      next: (project) => {
+        this.replace(project);
+        onSuccess?.(project);
+      },
+      error: () => this.fail('Не удалось назначить руководителя'),
+    });
+  }
+
+  removeManager(projectId: number, userId: number, onSuccess?: (project: Project) => void): void {
+    this.http.delete<Project>(`/api/projects/${projectId}/managers/${userId}`).subscribe({
+      next: (project) => {
+        this.replace(project);
+        onSuccess?.(project);
+      },
+      error: () => this.fail('Не удалось удалить руководителя'),
     });
   }
 

@@ -55,4 +55,14 @@ class ProjectController(
 	@DeleteMapping("/{projectId}/users/{userId}")
 	fun removeMember(@PathVariable projectId: Long, @PathVariable userId: Long): ProjectDto =
 		projectService.removeMember(projectId, userId)
+
+	@Operation(summary = "Assign a project manager")
+	@PutMapping("/{projectId}/managers/{userId}")
+	fun addManager(@PathVariable projectId: Long, @PathVariable userId: Long): ProjectDto =
+		projectService.addManager(projectId, userId)
+
+	@Operation(summary = "Remove a project manager")
+	@DeleteMapping("/{projectId}/managers/{userId}")
+	fun removeManager(@PathVariable projectId: Long, @PathVariable userId: Long): ProjectDto =
+		projectService.removeManager(projectId, userId)
 }

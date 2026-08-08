@@ -61,4 +61,12 @@ describe('UsersStore', () => {
     expect(store.users()).toHaveLength(1);
     expect(onSuccess).toHaveBeenCalledOnce();
   });
+
+  it('deletes a user', () => {
+    store.delete(1);
+
+    const request = http.expectOne('/api/users/1');
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null);
+  });
 });

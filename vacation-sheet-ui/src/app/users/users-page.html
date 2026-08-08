@@ -5,6 +5,9 @@
   </div>
   <div class="page-actions">
     <span class="count">{{ store.users().length }} зарегистрировано</span>
+    <button mat-button type="button" class="delete" [disabled]="!selectedIds().size" (click)="deleteSelected()">
+      Удалить выбранных
+    </button>
     <a mat-flat-button routerLink="/users/new">Добавить пользователя</a>
   </div>
 </header>
@@ -17,6 +20,23 @@
   } @else if (store.users().length) {
     <div class="table-wrap">
       <table mat-table [dataSource]="store.users()">
+        <ng-container matColumnDef="select">
+          <th mat-header-cell *matHeaderCellDef>
+            <mat-checkbox
+              aria-label="Выбрать всех пользователей"
+              [checked]="allSelected()"
+              [indeterminate]="selectedIds().size > 0 && !allSelected()"
+              (change)="toggleAll()"
+            />
+          </th>
+          <td mat-cell *matCellDef="let user">
+            <mat-checkbox
+              [attr.aria-label]="'Выбрать пользователя ' + user.email"
+              [checked]="isSelected(user.id)"
+              (change)="toggle(user.id)"
+            />
+          </td>
+        </ng-container>
         <ng-container matColumnDef="lastName">
           <th mat-header-cell *matHeaderCellDef>Фамилия</th>
           <td mat-cell *matCellDef="let user">{{ user.lastName || 'Не указана' }}</td>

@@ -7,6 +7,7 @@ import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -43,5 +44,16 @@ class UserServiceTest {
 		assertEquals("user@example.com", result.email)
 		assertEquals("Test", result.firstName)
 		assertEquals("User", result.lastName)
+	}
+
+	@Test
+	fun `delete removes only the user entity`() {
+		val user = UserAccountEntity("user@example.com", "Test", "User", id = 1L)
+		every { userAccountRepository.findById(1L) } returns Optional.of(user)
+		every { userAccountRepository.delete(user) } returns Unit
+
+		service.delete(1L)
+
+		verify(exactly = 1) { userAccountRepository.delete(user) }
 	}
 }

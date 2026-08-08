@@ -37,6 +37,14 @@ class ProjectEntity(
 	)
 	val members: MutableSet<UserAccountEntity> = linkedSetOf(),
 
+	@ManyToMany
+	@JoinTable(
+		name = "project_manager",
+		joinColumns = [JoinColumn(name = "project_id")],
+		inverseJoinColumns = [JoinColumn(name = "user_account_id")],
+	)
+	val managers: MutableSet<UserAccountEntity> = linkedSetOf(),
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	val id: Long? = null,

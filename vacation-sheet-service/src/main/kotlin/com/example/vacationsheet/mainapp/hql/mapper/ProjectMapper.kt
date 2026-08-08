@@ -24,9 +24,11 @@ class ProjectMapper(
 		id = requireNotNull(entity.id),
 		name = entity.name,
 		description = entity.description,
-		members = entity.members.map(userAccountMapper::toDto)
-			.sortedWith(compareBy<UserAccountDto> { it.lastName }.thenBy { it.firstName }.thenBy { it.email }),
+		members = entity.members.map(userAccountMapper::toDto).sortedWith(userComparator),
+		managers = entity.managers.map(userAccountMapper::toDto).sortedWith(userComparator),
 		ctime = entity.ctime,
 		utime = entity.utime,
 	)
+
+	private val userComparator = compareBy<UserAccountDto> { it.lastName }.thenBy { it.firstName }.thenBy { it.email }
 }

@@ -8,9 +8,9 @@ import org.springframework.data.repository.query.Param
 interface ProjectRepository : JpaRepository<ProjectEntity, Long> {
 	fun findByNameIgnoreCase(name: String): ProjectEntity?
 
-	@Query("select distinct project from ProjectEntity project left join fetch project.members order by project.name")
+	@Query("select distinct project from ProjectEntity project left join fetch project.members left join fetch project.managers order by project.name")
 	fun findAllWithMembers(): List<ProjectEntity>
 
-	@Query("select distinct project from ProjectEntity project left join fetch project.members where project.id = :id")
+	@Query("select distinct project from ProjectEntity project left join fetch project.members left join fetch project.managers where project.id = :id")
 	fun findByIdWithMembers(@Param("id") id: Long): ProjectEntity?
 }

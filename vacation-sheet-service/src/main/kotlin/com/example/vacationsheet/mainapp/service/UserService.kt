@@ -46,6 +46,11 @@ class UserService(
 		return userAccountMapper.toDto(user)
 	}
 
+	@Transactional
+	fun delete(id: Long) {
+		userAccountRepository.delete(getById(id))
+	}
+
 	@Transactional(readOnly = true)
 	fun findCurrent(email: String): UserAccountDto = userAccountRepository.findByEmail(email.trim().lowercase())?.let(userAccountMapper::toDto)
 		?: throw ResourceNotFoundException("Authenticated user was not found")

@@ -32,7 +32,7 @@ export class ProjectMembersPage implements OnInit {
   protected readonly usersStore = inject(UsersStore);
   protected readonly project = signal<Project | null>(null);
   protected readonly loading = signal(true);
-  protected readonly columns = ['email', 'firstName', 'lastName', 'action'];
+  protected readonly columns = ['email', 'firstName', 'lastName', 'member', 'manager'];
   protected readonly filter = signal('');
   protected readonly sortColumn = signal<UserSortColumn>('email');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
@@ -72,7 +72,11 @@ export class ProjectMembersPage implements OnInit {
   }
 
   protected isMember(userId: number): boolean {
-    return this.project()?.members.some((member) => member.id === userId) ?? false;
+    return this.project()?.members.some((user) => user.id === userId) ?? false;
+  }
+
+  protected isManager(userId: number): boolean {
+    return this.project()?.managers.some((user) => user.id === userId) ?? false;
   }
 
   protected setFilter(value: string): void {
@@ -102,6 +106,18 @@ export class ProjectMembersPage implements OnInit {
       this.projectsStore.removeMember(projectId, user.id, onSuccess);
     } else {
       this.projectsStore.addMember(projectId, user.id, onSuccess);
+    }
+  }
+
+  protected updateManagement(user: UserAccount): void {
+    const projectId = this.project()?.id;
+    if (!projectId) return;
+
+    const onSuccess = (project: Project) => this.project.set(project);
+    if (this.isManager(user.id)) {
+      this.projectsStore.removeManager(projectId, user.id, onSuccess);
+    } else {
+      this.projectsStore.addManager(projectId, user.id, onSuccess);
     }
   }
 }

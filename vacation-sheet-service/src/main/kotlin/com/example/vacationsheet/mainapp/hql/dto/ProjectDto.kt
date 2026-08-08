@@ -7,6 +7,7 @@ data class ProjectDto(
 	val name: String,
 	val description: String?,
 	val members: List<UserAccountDto>,
+	val managers: List<UserAccountDto>,
 	val ctime: OffsetDateTime?,
 	val utime: OffsetDateTime?,
 )

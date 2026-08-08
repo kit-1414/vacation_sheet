@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -39,4 +40,9 @@ class UserController(
 	@PutMapping("/{id}")
 	fun update(@PathVariable id: Long, @Valid @RequestBody request: UserAccountRequestDto): UserAccountDto =
 		userService.update(id, request)
+
+	@Operation(summary = "Delete a user")
+	@DeleteMapping("/{id}")
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	fun delete(@PathVariable id: Long) = userService.delete(id)
 }

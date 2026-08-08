@@ -13,6 +13,7 @@ describe('ProjectsStore', () => {
     name: 'Vacation Sheet',
     description: null,
     members: [],
+    managers: [],
     ctime: '2026-08-05T00:00:00Z',
     utime: '2026-08-05T00:00:00Z',
   };
@@ -43,5 +44,13 @@ describe('ProjectsStore', () => {
     request.flush(project);
 
     expect(store.projects()).toEqual([project]);
+  });
+
+  it('assigns a project manager', () => {
+    store.addManager(1, 2);
+
+    const request = http.expectOne('/api/projects/1/managers/2');
+    expect(request.request.method).toBe('PUT');
+    request.flush(project);
   });
 });
