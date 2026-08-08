@@ -15,13 +15,14 @@ class PublicMethodsLoggingAspect {
 		val methodName = joinPoint.signature.name
 		val logger = LoggerFactory.getLogger(joinPoint.target::class.java)
 
-		logger.debug("{}:{}() Started >>>", className, methodName)
+		val prefix = "${methodName}(...)"
+		logger.debug("{} Started >>>", prefix)
 		return try {
 			joinPoint.proceed().also {
-				logger.debug("{}:{}() Done <<<", className, methodName)
+				logger.debug("{} Done <<<", prefix)
 			}
 		} catch (exception: Throwable) {
-			logger.error("{}:{}() ERROR {} <<<", className, methodName, exception.toString(), exception)
+			logger.error("{} ERROR {} <<<", prefix, exception.toString(), exception)
 			throw exception
 		}
 	}
