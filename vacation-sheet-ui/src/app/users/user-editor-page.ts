@@ -9,6 +9,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { UserAccount, UsersStore } from './users.store';
+import { AuthStore } from '../auth.store';
 
 @Component({
   selector: 'app-user-editor-page',
@@ -30,6 +31,7 @@ export class UserEditorPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   protected readonly store = inject(UsersStore);
+  private readonly auth = inject(AuthStore);
   protected readonly user = signal<UserAccount | null>(null);
   protected readonly loading = signal(false);
 
@@ -68,7 +70,7 @@ export class UserEditorPage implements OnInit {
   }
 
   protected submit(): void {
-    if (this.form.invalid || this.store.saving()) return;
+    if (!this.auth.canAdminister() || this.form.invalid || this.store.saving()) return;
     const value = this.form.getRawValue();
     const request = {
       email: value.email,

@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException
 import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import org.springframework.security.oauth2.core.user.OAuth2User
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 class YandexOAuth2UserService(
 	private val userAccountRepository: UserAccountRepository,
 	private val emailDomainPolicy: EmailDomainPolicy,
+	private val userRoleService: UserRoleService,
 ) : OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 	private val delegate = DefaultOAuth2UserService()
 
@@ -32,7 +34,7 @@ class YandexOAuth2UserService(
 			)
 		}
 
-		if (userAccountRepository.findByEmail(email) == null) {
+		val account = userAccountRepository.findByEmail(email) ?: run {
 			val isFirstUser = userAccountRepository.count() == 0L
 			userAccountRepository.save(
 				UserAccountEntity(
@@ -45,7 +47,8 @@ class YandexOAuth2UserService(
 			)
 		}
 
-		return DefaultOAuth2User(oauthUser.authorities, oauthUser.attributes, "id")
+		val authorities = userRoleService.getRoles(account).map { SimpleGrantedAuthority(it.roleName) }
+		return DefaultOAuth2User(authorities, oauthUser.attributes, "id")
 	}
 
 	private fun authenticationError(message: String): Nothing =

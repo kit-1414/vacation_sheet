@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpStatus
+import org.springframework.http.HttpMethod
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
@@ -29,6 +30,20 @@ class SecurityConfig {
 					"/actuator/health/**",
 					"/error",
 				).permitAll()
+					.requestMatchers(HttpMethod.GET, "/api/**").authenticated()
+					.requestMatchers(
+						HttpMethod.PUT,
+						"/api/projects/*/users/*",
+						"/api/projects/*/managers/*",
+					).hasAnyRole("MANAGER", "ADMIN")
+					.requestMatchers(
+						HttpMethod.DELETE,
+						"/api/projects/*/users/*",
+						"/api/projects/*/managers/*",
+					).hasAnyRole("MANAGER", "ADMIN")
+					.requestMatchers(HttpMethod.POST, "/api/users", "/api/projects").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.PUT, "/api/users/*", "/api/projects/*").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.DELETE, "/api/users/*", "/api/projects/*").hasRole("ADMIN")
 					.requestMatchers("/api/**").authenticated()
 					.anyRequest().permitAll()
 			}
@@ -41,7 +56,13 @@ class SecurityConfig {
 			}
 			.logout {
 				it.logoutUrl("/api/auth/logout")
-				it.logoutSuccessHandler { _, response, _ -> response.status = HttpServletResponse.SC_NO_CONTENT }
+				it.logoutSuccessHandler { _, response, authentication ->
+					response.status = if (authentication == null) {
+						HttpServletResponse.SC_FORBIDDEN
+					} else {
+						HttpServletResponse.SC_NO_CONTENT
+					}
+				}
 			}
 			.exceptionHandling {
 				it.defaultAuthenticationEntryPointFor(

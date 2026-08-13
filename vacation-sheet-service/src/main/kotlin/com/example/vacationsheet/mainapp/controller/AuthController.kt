@@ -1,6 +1,7 @@
 package com.example.vacationsheet.mainapp.controller
 
-import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
+import com.example.vacationsheet.mainapp.dto.CurrentUserDto
+import com.example.vacationsheet.mainapp.service.UserRole
 import com.example.vacationsheet.mainapp.service.UserService
 import com.example.vacationsheet.mainapp.utils.logaspect.LogPublicMethods
 import io.swagger.v3.oas.annotations.Operation
@@ -26,10 +27,13 @@ class AuthController(
 
 	@Operation(summary = "Get the current authenticated user")
 	@GetMapping("/api/auth/me")
-	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): UserAccountDto {
+	fun currentUser(@AuthenticationPrincipal principal: OAuth2User): CurrentUserDto {
 		val email = principal.getAttribute<Any>("default_email")?.toString()
 			?: throw ResponseStatusException(HttpStatus.FORBIDDEN)
-		return userService.findCurrent(email)
+		val roles = principal.authorities.mapNotNull { authority ->
+			UserRole.entries.find { it.roleName == authority.authority }
+		}.toSet()
+		return CurrentUserDto(userService.findCurrent(email), roles)
 	}
 
 }

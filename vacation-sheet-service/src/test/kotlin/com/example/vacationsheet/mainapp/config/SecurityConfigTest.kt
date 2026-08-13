@@ -16,9 +16,12 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 
 @WebMvcTest(controllers = [AuthController::class, LoginController::class, ProjectController::class, UserController::class])
 @Import(SecurityConfig::class)
@@ -68,5 +71,45 @@ class SecurityConfigTest {
 	fun `authenticated post does not require csrf token`() {
 		mockMvc.perform(post("/api/auth/logout").with(oauth2Login()))
 			.andExpect(status().isNoContent)
+	}
+
+	@Test
+	fun `unauthenticated logout returns 403`() {
+		mockMvc.perform(post("/api/auth/logout"))
+			.andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `user cannot create users`() {
+		mockMvc.perform(
+			post("/api/users")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_USER")))
+				.contentType("application/json")
+				.content("""{"email":"user@example.com"}"""),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `manager cannot delete projects`() {
+		mockMvc.perform(
+			delete("/api/projects/1")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_MANAGER"))),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `user cannot change project members`() {
+		mockMvc.perform(
+			put("/api/projects/1/users/2")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_USER"))),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `admin can change project members`() {
+		mockMvc.perform(
+			put("/api/projects/1/users/2")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_ADMIN"))),
+		).andExpect(status().isOk)
 	}
 }

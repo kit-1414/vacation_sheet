@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
 import { UsersStore } from './users.store';
+import { AuthStore } from '../auth.store';
 
 @Component({
   selector: 'app-users-page',
@@ -17,6 +18,7 @@ import { UsersStore } from './users.store';
 })
 export class UsersPage implements OnInit {
   protected readonly store = inject(UsersStore);
+  protected readonly auth = inject(AuthStore);
   protected readonly selectedIds = signal(new Set<number>());
   protected readonly columns = ['select', 'lastName', 'firstName', 'email', 'isAdmin', 'isActive', 'ctime', 'utime', 'edit'];
 
@@ -29,6 +31,7 @@ export class UsersPage implements OnInit {
   }
 
   protected toggle(id: number): void {
+    if (!this.auth.canAdminister()) return;
     this.selectedIds.update((selectedIds) => {
       const updated = new Set(selectedIds);
       updated.has(id) ? updated.delete(id) : updated.add(id);
@@ -41,10 +44,12 @@ export class UsersPage implements OnInit {
   }
 
   protected toggleAll(): void {
+    if (!this.auth.canAdminister()) return;
     this.selectedIds.set(this.allSelected() ? new Set() : new Set(this.store.users().map((user) => user.id)));
   }
 
   protected deleteSelected(): void {
+    if (!this.auth.canAdminister()) return;
     this.selectedIds().forEach((id) => this.store.delete(id));
     this.selectedIds.set(new Set());
   }
