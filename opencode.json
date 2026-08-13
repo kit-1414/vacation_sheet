@@ -2,11 +2,10 @@
   "$schema": "https://opencode.ai/config.json",
   "instructions": [
     "AGENTS.md",
-    ".ai_files/instructions/bakend-database.md",
     ".ai_files/instructions/git.md",
     ".ai_files/instructions/backend_common.md",
     ".ai_files/instructions/backend_logging.md",
     ".ai_files/instructions/backend_database.md",
-    ".ai_files/instructions/business_logic"
+    ".ai_files/instructions/business_logic.md"
   ]
 }
