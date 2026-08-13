@@ -29,6 +29,8 @@ describe('UsersStore', () => {
         email: 'user@example.com',
         firstName: 'Test',
         lastName: 'User',
+        isAdmin: true,
+        isActive: false,
         ctime: '2026-08-05T00:00:00Z',
         utime: '2026-08-05T00:00:00Z',
       },
@@ -39,26 +41,45 @@ describe('UsersStore', () => {
       email: 'user@example.com',
       firstName: 'Test',
       lastName: 'User',
+      isAdmin: true,
+      isActive: false,
     });
     expect(store.loading()).toBe(false);
   });
 
   it('creates a user', () => {
     const onSuccess = vi.fn();
-    store.create({ email: 'user@example.com', firstName: 'Test', lastName: 'User' }, onSuccess);
+    const body = { email: 'user@example.com', firstName: 'Test', lastName: 'User', isAdmin: false, isActive: true };
+    store.create(body, onSuccess);
 
     const request = http.expectOne('/api/users');
     expect(request.request.method).toBe('POST');
+    expect(request.request.body).toEqual(body);
     request.flush({
       id: 1,
       email: 'user@example.com',
       firstName: 'Test',
       lastName: 'User',
+      isAdmin: false,
+      isActive: true,
       ctime: null,
       utime: null,
     });
 
     expect(store.users()).toHaveLength(1);
+    expect(onSuccess).toHaveBeenCalledOnce();
+  });
+
+  it('updates account flags', () => {
+    const onSuccess = vi.fn();
+    const body = { email: 'user@example.com', firstName: 'Test', lastName: 'User', isAdmin: true, isActive: false };
+    store.update(1, body, onSuccess);
+
+    const request = http.expectOne('/api/users/1');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual(body);
+    request.flush({ id: 1, ...body, ctime: null, utime: null });
+
     expect(onSuccess).toHaveBeenCalledOnce();
   });
 

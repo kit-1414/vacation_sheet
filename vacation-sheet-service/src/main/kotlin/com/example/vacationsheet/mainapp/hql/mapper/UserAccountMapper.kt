@@ -11,6 +11,8 @@ class UserAccountMapper {
 		email = entity.email,
 		firstName = entity.firstName,
 		lastName = entity.lastName,
+		isAdmin = entity.isAdmin,
+		isActive = entity.isActive,
 		ctime = entity.ctime,
 		utime = entity.utime,
 	)

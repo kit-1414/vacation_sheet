@@ -29,6 +29,10 @@
           <mat-label>Фамилия</mat-label>
           <input matInput formControlName="lastName" maxlength="255" />
         </mat-form-field>
+        <div class="account-flags">
+          <mat-checkbox formControlName="isAdmin">Администратор</mat-checkbox>
+          <mat-checkbox formControlName="isActive">Активен</mat-checkbox>
+        </div>
         <div class="form-actions">
           <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">Сохранить</button>
           <a mat-button routerLink="/users">Отмена</a>

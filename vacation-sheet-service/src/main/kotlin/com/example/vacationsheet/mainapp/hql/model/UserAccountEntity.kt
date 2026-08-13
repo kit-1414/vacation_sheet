@@ -23,6 +23,12 @@ class UserAccountEntity(
 	@Column(name = "last_name")
 	var lastName: String?,
 
+	@Column(name = "is_admin", nullable = false)
+	var isAdmin: Boolean = false,
+
+	@Column(name = "is_active", nullable = false)
+	var isActive: Boolean = true,
+
 	@Column(nullable = false, updatable = false)
 	var ctime: OffsetDateTime? = null,
 

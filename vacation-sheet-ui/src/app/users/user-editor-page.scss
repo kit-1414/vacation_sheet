@@ -26,6 +26,12 @@ form {
   padding-top: 1rem;
 }
 
+.account-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
 .form-actions {
   display: flex;
   gap: 0.5rem;

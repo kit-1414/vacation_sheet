@@ -28,6 +28,8 @@ describe('App', () => {
       email: 'user@example.com',
       firstName: 'Test',
       lastName: 'User',
+      isAdmin: true,
+      isActive: true,
       ctime: null,
       utime: null,
     });

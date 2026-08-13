@@ -6,6 +6,8 @@ export interface CurrentUser {
   email: string;
   firstName: string | null;
   lastName: string | null;
+  isAdmin: boolean;
+  isActive: boolean;
   ctime: string | null;
   utime: string | null;
 }

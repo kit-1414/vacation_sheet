@@ -14,6 +14,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class YandexOAuth2UserServiceTest {
 	private val userAccountRepository = mockk<UserAccountRepository>()
@@ -32,6 +34,7 @@ class YandexOAuth2UserServiceTest {
 		val savedAccount = slot<UserAccountEntity>()
 		every { emailDomainPolicy.isAllowed("user@example.com") } returns true
 		every { userAccountRepository.findByEmail("user@example.com") } returns null
+		every { userAccountRepository.count() } returns 0L
 		every { userAccountRepository.save(capture(savedAccount)) } answers { savedAccount.captured }
 
 		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy).loadUser(userRequest)
@@ -39,6 +42,27 @@ class YandexOAuth2UserServiceTest {
 		assertEquals("user@example.com", savedAccount.captured.email)
 		assertEquals("Test", savedAccount.captured.firstName)
 		assertEquals("User", savedAccount.captured.lastName)
+		assertTrue(savedAccount.captured.isAdmin)
+		assertTrue(savedAccount.captured.isActive)
+	}
+
+	@Test
+	fun `later login creates active non-admin user`() = withOAuthUser(
+		mapOf(
+			"id" to "yandex-id",
+			"default_email" to "user@example.com",
+		),
+	) {
+		val savedAccount = slot<UserAccountEntity>()
+		every { emailDomainPolicy.isAllowed("user@example.com") } returns true
+		every { userAccountRepository.findByEmail("user@example.com") } returns null
+		every { userAccountRepository.count() } returns 1L
+		every { userAccountRepository.save(capture(savedAccount)) } answers { savedAccount.captured }
+
+		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy).loadUser(userRequest)
+
+		assertFalse(savedAccount.captured.isAdmin)
+		assertTrue(savedAccount.captured.isActive)
 	}
 
 	@Test
@@ -50,7 +74,7 @@ class YandexOAuth2UserServiceTest {
 			"last_name" to "Name",
 		),
 	) {
-		val account = UserAccountEntity("user@example.com", "Original", "User")
+		val account = UserAccountEntity("user@example.com", "Original", "User", isAdmin = true, isActive = false)
 		every { emailDomainPolicy.isAllowed("user@example.com") } returns true
 		every { userAccountRepository.findByEmail("user@example.com") } returns account
 
@@ -58,7 +82,10 @@ class YandexOAuth2UserServiceTest {
 
 		assertEquals("Original", account.firstName)
 		assertEquals("User", account.lastName)
+		assertTrue(account.isAdmin)
+		assertFalse(account.isActive)
 		verify(exactly = 0) { userAccountRepository.save(any()) }
+		verify(exactly = 0) { userAccountRepository.count() }
 	}
 
 	private fun withOAuthUser(attributes: Map<String, Any>, test: () -> Unit) {

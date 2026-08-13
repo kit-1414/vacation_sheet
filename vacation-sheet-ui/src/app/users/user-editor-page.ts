@@ -2,6 +2,7 @@ import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -14,6 +15,7 @@ import { UserAccount, UsersStore } from './users.store';
   imports: [
     MatButtonModule,
     MatCardModule,
+    MatCheckboxModule,
     MatFormFieldModule,
     MatInputModule,
     MatProgressSpinnerModule,
@@ -35,6 +37,8 @@ export class UserEditorPage implements OnInit {
     email: ['', [Validators.required, Validators.email, Validators.maxLength(320)]],
     firstName: ['', Validators.maxLength(255)],
     lastName: ['', Validators.maxLength(255)],
+    isAdmin: false,
+    isActive: true,
   });
 
   ngOnInit(): void {
@@ -51,6 +55,8 @@ export class UserEditorPage implements OnInit {
           email: user.email,
           firstName: user.firstName ?? '',
           lastName: user.lastName ?? '',
+          isAdmin: user.isAdmin,
+          isActive: user.isActive,
         });
         this.loading.set(false);
       },
@@ -68,6 +74,8 @@ export class UserEditorPage implements OnInit {
       email: value.email,
       firstName: value.firstName || null,
       lastName: value.lastName || null,
+      isAdmin: value.isAdmin,
+      isActive: value.isActive,
     };
     const onSuccess = () => this.router.navigate(['/users']);
     const id = this.user()?.id;

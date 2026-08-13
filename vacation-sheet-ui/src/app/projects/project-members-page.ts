@@ -10,7 +10,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { UserAccount, UsersStore } from '../users/users.store';
 import { Project, ProjectsStore } from './projects.store';
 
-type UserSortColumn = 'email' | 'firstName' | 'lastName';
+type UserSortColumn = 'email' | 'firstName' | 'lastName' | 'isAdmin' | 'isActive';
 
 @Component({
   selector: 'app-project-members-page',
@@ -32,7 +32,7 @@ export class ProjectMembersPage implements OnInit {
   protected readonly usersStore = inject(UsersStore);
   protected readonly project = signal<Project | null>(null);
   protected readonly loading = signal(true);
-  protected readonly columns = ['email', 'firstName', 'lastName', 'member', 'manager'];
+  protected readonly columns = ['email', 'firstName', 'lastName', 'isAdmin', 'isActive', 'member', 'manager'];
   protected readonly filter = signal('');
   protected readonly sortColumn = signal<UserSortColumn>('email');
   protected readonly sortDirection = signal<'asc' | 'desc'>('asc');
@@ -42,11 +42,9 @@ export class ProjectMembersPage implements OnInit {
     const direction = this.sortDirection() === 'asc' ? 1 : -1;
 
     const users = this.usersStore.users()
-      .filter((user) => [user.email, user.firstName, user.lastName]
+      .filter((user) => [user.email, user.firstName, user.lastName, this.booleanLabel(user.isAdmin), this.booleanLabel(user.isActive)]
         .some((value) => value?.toLocaleLowerCase().includes(pattern)));
-    return users.sort((left, right) =>
-      (left[column] ?? '').localeCompare(right[column] ?? '') * direction,
-    );
+    return users.sort((left, right) => this.sortValue(left, column).localeCompare(this.sortValue(right, column)) * direction);
   });
 
   ngOnInit(): void {
@@ -95,6 +93,15 @@ export class ProjectMembersPage implements OnInit {
   protected sortIndicator(column: UserSortColumn): string {
     if (this.sortColumn() !== column) return '';
     return this.sortDirection() === 'asc' ? ' ↑' : ' ↓';
+  }
+
+  private sortValue(user: UserAccount, column: UserSortColumn): string {
+    const value = user[column];
+    return typeof value === 'boolean' ? this.booleanLabel(value) : value ?? '';
+  }
+
+  private booleanLabel(value: boolean): string {
+    return value ? 'Да' : 'Нет';
   }
 
   protected updateMembership(user: UserAccount): void {

@@ -7,6 +7,8 @@ data class UserAccountDto(
 	val email: String,
 	val firstName: String?,
 	val lastName: String?,
+	val isAdmin: Boolean,
+	val isActive: Boolean,
 	val ctime: OffsetDateTime?,
 	val utime: OffsetDateTime?,
 )

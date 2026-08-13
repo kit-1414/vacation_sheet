@@ -23,7 +23,7 @@
         <input
           #filterInput
           matInput
-          placeholder="Email, имя или фамилия"
+          placeholder="Email, имя, фамилия или статус"
           [value]="filter()"
           (input)="setFilter(filterInput.value)"
         />
@@ -48,6 +48,18 @@
             <button mat-button type="button" (click)="sortBy('lastName')">Фамилия{{ sortIndicator('lastName') }}</button>
           </th>
           <td mat-cell *matCellDef="let user">{{ user.lastName || 'Не указана' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="isAdmin">
+          <th mat-header-cell *matHeaderCellDef>
+            <button mat-button type="button" (click)="sortBy('isAdmin')">Администратор{{ sortIndicator('isAdmin') }}</button>
+          </th>
+          <td mat-cell *matCellDef="let user">{{ user.isAdmin ? 'Да' : 'Нет' }}</td>
+        </ng-container>
+        <ng-container matColumnDef="isActive">
+          <th mat-header-cell *matHeaderCellDef>
+            <button mat-button type="button" (click)="sortBy('isActive')">Активен{{ sortIndicator('isActive') }}</button>
+          </th>
+          <td mat-cell *matCellDef="let user">{{ user.isActive ? 'Да' : 'Нет' }}</td>
         </ng-container>
         <ng-container matColumnDef="member">
           <th mat-header-cell *matHeaderCellDef>Участник</th>

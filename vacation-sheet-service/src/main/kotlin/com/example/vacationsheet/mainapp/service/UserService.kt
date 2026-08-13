@@ -31,6 +31,8 @@ class UserService(
 				email = email,
 				firstName = normalizeName(request.firstName),
 				lastName = normalizeName(request.lastName),
+				isAdmin = request.isAdmin,
+				isActive = request.isActive,
 			),
 		).let(userAccountMapper::toDto)
 	}
@@ -43,6 +45,8 @@ class UserService(
 		user.email = email
 		user.firstName = normalizeName(request.firstName)
 		user.lastName = normalizeName(request.lastName)
+		user.isAdmin = request.isAdmin
+		user.isActive = request.isActive
 		return userAccountMapper.toDto(user)
 	}
 

@@ -18,7 +18,7 @@ import { UsersStore } from './users.store';
 export class UsersPage implements OnInit {
   protected readonly store = inject(UsersStore);
   protected readonly selectedIds = signal(new Set<number>());
-  protected readonly columns = ['select', 'lastName', 'firstName', 'email', 'ctime', 'utime', 'edit'];
+  protected readonly columns = ['select', 'lastName', 'firstName', 'email', 'isAdmin', 'isActive', 'ctime', 'utime', 'edit'];
 
   ngOnInit(): void {
     this.store.load();

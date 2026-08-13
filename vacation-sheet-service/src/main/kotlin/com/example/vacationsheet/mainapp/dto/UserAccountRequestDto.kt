@@ -15,4 +15,8 @@ data class UserAccountRequestDto(
 
 	@field:Size(max = 255)
 	val lastName: String? = null,
+
+	val isAdmin: Boolean = false,
+
+	val isActive: Boolean = true,
 )

@@ -33,11 +33,14 @@ class YandexOAuth2UserService(
 		}
 
 		if (userAccountRepository.findByEmail(email) == null) {
+			val isFirstUser = userAccountRepository.count() == 0L
 			userAccountRepository.save(
 				UserAccountEntity(
 					email = email,
 					firstName = oauthUser.optionalTextAttribute("first_name"),
 					lastName = oauthUser.optionalTextAttribute("last_name"),
+					isAdmin = isFirstUser,
+					isActive = true,
 				),
 			)
 		}
