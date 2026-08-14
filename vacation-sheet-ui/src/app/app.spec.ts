@@ -30,6 +30,7 @@ describe('App', () => {
       lastName: 'User',
       isAdmin: true,
       isActive: true,
+      roles: ['ADMIN', 'USER'],
       ctime: null,
       utime: null,
     });

@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Project, ProjectsStore } from './projects.store';
+import { AuthStore } from '../auth.store';
 
 @Component({
   selector: 'app-project-editor-page',
@@ -28,6 +29,7 @@ export class ProjectEditorPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   protected readonly store = inject(ProjectsStore);
+  private readonly auth = inject(AuthStore);
   protected readonly project = signal<Project | null>(null);
   protected readonly loading = signal(false);
 
@@ -57,7 +59,7 @@ export class ProjectEditorPage implements OnInit {
   }
 
   protected submit(): void {
-    if (this.form.invalid || this.store.saving()) return;
+    if (!this.auth.canAdminister() || this.form.invalid || this.store.saving()) return;
     const request = {
       name: this.form.controls.name.value,
       description: this.form.controls.description.value || null,

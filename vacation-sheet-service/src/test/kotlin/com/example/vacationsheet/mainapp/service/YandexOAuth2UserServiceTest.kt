@@ -20,10 +20,11 @@ import kotlin.test.assertTrue
 class YandexOAuth2UserServiceTest {
 	private val userAccountRepository = mockk<UserAccountRepository>()
 	private val emailDomainPolicy = mockk<EmailDomainPolicy>()
+	private val userRoleService = mockk<UserRoleService>()
 	private val userRequest = mockk<OAuth2UserRequest>()
 
 	@Test
-	fun `first login saves normalized email and names`() = withOAuthUser(
+	fun `first login saves normalized email and assigns local roles`() = withOAuthUser(
 		mapOf(
 			"id" to "yandex-id",
 			"default_email" to "  User@Example.COM ",
@@ -36,30 +37,30 @@ class YandexOAuth2UserServiceTest {
 		every { userAccountRepository.findByEmail("user@example.com") } returns null
 		every { userAccountRepository.count() } returns 0L
 		every { userAccountRepository.save(capture(savedAccount)) } answers { savedAccount.captured }
+		every { userRoleService.getRoles(any()) } returns setOf(UserRole.ADMIN, UserRole.USER)
 
-		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy).loadUser(userRequest)
+		val result = YandexOAuth2UserService(userAccountRepository, emailDomainPolicy, userRoleService).loadUser(userRequest)
 
 		assertEquals("user@example.com", savedAccount.captured.email)
 		assertEquals("Test", savedAccount.captured.firstName)
 		assertEquals("User", savedAccount.captured.lastName)
 		assertTrue(savedAccount.captured.isAdmin)
 		assertTrue(savedAccount.captured.isActive)
+		assertEquals(setOf(ROLE_ADMIN, ROLE_USER), result.authorities.map { it.authority }.toSet())
 	}
 
 	@Test
 	fun `later login creates active non-admin user`() = withOAuthUser(
-		mapOf(
-			"id" to "yandex-id",
-			"default_email" to "user@example.com",
-		),
+		mapOf("id" to "yandex-id", "default_email" to "user@example.com"),
 	) {
 		val savedAccount = slot<UserAccountEntity>()
 		every { emailDomainPolicy.isAllowed("user@example.com") } returns true
 		every { userAccountRepository.findByEmail("user@example.com") } returns null
 		every { userAccountRepository.count() } returns 1L
 		every { userAccountRepository.save(capture(savedAccount)) } answers { savedAccount.captured }
+		every { userRoleService.getRoles(any()) } returns setOf(UserRole.USER)
 
-		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy).loadUser(userRequest)
+		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy, userRoleService).loadUser(userRequest)
 
 		assertFalse(savedAccount.captured.isAdmin)
 		assertTrue(savedAccount.captured.isActive)
@@ -77,13 +78,15 @@ class YandexOAuth2UserServiceTest {
 		val account = UserAccountEntity("user@example.com", "Original", "User", isAdmin = true, isActive = false)
 		every { emailDomainPolicy.isAllowed("user@example.com") } returns true
 		every { userAccountRepository.findByEmail("user@example.com") } returns account
+		every { userRoleService.getRoles(account) } returns setOf(UserRole.NOBODY)
 
-		YandexOAuth2UserService(userAccountRepository, emailDomainPolicy).loadUser(userRequest)
+		val result = YandexOAuth2UserService(userAccountRepository, emailDomainPolicy, userRoleService).loadUser(userRequest)
 
 		assertEquals("Original", account.firstName)
 		assertEquals("User", account.lastName)
 		assertTrue(account.isAdmin)
 		assertFalse(account.isActive)
+		assertEquals(setOf(ROLE_NOBODY), result.authorities.map { it.authority }.toSet())
 		verify(exactly = 0) { userAccountRepository.save(any()) }
 		verify(exactly = 0) { userAccountRepository.count() }
 	}
@@ -92,7 +95,7 @@ class YandexOAuth2UserServiceTest {
 		mockkConstructor(DefaultOAuth2UserService::class)
 		try {
 			val oauthUser = DefaultOAuth2User(
-				setOf(SimpleGrantedAuthority("ROLE_USER")),
+				setOf(SimpleGrantedAuthority("PROVIDER_AUTHORITY")),
 				attributes,
 				"id",
 			)

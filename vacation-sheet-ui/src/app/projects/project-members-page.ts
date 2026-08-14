@@ -8,6 +8,7 @@ import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { UserAccount, UsersStore } from '../users/users.store';
+import { AuthStore } from '../auth.store';
 import { Project, ProjectsStore } from './projects.store';
 
 type UserSortColumn = 'email' | 'firstName' | 'lastName' | 'isAdmin' | 'isActive';
@@ -30,6 +31,7 @@ export class ProjectMembersPage implements OnInit {
   private readonly route = inject(ActivatedRoute);
   protected readonly projectsStore = inject(ProjectsStore);
   protected readonly usersStore = inject(UsersStore);
+  private readonly auth = inject(AuthStore);
   protected readonly project = signal<Project | null>(null);
   protected readonly loading = signal(true);
   protected readonly columns = ['email', 'firstName', 'lastName', 'isAdmin', 'isActive', 'member', 'manager'];
@@ -105,6 +107,7 @@ export class ProjectMembersPage implements OnInit {
   }
 
   protected updateMembership(user: UserAccount): void {
+    if (!this.auth.canManageRelations()) return;
     const projectId = this.project()?.id;
     if (!projectId) return;
 
@@ -117,6 +120,7 @@ export class ProjectMembersPage implements OnInit {
   }
 
   protected updateManagement(user: UserAccount): void {
+    if (!this.auth.canManageRelations()) return;
     const projectId = this.project()?.id;
     if (!projectId) return;
 
