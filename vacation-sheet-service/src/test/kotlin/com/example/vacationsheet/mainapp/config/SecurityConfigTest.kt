@@ -4,8 +4,11 @@ import com.example.vacationsheet.mainapp.controller.AuthController
 import com.example.vacationsheet.mainapp.controller.LoginController
 import com.example.vacationsheet.mainapp.controller.ProjectController
 import com.example.vacationsheet.mainapp.controller.UserController
+import com.example.vacationsheet.mainapp.controller.VacationRequestUserController
+import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
 import com.example.vacationsheet.mainapp.service.ProjectService
 import com.example.vacationsheet.mainapp.service.UserService
+import com.example.vacationsheet.mainapp.service.VacationRequestService
 import com.example.vacationsheet.mainapp.service.YandexOAuth2UserService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,8 +25,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirec
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.oauth2Login
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.mockito.BDDMockito.given
 
-@WebMvcTest(controllers = [AuthController::class, LoginController::class, ProjectController::class, UserController::class])
+@WebMvcTest(
+	controllers = [
+		AuthController::class,
+		LoginController::class,
+		ProjectController::class,
+		UserController::class,
+		VacationRequestUserController::class,
+	],
+)
 @Import(SecurityConfig::class)
 class SecurityConfigTest {
 
@@ -38,6 +50,9 @@ class SecurityConfigTest {
 
 	@MockitoBean
 	lateinit var projectService: ProjectService
+
+	@MockitoBean
+	lateinit var vacationRequestService: VacationRequestService
 
 	@MockitoBean
 	lateinit var clientRegistrationRepository: ClientRegistrationRepository
@@ -111,5 +126,62 @@ class SecurityConfigTest {
 			put("/api/projects/1/users/2")
 				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_ADMIN"))),
 		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `nobody can list own vacation requests`() {
+		given(userService.findCurrent("user@example.com")).willReturn(currentUser())
+		given(vacationRequestService.getRequestsByOwnerId(1L)).willReturn(emptyList())
+
+		mockMvc.perform(
+			get("/api/user/actions/vacation_request")
+				.with(
+					oauth2Login()
+						.attributes { it["default_email"] = "user@example.com" }
+						.authorities(SimpleGrantedAuthority("ROLE_NOBODY")),
+				),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `nobody cannot create vacation request`() {
+		mockMvc.perform(
+			post("/api/user/actions/vacation_request")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_NOBODY")))
+				.contentType("application/json")
+				.content(validVacationRequestJson),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `user can access vacation request create endpoint`() {
+		given(userService.findCurrent("user@example.com")).willReturn(currentUser())
+
+		mockMvc.perform(
+			post("/api/user/actions/vacation_request")
+				.with(
+					oauth2Login()
+						.attributes { it["default_email"] = "user@example.com" }
+						.authorities(SimpleGrantedAuthority("ROLE_USER")),
+				)
+				.contentType("application/json")
+				.content(validVacationRequestJson),
+		).andExpect(status().isCreated)
+	}
+
+	private fun currentUser() = UserAccountDto(
+		id = 1L,
+		email = "user@example.com",
+		firstName = "Test",
+		lastName = "User",
+		isAdmin = false,
+		isActive = true,
+		ctime = null,
+		utime = null,
+	)
+
+	private companion object {
+		const val validVacationRequestJson =
+			"""{"title":"Vacation","requestState":"DRAFT","vacationType":"PAYMENT_VACATION","startDate":"2026-09-01","endDate":"2026-09-14"}"""
 	}
 }

@@ -31,6 +31,15 @@ class SecurityConfig {
 					"/error",
 				).permitAll()
 					.requestMatchers(HttpMethod.GET, "/api/**").authenticated()
+					.requestMatchers(HttpMethod.POST, "/api/user/actions/vacation_request").hasAnyRole("USER", "ADMIN")
+					.requestMatchers(
+						HttpMethod.PUT,
+						"/api/user/actions/vacation_request/*",
+					).hasAnyRole("USER", "ADMIN")
+					.requestMatchers(
+						HttpMethod.DELETE,
+						"/api/user/actions/vacation_request/*",
+					).hasAnyRole("USER", "ADMIN")
 					.requestMatchers(
 						HttpMethod.PUT,
 						"/api/projects/*/users/*",

@@ -20,6 +20,18 @@ class RestExceptionHandler {
 	fun handleUserEmailConflict(exception: UserEmailAlreadyExistsException): ProblemDetail =
 		ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.message ?: "User email already exists")
 
+	@ExceptionHandler(VacationRequestAccessDeniedException::class)
+	fun handleVacationRequestAccessDenied(exception: VacationRequestAccessDeniedException): ProblemDetail =
+		ProblemDetail.forStatusAndDetail(HttpStatus.FORBIDDEN, exception.message ?: "Vacation request access denied")
+
+	@ExceptionHandler(VacationRequestModificationNotAllowedException::class)
+	fun handleVacationRequestConflict(exception: VacationRequestModificationNotAllowedException): ProblemDetail =
+		ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, exception.message ?: "Vacation request cannot be modified")
+
+	@ExceptionHandler(InvalidVacationRequestException::class)
+	fun handleInvalidVacationRequest(exception: InvalidVacationRequestException): ProblemDetail =
+		ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, exception.message ?: "Invalid vacation request")
+
 	@ExceptionHandler(MethodArgumentNotValidException::class)
 	fun handleValidation(exception: MethodArgumentNotValidException): ProblemDetail {
 		val problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, "Request validation failed")

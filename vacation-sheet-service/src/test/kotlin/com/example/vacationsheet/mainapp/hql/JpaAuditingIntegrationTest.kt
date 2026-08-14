@@ -3,8 +3,12 @@ package com.example.vacationsheet.mainapp.hql
 import com.example.vacationsheet.mainapp.config.JpaAuditingConfig
 import com.example.vacationsheet.mainapp.hql.model.ProjectEntity
 import com.example.vacationsheet.mainapp.hql.model.UserAccountEntity
+import com.example.vacationsheet.mainapp.hql.model.VacationRequestEntity
+import com.example.vacationsheet.mainapp.hql.model.VacationRequestState
+import com.example.vacationsheet.mainapp.hql.model.VacationType
 import com.example.vacationsheet.mainapp.hql.repository.ProjectRepository
 import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
+import com.example.vacationsheet.mainapp.hql.repository.VacationRequestRepository
 import jakarta.persistence.EntityManager
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,6 +20,7 @@ import org.springframework.test.context.DynamicPropertySource
 import org.testcontainers.containers.PostgreSQLContainer
 import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
+import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -30,6 +35,9 @@ class JpaAuditingIntegrationTest {
 
 	@Autowired
 	lateinit var projectRepository: ProjectRepository
+
+	@Autowired
+	lateinit var vacationRequestRepository: VacationRequestRepository
 
 	@Autowired
 	lateinit var entityManager: EntityManager
@@ -70,6 +78,43 @@ class JpaAuditingIntegrationTest {
 		val updated = projectRepository.findById(id).orElseThrow()
 		assertEquals(creationTime, updated.ctime)
 		assertTrue(assertNotNull(updated.utime).isAfter(oldUpdateTime))
+	}
+
+	@Test
+	fun `vacation request persists relationships and audit times`() {
+		val author = userAccountRepository.saveAndFlush(UserAccountEntity("author@example.com", "Test", "Author"))
+		val manager = userAccountRepository.saveAndFlush(UserAccountEntity("manager@example.com", "Test", "Manager"))
+		val saved = vacationRequestRepository.saveAndFlush(
+			VacationRequestEntity(
+				title = "Vacation",
+				requestState = VacationRequestState.READY,
+				vacationType = VacationType.PAYMENT_VACATION,
+				startDate = LocalDate.of(2026, 9, 1),
+				endDate = LocalDate.of(2026, 9, 14),
+				userComments = null,
+				author = author,
+				manager = manager,
+			),
+		)
+		val requestId = requireNotNull(saved.id)
+		val authorId = requireNotNull(author.id)
+		val managerId = requireNotNull(manager.id)
+		assertNotNull(saved.ctime)
+		assertNotNull(saved.utime)
+
+		entityManager.clear()
+		userAccountRepository.delete(userAccountRepository.findById(managerId).orElseThrow())
+		userAccountRepository.flush()
+		entityManager.clear()
+
+		assertEquals(null, vacationRequestRepository.findByIdWithUsers(requestId)?.manager)
+
+		entityManager.clear()
+		userAccountRepository.delete(userAccountRepository.findById(authorId).orElseThrow())
+		userAccountRepository.flush()
+		entityManager.clear()
+
+		assertTrue(vacationRequestRepository.findById(requestId).isEmpty)
 	}
 
 	companion object {
