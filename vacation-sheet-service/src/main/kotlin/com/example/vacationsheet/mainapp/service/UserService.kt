@@ -47,7 +47,7 @@ class UserService(
 		user.lastName = normalizeName(request.lastName)
 		user.isAdmin = request.isAdmin
 		user.isActive = request.isActive
-		return userAccountMapper.toDto(user)
+		return userAccountMapper.toDto(userAccountRepository.saveAndFlush(user))
 	}
 
 	@Transactional

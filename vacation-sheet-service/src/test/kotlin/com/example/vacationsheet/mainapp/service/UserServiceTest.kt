@@ -64,6 +64,7 @@ class UserServiceTest {
 		val user = UserAccountEntity("user@example.com", "Test", "User", id = 1L)
 		every { userAccountRepository.findById(1L) } returns Optional.of(user)
 		every { userAccountRepository.findByEmail("user@example.com") } returns user
+		every { userAccountRepository.saveAndFlush(user) } returns user
 
 		val result = service.update(
 			1L,
@@ -72,6 +73,7 @@ class UserServiceTest {
 
 		assertTrue(result.isAdmin)
 		assertFalse(result.isActive)
+		verify(exactly = 1) { userAccountRepository.saveAndFlush(user) }
 	}
 
 	@Test

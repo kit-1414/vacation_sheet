@@ -1,6 +1,5 @@
 package com.example.vacationsheet.mainapp.hql.model
 
-import com.example.vacationsheet.mainapp.hql.handler.JpaTimeHandler
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EntityListeners
@@ -11,11 +10,14 @@ import jakarta.persistence.JoinColumn
 import jakarta.persistence.JoinTable
 import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
+import org.springframework.data.annotation.CreatedDate
+import org.springframework.data.annotation.LastModifiedDate
+import org.springframework.data.jpa.domain.support.AuditingEntityListener
 import java.time.OffsetDateTime
 
 @Entity
 @Table(name = "projects")
-@EntityListeners(JpaTimeHandler::class)
+@EntityListeners(AuditingEntityListener::class)
 class ProjectEntity(
 	@Column(nullable = false, length = 100)
 	var name: String,
@@ -24,9 +26,11 @@ class ProjectEntity(
 	var description: String?,
 
 	@Column(nullable = false, updatable = false)
+	@field:CreatedDate
 	var ctime: OffsetDateTime? = null,
 
 	@Column(nullable = false)
+	@field:LastModifiedDate
 	var utime: OffsetDateTime? = null,
 
 	@ManyToMany

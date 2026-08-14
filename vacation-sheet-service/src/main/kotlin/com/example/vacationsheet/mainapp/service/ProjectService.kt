@@ -35,7 +35,7 @@ class ProjectService(
 		val project = getProject(id)
 		ensureNameAvailable(request.name.trim(), id)
 		projectMapper.updateEntity(request, project)
-		return projectMapper.toDto(project)
+		return projectMapper.toDto(projectRepository.saveAndFlush(project))
 	}
 
 	@Transactional

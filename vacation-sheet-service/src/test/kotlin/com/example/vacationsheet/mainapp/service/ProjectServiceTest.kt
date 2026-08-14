@@ -11,6 +11,8 @@ import com.example.vacationsheet.mainapp.hql.repository.UserAccountRepository
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 import java.util.Optional
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -48,6 +50,24 @@ class ProjectServiceTest {
 			service.create(ProjectRequestDto(" project ", null))
 		}
 		verify(exactly = 0) { projectRepository.save(any()) }
+	}
+
+	@Test
+	fun `update flushes project before mapping response`() {
+		val oldUpdateTime = OffsetDateTime.of(2026, 1, 1, 0, 0, 0, 0, ZoneOffset.UTC)
+		val newUpdateTime = oldUpdateTime.plusDays(1)
+		val project = ProjectEntity("Old", null, utime = oldUpdateTime, id = 1L)
+		every { projectRepository.findByIdWithMembers(1L) } returns project
+		every { projectRepository.findByNameIgnoreCase("New") } returns null
+		every { projectRepository.saveAndFlush(project) } answers {
+			project.utime = newUpdateTime
+			project
+		}
+
+		val response = service.update(1L, ProjectRequestDto("New", null))
+
+		assertEquals(newUpdateTime, response.utime)
+		verify(exactly = 1) { projectRepository.saveAndFlush(project) }
 	}
 
 	@Test
