@@ -5,8 +5,10 @@ import com.example.vacationsheet.mainapp.controller.LoginController
 import com.example.vacationsheet.mainapp.controller.ProjectController
 import com.example.vacationsheet.mainapp.controller.UserController
 import com.example.vacationsheet.mainapp.controller.VacationRequestUserController
-import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
+import com.example.vacationsheet.mainapp.dto.CurrentUserDto
+import com.example.vacationsheet.mainapp.service.CurrentUserService
 import com.example.vacationsheet.mainapp.service.ProjectService
+import com.example.vacationsheet.mainapp.service.UserRole
 import com.example.vacationsheet.mainapp.service.UserService
 import com.example.vacationsheet.mainapp.service.VacationRequestService
 import com.example.vacationsheet.mainapp.service.YandexOAuth2UserService
@@ -47,6 +49,9 @@ class SecurityConfigTest {
 
 	@MockitoBean
 	lateinit var userService: UserService
+
+	@MockitoBean
+	lateinit var currentUserService: CurrentUserService
 
 	@MockitoBean
 	lateinit var projectService: ProjectService
@@ -130,7 +135,7 @@ class SecurityConfigTest {
 
 	@Test
 	fun `nobody can list own vacation requests`() {
-		given(userService.findCurrent("user@example.com")).willReturn(currentUser())
+		given(currentUserService.getCurrentUser()).willReturn(currentUser())
 		given(vacationRequestService.getRequestsByOwnerId(1L)).willReturn(emptyList())
 
 		mockMvc.perform(
@@ -155,7 +160,7 @@ class SecurityConfigTest {
 
 	@Test
 	fun `user can access vacation request create endpoint`() {
-		given(userService.findCurrent("user@example.com")).willReturn(currentUser())
+		given(currentUserService.getCurrentUser()).willReturn(currentUser())
 
 		mockMvc.perform(
 			post("/api/user/actions/vacation_request")
@@ -169,7 +174,7 @@ class SecurityConfigTest {
 		).andExpect(status().isCreated)
 	}
 
-	private fun currentUser() = UserAccountDto(
+	private fun currentUser() = CurrentUserDto(
 		id = 1L,
 		email = "user@example.com",
 		firstName = "Test",
@@ -178,6 +183,7 @@ class SecurityConfigTest {
 		isActive = true,
 		ctime = null,
 		utime = null,
+		roles = setOf(UserRole.USER),
 	)
 
 	private companion object {

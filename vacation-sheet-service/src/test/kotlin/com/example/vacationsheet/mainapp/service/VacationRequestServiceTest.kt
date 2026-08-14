@@ -1,5 +1,6 @@
 package com.example.vacationsheet.mainapp.service
 
+import com.example.vacationsheet.mainapp.dto.CurrentUserDto
 import com.example.vacationsheet.mainapp.dto.VacationRequestRequestDto
 import com.example.vacationsheet.mainapp.exception.InvalidVacationRequestException
 import com.example.vacationsheet.mainapp.exception.VacationRequestAccessDeniedException
@@ -32,7 +33,7 @@ class VacationRequestServiceTest {
 		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns false
 		every { vacationRequestRepository.existsById(10L) } returns true
 
-		assertFailsWith<VacationRequestAccessDeniedException> { service.findById(10L, 1L) }
+		assertFailsWith<VacationRequestAccessDeniedException> { service.findById(10L, currentUser()) }
 		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsers(any()) }
 	}
 
@@ -43,7 +44,7 @@ class VacationRequestServiceTest {
 		every { vacationRequestRepository.findByIdWithUsers(10L) } returns entity
 		every { vacationRequestRepository.saveAndFlush(entity) } returns entity
 
-		val response = service.update(10L, 1L, request(VacationRequestState.READY))
+		val response = service.update(10L, currentUser(), request(VacationRequestState.READY))
 
 		assertEquals(VacationRequestState.READY, response.requestState)
 		assertEquals("Vacation", response.title)
@@ -56,7 +57,7 @@ class VacationRequestServiceTest {
 		every { vacationRequestRepository.findByIdWithUsers(10L) } returns entity
 
 		assertFailsWith<VacationRequestModificationNotAllowedException> {
-			service.update(10L, 1L, request(VacationRequestState.DRAFT))
+			service.update(10L, currentUser(), request(VacationRequestState.DRAFT))
 		}
 		verify(exactly = 0) { vacationRequestRepository.saveAndFlush(any()) }
 	}
@@ -64,7 +65,7 @@ class VacationRequestServiceTest {
 	@Test
 	fun `create rejects manager-only state`() {
 		assertFailsWith<InvalidVacationRequestException> {
-			service.create(1L, request(VacationRequestState.APPROVED))
+			service.create( request(VacationRequestState.APPROVED), currentUser())
 		}
 		verify(exactly = 0) { userAccountRepository.findById(any()) }
 	}
@@ -76,7 +77,7 @@ class VacationRequestServiceTest {
 		every { vacationRequestRepository.findByIdWithUsers(10L) } returns entity
 		every { vacationRequestRepository.delete(entity) } returns Unit
 
-		service.delete(10L, 1L)
+		service.delete(10L, currentUser())
 
 		verify(exactly = 1) { vacationRequestRepository.delete(entity) }
 	}
@@ -98,5 +99,17 @@ class VacationRequestServiceTest {
 		vacationType = VacationType.PAYMENT_VACATION,
 		startDate = LocalDate.of(2026, 9, 1),
 		endDate = LocalDate.of(2026, 9, 14),
+	)
+
+	private fun currentUser() = CurrentUserDto(
+		id = 1L,
+		email = "user@example.com",
+		firstName = "Test",
+		lastName = "User",
+		isAdmin = false,
+		isActive = true,
+		ctime = null,
+		utime = null,
+		roles = setOf(UserRole.USER),
 	)
 }

@@ -1,6 +1,7 @@
 package com.example.vacationsheet.mainapp.service
 
 import com.example.vacationsheet.mainapp.dto.VacationRequestRequestDto
+import com.example.vacationsheet.mainapp.dto.CurrentUserDto
 import com.example.vacationsheet.mainapp.exception.InvalidVacationRequestException
 import com.example.vacationsheet.mainapp.exception.ResourceNotFoundException
 import com.example.vacationsheet.mainapp.exception.VacationRequestAccessDeniedException
@@ -26,24 +27,28 @@ class VacationRequestService(
 		vacationRequestRepository.findAllByOwnerId(id).map(vacationRequestMapper::toDto)
 
 	@Transactional(readOnly = true)
-	fun findById(id: Long, userAccountId: Long): VacationRequestDto {
-		failIfNotCreator(id, userAccountId)
+	fun getRequestsByOwnerId(currentUser: CurrentUserDto): List<VacationRequestDto> =
+		getRequestsByOwnerId(currentUser.id)
+
+	@Transactional(readOnly = true)
+	fun findById(id: Long, currentUser: CurrentUserDto): VacationRequestDto {
+		failIfNotCreator(id, currentUser)
 		return vacationRequestMapper.toDto(getById(id))
 	}
 
 	@Transactional
-	fun create(userAccountId: Long, request: VacationRequestRequestDto): VacationRequestDto {
+	fun create(request: VacationRequestRequestDto, currentUser: CurrentUserDto): VacationRequestDto {
 		validateUserRequest(request)
-		val author = userAccountRepository.findById(userAccountId).orElseThrow {
-			ResourceNotFoundException("User $userAccountId was not found")
+		val author = userAccountRepository.findById(currentUser.id).orElseThrow {
+			ResourceNotFoundException("User ${currentUser.id} was not found")
 		}
 		return vacationRequestRepository.save(vacationRequestMapper.toEntity(request, author))
 			.let(vacationRequestMapper::toDto)
 	}
 
 	@Transactional
-	fun update(id: Long, userAccountId: Long, request: VacationRequestRequestDto): VacationRequestDto {
-		failIfNotCreator(id, userAccountId)
+	fun update(id: Long, currentUser: CurrentUserDto, request: VacationRequestRequestDto): VacationRequestDto {
+		failIfNotCreator(id, currentUser)
 		val entity = getById(id)
 		failIfModificationNotAllowed(entity)
 		validateUserRequest(request)
@@ -52,26 +57,26 @@ class VacationRequestService(
 	}
 
 	@Transactional
-	fun delete(id: Long, userAccountId: Long) {
-		failIfNotCreator(id, userAccountId)
+	fun delete(id: Long, currentUser: CurrentUserDto) {
+		failIfNotCreator(id, currentUser)
 		val entity = getById(id)
 		failIfModificationNotAllowed(entity)
 		vacationRequestRepository.delete(entity)
 	}
 
 	@Transactional(readOnly = true)
-	fun checkIsCreator(requestVacationId: Long, userAccountId: Long): Boolean =
-		vacationRequestRepository.existsByIdAndAuthorId(requestVacationId, userAccountId)
+	fun checkIsCreator(requestVacationId: Long, currentUser: CurrentUserDto): Boolean =
+		vacationRequestRepository.existsByIdAndAuthorId(requestVacationId, currentUser.id)
 
 	@Transactional(readOnly = true)
-	fun failIfNotCreator(requestVacationId: Long, userAccountId: Long) {
-		if (!checkIsCreator(requestVacationId, userAccountId)) {
+	fun failIfNotCreator(requestVacationId: Long, currentUser: CurrentUserDto) {
+		if (!checkIsCreator(requestVacationId, currentUser)) {
 			if (!vacationRequestRepository.existsById(requestVacationId)) {
 				throw ResourceNotFoundException("Vacation request $requestVacationId was not found")
 			}
 			logger.debug(
 				"User {} attempted to access vacation request {} owned by another user",
-				userAccountId,
+				currentUser.id,
 				requestVacationId,
 			)
 			throw VacationRequestAccessDeniedException("Vacation request access denied")
