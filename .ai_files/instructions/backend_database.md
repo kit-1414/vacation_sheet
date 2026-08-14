@@ -9,8 +9,6 @@
    - у связи есть бизнес - атрибуты, используемые в логике приложения.
  - Таблицы классов модели (для которых есть класс Entity) имеют служебное поле ctime: timestamptz, utime: timestamptz. 
    Поля заполняются JPА аннотациями. При конвертации из DTO игнорируются. 
-     -  ctime: @CreatedDate
-     -  utime: @LastModifiedDate 
    В клссах модели и ДТО эти поля имеют тип OffsetDateTime. в Модели и DTO поля прнимают НУЛЛ значения. При конвертации в JPA эти поля игнорируются. 
  - JPA классы для таблиц имеют окончания "Entity". JPA Классы  кладуться в pakage <MODULE_ROOT_PACKAGE>.hql.model
  - для JPA класса создается класс JpaRepository и кладется в pakage <MODULE_ROOT_PACKAGE>.hql.repository
