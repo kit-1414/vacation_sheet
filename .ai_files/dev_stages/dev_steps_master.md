@@ -6,4 +6,5 @@
  - DONE - реализация заврешена
 
 ## Список этапов разработки:
- - step_5_add_vacation_request_for_user_backend.md - READY
+ - step_5_1_add_vacation_request_for_user_backend.md - READY
+ - step_5_2_add_vacation_request_for_user_frontend.md- DRAFT
