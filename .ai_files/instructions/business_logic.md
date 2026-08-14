@@ -74,6 +74,14 @@
      - констнтами - литералами
      - енумом, со свойством roleName т этих литералов
 
+  ## Доступ к текущему пользователю и ролям
+  для работы с текущим поьзователем, ролями и тп используем отдельную ДТО b сервис
+  и метод CurrentUserService.getCurrentUser(): CurrentUserDto.
+  используем этот серсвис и ДТО 
+   - в конроллере "*/me"
+   - в конроллерах(сервисах), где требуется проверять принадлежность сущьностей текущему пользователю 
+     передавая саму ДТО как параметр в сервис
+
   ### Заявление на отпуск
   Сущьногсть "заявление на отпуск" (vacation_request)
 
@@ -104,8 +112,8 @@
   на бэке при действиях с заявлениями по ID - получение, обновление, удаление нужна доп проверка что 
   заявлени принадлежит текущему полтзователю.
   Соотв у сервиса заявлений VacationRequestService должен быть метод проверки авторста заявления
-  VacationRequestService.checkIsCreator(requestVacationId, userAccountId): Boolean
-  VacationRequestService.failIfNotCreator(requestVacationId, userAccountId) - 
+  VacationRequestService.checkIsCreator(requestVacationId, CurrentUserDto): Boolean
+  VacationRequestService.failIfNotCreator(requestVacationId, CurrentUserDto) - 
   выкидывает исключение с ошибкой доступа и сообщением в дебаг что попытка доступа к чужому заявлению (на англ)
 
   Автору (создателю - пользователю) обновлять и удалять заявления можно толоко если заявления в состоянии DRAFT или READY.
