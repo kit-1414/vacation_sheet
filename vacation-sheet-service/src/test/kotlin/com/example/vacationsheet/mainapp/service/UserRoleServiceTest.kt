@@ -28,6 +28,6 @@ class UserRoleServiceTest {
 	fun `active manager has manager role instead of user role`() {
 		val user = UserAccountEntity("user@example.com", null, null, id = 1L)
 		every { projectRepository.existsByManagersId(1L) } returns true
-		assertEquals(setOf(UserRole.MANAGER), service.getRoles(user))
+		assertEquals(setOf(UserRole.MANAGER,UserRole.USER ), service.getRoles(user))
 	}
 }

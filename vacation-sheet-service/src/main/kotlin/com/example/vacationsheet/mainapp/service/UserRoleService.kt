@@ -13,10 +13,9 @@ class UserRoleService(
 
 		return buildSet {
 			if (user.isAdmin) add(UserRole.ADMIN)
+			if (user.isActive) add(UserRole.USER)
 			if (projectRepository.existsByManagersId(requireNotNull(user.id))) {
 				add(UserRole.MANAGER)
-			} else {
-				add(UserRole.USER)
 			}
 		}
 	}
