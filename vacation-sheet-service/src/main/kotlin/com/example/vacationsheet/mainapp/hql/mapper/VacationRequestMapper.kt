@@ -2,6 +2,8 @@ package com.example.vacationsheet.mainapp.hql.mapper
 
 import com.example.vacationsheet.mainapp.dto.VacationRequestRequestDto
 import com.example.vacationsheet.mainapp.hql.dto.VacationRequestDto
+import com.example.vacationsheet.mainapp.hql.dto.ManagerVacationRequestDto
+import com.example.vacationsheet.mainapp.hql.dto.ProjectSummaryDto
 import com.example.vacationsheet.mainapp.hql.model.UserAccountEntity
 import com.example.vacationsheet.mainapp.hql.model.VacationRequestEntity
 import org.springframework.stereotype.Component
@@ -43,4 +45,10 @@ class VacationRequestMapper(
 		ctime = entity.ctime,
 		utime = entity.utime,
 	)
+
+	fun toManagerDto(entity: VacationRequestEntity, authorProjects: List<ProjectSummaryDto>) =
+		ManagerVacationRequestDto(
+			request = toDto(entity),
+			authorProjects = authorProjects,
+		)
 }

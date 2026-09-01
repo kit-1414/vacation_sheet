@@ -5,6 +5,7 @@ import com.example.vacationsheet.mainapp.controller.LoginController
 import com.example.vacationsheet.mainapp.controller.ProjectController
 import com.example.vacationsheet.mainapp.controller.UserController
 import com.example.vacationsheet.mainapp.controller.VacationRequestUserController
+import com.example.vacationsheet.mainapp.controller.VacationRequestManagerController
 import com.example.vacationsheet.mainapp.dto.CurrentUserDto
 import com.example.vacationsheet.mainapp.service.CurrentUserService
 import com.example.vacationsheet.mainapp.service.ProjectService
@@ -36,6 +37,7 @@ import org.mockito.BDDMockito.given
 		ProjectController::class,
 		UserController::class,
 		VacationRequestUserController::class,
+		VacationRequestManagerController::class,
 	],
 )
 @Import(SecurityConfig::class)
@@ -172,6 +174,74 @@ class SecurityConfigTest {
 				.contentType("application/json")
 				.content(validVacationRequestJson),
 		).andExpect(status().isCreated)
+	}
+
+	@Test
+	fun `manager can list vacation requests for review`() {
+		given(vacationRequestService.getRequestsForManager()).willReturn(emptyList())
+
+		mockMvc.perform(
+			get("/api/manager/actions/vacation_request")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_MANAGER"))),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `admin can list vacation requests for review`() {
+		given(vacationRequestService.getRequestsForManager()).willReturn(emptyList())
+
+		mockMvc.perform(
+			get("/api/manager/actions/vacation_request")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_ADMIN"))),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `user cannot list vacation requests for review`() {
+		mockMvc.perform(
+			get("/api/manager/actions/vacation_request")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_USER"))),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `nobody cannot open vacation request for review`() {
+		mockMvc.perform(
+			get("/api/manager/actions/vacation_request/1")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_NOBODY"))),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `manager can access vacation request review endpoint`() {
+		given(currentUserService.getCurrentUser()).willReturn(currentUser())
+
+		mockMvc.perform(
+			put("/api/manager/actions/vacation_request/1")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_MANAGER")))
+				.contentType("application/json")
+				.content(
+					"""{"managerComment":null,"updateManagerComment":true,"requestState":"APPROVED"}""",
+				),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `user cannot review vacation request`() {
+		mockMvc.perform(
+			put("/api/manager/actions/vacation_request/1")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_USER")))
+				.contentType("application/json")
+				.content(
+					"""{"managerComment":null,"updateManagerComment":false,"requestState":"APPROVED"}""",
+				),
+		).andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `unauthenticated manager request returns 403`() {
+		mockMvc.perform(get("/api/manager/actions/vacation_request"))
+			.andExpect(status().isForbidden)
 	}
 
 	private fun currentUser() = CurrentUserDto(

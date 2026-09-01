@@ -2,6 +2,7 @@ package com.example.vacationsheet.mainapp.hql.mapper
 
 import com.example.vacationsheet.mainapp.dto.ProjectRequestDto
 import com.example.vacationsheet.mainapp.hql.dto.ProjectDto
+import com.example.vacationsheet.mainapp.hql.dto.ProjectSummaryDto
 import com.example.vacationsheet.mainapp.hql.dto.UserAccountDto
 import com.example.vacationsheet.mainapp.hql.model.ProjectEntity
 import org.springframework.stereotype.Component
@@ -28,6 +29,11 @@ class ProjectMapper(
 		managers = entity.managers.map(userAccountMapper::toDto).sortedWith(userComparator),
 		ctime = entity.ctime,
 		utime = entity.utime,
+	)
+
+	fun toSummaryDto(entity: ProjectEntity) = ProjectSummaryDto(
+		id = requireNotNull(entity.id),
+		name = entity.name,
 	)
 
 	private val userComparator = compareBy<UserAccountDto> { it.lastName }.thenBy { it.firstName }.thenBy { it.email }

@@ -14,4 +14,10 @@ interface ProjectRepository : JpaRepository<ProjectEntity, Long> {
 
 	@Query("select distinct project from ProjectEntity project left join fetch project.members left join fetch project.managers where project.id = :id")
 	fun findByIdWithMembers(@Param("id") id: Long): ProjectEntity?
+
+	@Query(
+		"select distinct project from ProjectEntity project join project.members matchingMember " +
+			"left join fetch project.members where matchingMember.id in :memberIds order by project.name",
+	)
+	fun findAllWithMembersByMemberIds(@Param("memberIds") memberIds: Set<Long>): List<ProjectEntity>
 }
