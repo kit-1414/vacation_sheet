@@ -4,8 +4,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSortModule, Sort, SortDirection } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
@@ -20,7 +22,6 @@ import {
 
 type SortField =
   'email' | 'firstName' | 'lastName' | 'ctime' | 'startDate' | 'endDate' | 'requestState';
-type SortDirection = 'asc' | 'desc';
 
 @Component({
   selector: 'app-manager-vacation-requests-page',
@@ -30,8 +31,10 @@ type SortDirection = 'asc' | 'desc';
     MatCardModule,
     MatFormFieldModule,
     MatInputModule,
+    MatPaginatorModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSortModule,
     MatTableModule,
     RouterLink,
   ],
@@ -50,13 +53,19 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected readonly projectFilter = signal<number[]>([]);
   protected readonly sortField = signal<SortField>('ctime');
   protected readonly sortDirection = signal<SortDirection>('desc');
+  protected readonly pageIndex = signal(0);
+  protected readonly pageSize = signal(10);
+  protected readonly pageSizeOptions = [10, 50, 100, 300];
   protected readonly pendingStates = signal<Record<number, ManagerVacationRequestState>>({});
   protected readonly columns = [
     'title',
-    'author',
+    'email',
+    'firstName',
+    'lastName',
     'projects',
     'ctime',
-    'dates',
+    'startDate',
+    'endDate',
     'requestState',
     'vacationType',
     'quickReview',
@@ -79,6 +88,16 @@ export class ManagerVacationRequestsPage implements OnInit {
       periodEnd: this.periodEnd(),
       projectIds: this.projectFilter(),
     }).sort((left, right) => this.sortValue(left).localeCompare(this.sortValue(right)) * direction);
+  });
+
+  protected readonly effectivePageIndex = computed(() => {
+    const lastPage = Math.max(0, Math.ceil(this.visibleRequests().length / this.pageSize()) - 1);
+    return Math.min(this.pageIndex(), lastPage);
+  });
+
+  protected readonly pagedRequests = computed(() => {
+    const start = this.effectivePageIndex() * this.pageSize();
+    return this.visibleRequests().slice(start, start + this.pageSize());
   });
 
   ngOnInit(): void {
@@ -111,6 +130,22 @@ export class ManagerVacationRequestsPage implements OnInit {
           updated.request.requestState as ManagerVacationRequestState,
         ),
     );
+  }
+
+  protected changeSort(sort: Sort): void {
+    if (!sort.direction) {
+      this.sortField.set('ctime');
+      this.sortDirection.set('desc');
+    } else {
+      this.sortField.set(sort.active as SortField);
+      this.sortDirection.set(sort.direction);
+    }
+    this.pageIndex.set(0);
+  }
+
+  protected changePage(page: PageEvent): void {
+    this.pageIndex.set(page.pageIndex);
+    this.pageSize.set(page.pageSize);
   }
 
   protected stateLabel(state: VacationRequestState): string {
