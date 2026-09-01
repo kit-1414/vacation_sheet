@@ -18,3 +18,4 @@ function roleGuard(roles: UserRole[], redirectTo: string): CanActivateFn {
 
 export const adminGuard = roleGuard(['ADMIN'], '/projects');
 export const managerGuard = roleGuard(['MANAGER'], '/projects');
+export const userGuard = roleGuard(['USER'], '/profile/vacation-requests');

@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, managerGuard } from './auth.guard';
+import { adminGuard, managerGuard, userGuard } from './auth.guard';
 
 export const routes: Routes = [
   {
@@ -34,6 +34,24 @@ export const routes: Routes = [
     path: 'users/:id/edit',
     canActivate: [adminGuard],
     loadComponent: () => import('./users/user-editor-page').then((module) => module.UserEditorPage),
+  },
+  {
+    path: 'profile',
+    loadComponent: () => import('./profile/profile-page').then((module) => module.ProfilePage),
+  },
+  {
+    path: 'profile/vacation-requests',
+    loadComponent: () => import('./vacation-requests/vacation-requests-page').then((module) => module.VacationRequestsPage),
+  },
+  {
+    path: 'profile/vacation-requests/new',
+    canActivate: [userGuard],
+    loadComponent: () => import('./vacation-requests/vacation-request-editor-page').then((module) => module.VacationRequestEditorPage),
+  },
+  {
+    path: 'profile/vacation-requests/:id/edit',
+    canActivate: [userGuard],
+    loadComponent: () => import('./vacation-requests/vacation-request-editor-page').then((module) => module.VacationRequestEditorPage),
   },
   { path: '', pathMatch: 'full', redirectTo: 'projects' },
   { path: '**', redirectTo: 'projects' },

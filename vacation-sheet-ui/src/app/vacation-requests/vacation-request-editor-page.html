@@ -1,0 +1,94 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Заявления на отпуск</p>
+    <h1>{{ request() ? 'Редактировать заявление' : 'Добавить заявление' }}</h1>
+  </div>
+  <a mat-button routerLink="/profile/vacation-requests">К списку заявлений</a>
+</header>
+
+@if (loading()) {
+  <mat-spinner diameter="40" aria-label="Загрузка заявления"></mat-spinner>
+} @else if (editable()) {
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="wide">
+          <mat-label>Заголовок</mat-label>
+          <input matInput formControlName="title" maxlength="50" />
+          @if (form.controls.title.hasError('required')) {
+            <mat-error>Укажите заголовок</mat-error>
+          } @else if (form.controls.title.hasError('maxlength')) {
+            <mat-error>Не более 50 символов</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Тип отпуска</mat-label>
+          <mat-select formControlName="vacationType">
+            <mat-option value="PAYMENT_VACATION">Оплачиваемый отпуск</mat-option>
+            <mat-option value="FREE_VACATION">Отпуск за свой счёт</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Состояние</mat-label>
+          <mat-select formControlName="requestState">
+            <mat-option value="DRAFT">Черновик</mat-option>
+            <mat-option value="READY">Готово к согласованию</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Дата начала</mat-label>
+          <input
+            matInput
+            type="date"
+            formControlName="startDate"
+            min="0001-01-01"
+            max="9999-12-31"
+          />
+          <mat-hint>ДД.ММ.ГГГГ: день, месяц, год</mat-hint>
+          @if (form.controls.startDate.hasError('required')) {
+            <mat-error>Укажите дату начала</mat-error>
+          } @else if (form.controls.startDate.hasError('invalidDate')) {
+            <mat-error>Укажите корректную календарную дату</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Дата завершения</mat-label>
+          <input matInput type="date" formControlName="endDate" min="0001-01-01" max="9999-12-31" />
+          <mat-hint>ДД.ММ.ГГГГ: день, месяц, год</mat-hint>
+          @if (form.controls.endDate.hasError('required')) {
+            <mat-error>Укажите дату завершения</mat-error>
+          } @else if (form.controls.endDate.hasError('invalidDate')) {
+            <mat-error>Укажите корректную календарную дату</mat-error>
+          }
+        </mat-form-field>
+
+        @if (form.hasError('dateRange')) {
+          <p class="validation-error">Дата завершения не может быть раньше даты начала.</p>
+        }
+
+        <mat-form-field appearance="outline" class="wide">
+          <mat-label>Комментарий</mat-label>
+          <textarea matInput formControlName="userComments" maxlength="2000" rows="7"></textarea>
+          @if (form.controls.userComments.hasError('maxlength')) {
+            <mat-error>Не более 2000 символов</mat-error>
+          }
+        </mat-form-field>
+
+        <div class="form-actions wide">
+          <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">
+            Сохранить
+          </button>
+          <a mat-button routerLink="/profile/vacation-requests">Отмена</a>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+}
+
+@if (store.error(); as error) {
+  <p class="error">{{ error }}</p>
+}

@@ -1,0 +1,36 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Профиль</p>
+    <h1>Личный кабинет</h1>
+  </div>
+  <a mat-flat-button routerLink="/profile/vacation-requests">Заявления на отпуск</a>
+</header>
+
+@if (auth.user(); as user) {
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <dl>
+        <div>
+          <dt>Email</dt>
+          <dd>{{ user.email }}</dd>
+        </div>
+        <div>
+          <dt>Имя</dt>
+          <dd>{{ user.firstName || 'Не указано' }}</dd>
+        </div>
+        <div>
+          <dt>Фамилия</dt>
+          <dd>{{ user.lastName || 'Не указана' }}</dd>
+        </div>
+        <div>
+          <dt>Добавлен</dt>
+          <dd>{{ (user.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd>
+        </div>
+        <div>
+          <dt>Обновлён</dt>
+          <dd>{{ (user.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd>
+        </div>
+      </dl>
+    </mat-card-content>
+  </mat-card>
+}

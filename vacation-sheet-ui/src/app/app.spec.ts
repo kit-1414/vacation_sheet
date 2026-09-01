@@ -37,5 +37,6 @@ describe('App', () => {
     fixture.detectChanges();
 
     expect((fixture.nativeElement as HTMLElement).textContent).toContain('user@example.com');
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('Личный кабинет');
   });
 });

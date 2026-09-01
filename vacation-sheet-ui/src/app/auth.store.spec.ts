@@ -33,6 +33,7 @@ describe('AuthStore', () => {
 
     expect(store.canAdminister()).toBe(true);
     expect(store.canManageRelations()).toBe(true);
+    expect(store.canManageVacationRequests()).toBe(true);
   });
 
   it('allows managers to manage relations but not administer', () => {
@@ -51,5 +52,6 @@ describe('AuthStore', () => {
 
     expect(store.canAdminister()).toBe(false);
     expect(store.canManageRelations()).toBe(true);
+    expect(store.canManageVacationRequests()).toBe(false);
   });
 });
