@@ -73,25 +73,6 @@
               }
             </mat-select>
           </mat-form-field>
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Сортировать по</mat-label>
-            <mat-select [value]="sortField()" (valueChange)="sortField.set($event)">
-              <mat-option value="email">Email</mat-option>
-              <mat-option value="firstName">Имени</mat-option>
-              <mat-option value="lastName">Фамилии</mat-option>
-              <mat-option value="ctime">Времени создания</mat-option>
-              <mat-option value="startDate">Дате начала</mat-option>
-              <mat-option value="endDate">Дате завершения</mat-option>
-              <mat-option value="requestState">Состоянию</mat-option>
-            </mat-select>
-          </mat-form-field>
-          <mat-form-field appearance="outline" subscriptSizing="dynamic">
-            <mat-label>Направление</mat-label>
-            <mat-select [value]="sortDirection()" (valueChange)="sortDirection.set($event)">
-              <mat-option value="asc">По возрастанию</mat-option>
-              <mat-option value="desc">По убыванию</mat-option>
-            </mat-select>
-          </mat-form-field>
         </section>
         @if (invalidPeriod()) {
           <p class="validation-error">Конец интервала не может быть раньше начала.</p>
@@ -108,17 +89,33 @@
     } @else if (visibleRequests().length) {
       <mat-card appearance="outlined">
         <div class="table-wrap">
-          <table mat-table [dataSource]="visibleRequests()">
+          <table
+            mat-table
+            matSort
+            matSortDisableClear
+            [dataSource]="pagedRequests()"
+            [matSortActive]="sortField()"
+            [matSortDirection]="sortDirection()"
+            (matSortChange)="changeSort($event)"
+          >
             <ng-container matColumnDef="title"
               ><th mat-header-cell *matHeaderCellDef>Заголовок</th>
               <td mat-cell *matCellDef="let item">{{ item.request.title }}</td></ng-container
             >
-            <ng-container matColumnDef="author"
-              ><th mat-header-cell *matHeaderCellDef>Автор</th>
+            <ng-container matColumnDef="email"
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="email">Email</th>
+              <td mat-cell *matCellDef="let item">{{ item.request.author.email }}</td></ng-container
+            >
+            <ng-container matColumnDef="firstName"
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="firstName">Имя</th>
               <td mat-cell *matCellDef="let item">
-                <strong>{{ item.request.author.email }}</strong
-                ><br />{{ item.request.author.firstName || 'Без имени' }}
-                {{ item.request.author.lastName || '' }}
+                {{ item.request.author.firstName || 'Не указано' }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="lastName"
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="lastName">Фамилия</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.request.author.lastName || 'Не указана' }}
               </td></ng-container
             >
             <ng-container matColumnDef="projects"
@@ -128,19 +125,25 @@
               </td></ng-container
             >
             <ng-container matColumnDef="ctime"
-              ><th mat-header-cell *matHeaderCellDef>Создано</th>
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="ctime">Создано</th>
               <td mat-cell *matCellDef="let item">
                 {{ (item.request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}
               </td></ng-container
             >
-            <ng-container matColumnDef="dates"
-              ><th mat-header-cell *matHeaderCellDef>Период отпуска</th>
+            <ng-container matColumnDef="startDate"
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="startDate">Начало</th>
               <td mat-cell *matCellDef="let item">
-                {{ dateLabel(item.request.startDate) }} – {{ dateLabel(item.request.endDate) }}
+                {{ dateLabel(item.request.startDate) }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="endDate"
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="endDate">Завершение</th>
+              <td mat-cell *matCellDef="let item">
+                {{ dateLabel(item.request.endDate) }}
               </td></ng-container
             >
             <ng-container matColumnDef="requestState"
-              ><th mat-header-cell *matHeaderCellDef>Состояние</th>
+              ><th mat-header-cell *matHeaderCellDef mat-sort-header="requestState">Состояние</th>
               <td mat-cell *matCellDef="let item">
                 {{ stateLabel(item.request.requestState) }}
               </td></ng-container
@@ -186,6 +189,15 @@
             <tr mat-row *matRowDef="let row; columns: columns"></tr>
           </table>
         </div>
+        <mat-paginator
+          aria-label="Пагинация заявлений"
+          showFirstLastButtons
+          [length]="visibleRequests().length"
+          [pageIndex]="effectivePageIndex()"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="pageSizeOptions"
+          (page)="changePage($event)"
+        />
       </mat-card>
     } @else {
       <p class="empty">Заявлений с выбранными параметрами нет.</p>

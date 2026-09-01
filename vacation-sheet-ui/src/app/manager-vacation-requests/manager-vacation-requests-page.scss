@@ -57,7 +57,11 @@ h1 {
 
 table {
   width: 100%;
-  min-width: 92rem;
+  min-width: 110rem;
+}
+
+mat-paginator {
+  border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
 .quick-review {
