@@ -131,12 +131,12 @@
   При переводе состояния в READY связь с руководителем очишается и удаляется комментарий.
 
   метод рассмотрения заявления:
-        передает в path  - "vacation_request_id": <ID заявления>   
+        передает в path  - "vacationRequestId": <ID заявления>   
         принимают на вход JSON
    {
-    "manager_comment": <комментарий руководителя>. Допустим NULL
-    "update_manager_comment": Boolean - говорит, надо ли обновлять комментарий руководитеоя значением из запроса. при значении = false  не надо 
-    "request_state":  <READY | APPROVED | REJECTED> 
+    "managerComment": <комментарий руководителя>. Допустим NULL
+    "updateManagerComment": Boolean - говорит, надо ли обновлять комментарий руководитеоя значением из запроса. при значении = false  не надо 
+    "requestState":  <READY | APPROVED | REJECTED> 
    }
 
   При `update_manager_comment = false` текущее значение комментария руководителя сохраняется.
