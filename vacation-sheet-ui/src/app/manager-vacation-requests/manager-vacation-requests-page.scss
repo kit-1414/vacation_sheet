@@ -27,6 +27,13 @@ h1 {
   letter-spacing: -0.04em;
 }
 
+.page-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
 .review-workspace {
   display: grid;
   grid-template-columns: minmax(18rem, 21rem) minmax(0, 1fr);
@@ -114,5 +121,9 @@ mat-spinner {
     align-items: start;
     flex-direction: column;
     gap: 0.75rem;
+  }
+
+  .page-actions {
+    justify-content: flex-start;
   }
 }

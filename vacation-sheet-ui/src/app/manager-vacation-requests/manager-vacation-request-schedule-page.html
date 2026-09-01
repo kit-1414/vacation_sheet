@@ -1,0 +1,105 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Рассмотрение заявлений</p>
+    <h1>График отпусков</h1>
+  </div>
+  <a mat-button routerLink="/profile/vacation-requests/review">Вернуться к списку</a>
+</header>
+
+<section class="schedule-controls" aria-label="Настройки графика">
+  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+    <mat-label>Дней в каждую сторону</mat-label>
+    <input
+      matInput
+      type="number"
+      min="1"
+      max="366"
+      [value]="daysAround()"
+      (input)="changeDays($any($event.target).value)"
+    />
+  </mat-form-field>
+  <div class="legend" aria-label="Легенда состояний">
+    <span><i data-state="READY"></i>Готово</span>
+    <span><i data-state="APPROVED"></i>Одобрено</span>
+    <span><i data-state="REJECTED"></i>Отклонено</span>
+  </div>
+</section>
+
+@if (invalidDays()) {
+  <p class="validation-error">Укажите целое число от 1 до 366.</p>
+}
+
+@if (store.loading()) {
+  <mat-spinner diameter="40" aria-label="Загрузка графика"></mat-spinner>
+} @else if (store.error(); as error) {
+  <p class="error">{{ error }}</p>
+} @else if (rows().length) {
+  <div class="schedule-scroll" #timelineScroll>
+    <div
+      class="schedule-table"
+      [style.--day-count]="calendar().length"
+      [style.width.px]="scheduleWidth()"
+    >
+      <div class="schedule-row month-row">
+        <div class="employee-cell header-cell">Сотрудник</div>
+        <div class="calendar-grid month-grid">
+          @for (month of months(); track month.key) {
+            <div
+              class="month-cell"
+              [style.grid-column]="month.startColumn + ' / span ' + month.span"
+            >
+              {{ month.label }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="schedule-row day-header-row">
+        <div class="employee-cell header-cell">Email / ФИО</div>
+        <div class="calendar-grid days-grid">
+          @for (day of calendar(); track day.date) {
+            <div class="day-header" [class.weekend]="day.isWeekend" [class.today]="day.isToday">
+              <span>{{ day.weekday }}</span
+              ><strong>{{ day.dayNumber }}</strong>
+            </div>
+          }
+        </div>
+      </div>
+
+      @for (row of rows(); track row.author.id) {
+        <div class="schedule-row employee-row" [style.--track-count]="row.trackCount">
+          <div class="employee-cell">
+            <strong>{{ row.author.email }}</strong>
+            <span>{{ row.author.firstName || '' }} {{ row.author.lastName || '' }}</span>
+          </div>
+          <div class="calendar-grid employee-timeline">
+            @for (day of calendar(); track day.date) {
+              <div
+                class="day-background"
+                [class.weekend]="day.isWeekend"
+                [class.today]="day.isToday"
+              ></div>
+            }
+            @for (bar of row.bars; track bar.item.request.id) {
+              <button
+                type="button"
+                class="vacation-bar"
+                [attr.data-state]="bar.item.request.requestState"
+                [style.grid-column]="bar.startColumn + ' / span ' + bar.span"
+                [style.grid-row]="bar.track + 1"
+                [matTooltip]="barTooltip(bar)"
+                matTooltipClass="schedule-tooltip"
+                (click)="openReview(bar.item, $event)"
+                (contextmenu)="openReview(bar.item, $event)"
+              >
+                {{ bar.item.request.title }}
+              </button>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+} @else {
+  <p class="empty">Нет заявлений для отображения с текущими фильтрами.</p>
+}

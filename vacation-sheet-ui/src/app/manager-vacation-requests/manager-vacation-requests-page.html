@@ -3,7 +3,10 @@
     <p class="eyebrow">Личный кабинет</p>
     <h1>Рассмотрение заявлений</h1>
   </div>
-  <a mat-button routerLink="/profile">К профилю</a>
+  <div class="page-actions">
+    <a mat-flat-button routerLink="/profile/vacation-requests/review/schedule">График отпусков</a>
+    <a mat-button routerLink="/profile">К профилю</a>
+  </div>
 </header>
 
 <div class="review-workspace">
@@ -15,29 +18,33 @@
             <mat-label>Email автора</mat-label>
             <input
               matInput
-              [value]="emailFilter()"
-              (input)="emailFilter.set($any($event.target).value)"
+              [value]="view.emailFilter()"
+              (input)="view.emailFilter.set($any($event.target).value)"
             />
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Имя автора</mat-label>
             <input
               matInput
-              [value]="firstNameFilter()"
-              (input)="firstNameFilter.set($any($event.target).value)"
+              [value]="view.firstNameFilter()"
+              (input)="view.firstNameFilter.set($any($event.target).value)"
             />
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Фамилия автора</mat-label>
             <input
               matInput
-              [value]="lastNameFilter()"
-              (input)="lastNameFilter.set($any($event.target).value)"
+              [value]="view.lastNameFilter()"
+              (input)="view.lastNameFilter.set($any($event.target).value)"
             />
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Состояния</mat-label>
-            <mat-select multiple [value]="stateFilter()" (valueChange)="stateFilter.set($event)">
+            <mat-select
+              multiple
+              [value]="view.stateFilter()"
+              (valueChange)="view.stateFilter.set($event)"
+            >
               <mat-option value="READY">Готово к согласованию</mat-option>
               <mat-option value="APPROVED">Одобрено</mat-option>
               <mat-option value="REJECTED">Отклонено</mat-option>
@@ -48,8 +55,8 @@
             <input
               matInput
               type="date"
-              [value]="periodStart()"
-              (input)="periodStart.set($any($event.target).value)"
+              [value]="view.periodStart()"
+              (input)="view.periodStart.set($any($event.target).value)"
             />
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
@@ -57,16 +64,16 @@
             <input
               matInput
               type="date"
-              [value]="periodEnd()"
-              (input)="periodEnd.set($any($event.target).value)"
+              [value]="view.periodEnd()"
+              (input)="view.periodEnd.set($any($event.target).value)"
             />
           </mat-form-field>
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Проекты</mat-label>
             <mat-select
               multiple
-              [value]="projectFilter()"
-              (valueChange)="projectFilter.set($event)"
+              [value]="view.projectFilter()"
+              (valueChange)="view.projectFilter.set($event)"
             >
               @for (project of projectsStore.projects(); track project.id) {
                 <mat-option [value]="project.id">{{ project.name }}</mat-option>
@@ -74,7 +81,7 @@
             </mat-select>
           </mat-form-field>
         </section>
-        @if (invalidPeriod()) {
+        @if (view.invalidPeriod()) {
           <p class="validation-error">Конец интервала не может быть раньше начала.</p>
         }
       </mat-card-content>
@@ -86,16 +93,16 @@
       <mat-spinner diameter="40" aria-label="Загрузка заявлений"></mat-spinner>
     } @else if (store.error(); as error) {
       <p class="error">{{ error }}</p>
-    } @else if (visibleRequests().length) {
+    } @else if (view.visibleRequests().length) {
       <mat-card appearance="outlined">
         <div class="table-wrap">
           <table
             mat-table
             matSort
             matSortDisableClear
-            [dataSource]="pagedRequests()"
-            [matSortActive]="sortField()"
-            [matSortDirection]="sortDirection()"
+            [dataSource]="view.pagedRequests()"
+            [matSortActive]="view.sortField()"
+            [matSortDirection]="view.sortDirection()"
             (matSortChange)="changeSort($event)"
           >
             <ng-container matColumnDef="title"
@@ -192,10 +199,10 @@
         <mat-paginator
           aria-label="Пагинация заявлений"
           showFirstLastButtons
-          [length]="visibleRequests().length"
-          [pageIndex]="effectivePageIndex()"
-          [pageSize]="pageSize()"
-          [pageSizeOptions]="pageSizeOptions"
+          [length]="view.visibleRequests().length"
+          [pageIndex]="view.effectivePageIndex()"
+          [pageSize]="view.pageSize()"
+          [pageSizeOptions]="view.pageSizeOptions"
           (page)="changePage($event)"
         />
       </mat-card>

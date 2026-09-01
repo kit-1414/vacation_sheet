@@ -1,0 +1,29 @@
+.request-summary {
+  margin-bottom: 1rem;
+}
+
+.request-summary p {
+  margin-block: 0.35rem;
+}
+
+form {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+.warning,
+.error {
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+}
+
+.warning {
+  background: var(--mat-sys-tertiary-container);
+  color: var(--mat-sys-on-tertiary-container);
+}
+
+.error {
+  color: var(--mat-sys-error);
+  background: var(--mat-sys-error-container);
+}

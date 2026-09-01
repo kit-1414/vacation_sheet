@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>{{ data.request.title }}</h2>
+
+<mat-dialog-content>
+  <div class="request-summary">
+    <p><strong>Автор:</strong> {{ data.request.author.email }}</p>
+    <p>
+      <strong>Период:</strong> {{ data.request.startDate | date: 'dd.MM.yyyy' }} –
+      {{ data.request.endDate | date: 'dd.MM.yyyy' }}
+    </p>
+    <p><strong>Комментарий автора:</strong> {{ data.request.userComments || 'Отсутствует' }}</p>
+    <div>
+      <strong>Проекты:</strong>
+      @if (data.authorProjects.length) {
+        {{ projectNames }}
+      } @else {
+        Нет проектов
+      }
+    </div>
+  </div>
+
+  <form id="schedule-review-form" [formGroup]="form" (ngSubmit)="submit()">
+    <mat-form-field appearance="outline">
+      <mat-label>Состояние</mat-label>
+      <mat-select formControlName="requestState">
+        <mat-option value="READY">Готово к согласованию</mat-option>
+        <mat-option value="APPROVED">Одобрено</mat-option>
+        <mat-option value="REJECTED">Отклонено</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Комментарий руководителя</mat-label>
+      <textarea matInput formControlName="managerComment" maxlength="2000" rows="6"></textarea>
+      @if (form.controls.managerComment.hasError('maxlength')) {
+        <mat-error>Не более 2000 символов</mat-error>
+      }
+    </mat-form-field>
+
+    @if (form.controls.requestState.value === 'READY') {
+      <p class="warning">Руководитель и комментарий будут очищены.</p>
+    }
+  </form>
+
+  @if (store.error(); as error) {
+    <p class="error">{{ error }}</p>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Отмена</button>
+  <button
+    mat-flat-button
+    type="submit"
+    form="schedule-review-form"
+    [disabled]="form.invalid || store.saving()"
+  >
+    Сохранить
+  </button>
+</mat-dialog-actions>
