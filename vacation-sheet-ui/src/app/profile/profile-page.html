@@ -3,7 +3,14 @@
     <p class="eyebrow">Профиль</p>
     <h1>Личный кабинет</h1>
   </div>
-  <a mat-flat-button routerLink="/profile/vacation-requests">Заявления на отпуск</a>
+  <div class="page-actions">
+    <a mat-flat-button routerLink="/profile/vacation-requests">Заявления на отпуск</a>
+    @if (auth.canReviewVacationRequests()) {
+      <a mat-stroked-button routerLink="/profile/vacation-requests/review">
+        Рассмотрение заявлений
+      </a>
+    }
+  </div>
 </header>
 
 @if (auth.user(); as user) {

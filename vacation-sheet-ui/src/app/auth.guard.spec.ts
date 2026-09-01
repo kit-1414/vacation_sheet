@@ -7,12 +7,13 @@ import {
   provideRouter,
 } from '@angular/router';
 import { Observable, firstValueFrom, of } from 'rxjs';
+import { CanActivateFn } from '@angular/router';
 
 import { AuthStore, CurrentUser, UserRole } from './auth.store';
-import { userGuard } from './auth.guard';
+import { managerGuard, userGuard } from './auth.guard';
 
 describe('userGuard', () => {
-  async function runGuard(roles: UserRole[]): Promise<boolean | UrlTree> {
+  async function runGuard(guard: CanActivateFn, roles: UserRole[]): Promise<boolean | UrlTree> {
     const user: CurrentUser = {
       id: 1,
       email: 'user@example.com',
@@ -31,7 +32,7 @@ describe('userGuard', () => {
       ],
     });
     const result = TestBed.runInInjectionContext(() =>
-      userGuard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
+      guard({} as ActivatedRouteSnapshot, {} as RouterStateSnapshot),
     );
     return firstValueFrom(result as Observable<boolean | UrlTree>);
   }
@@ -39,15 +40,19 @@ describe('userGuard', () => {
   afterEach(() => TestBed.resetTestingModule());
 
   it('allows users to edit vacation requests', async () => {
-    expect(await runGuard(['USER'])).toBe(true);
+    expect(await runGuard(userGuard, ['USER'])).toBe(true);
   });
 
   it('redirects inactive users to the vacation request list', async () => {
-    const result = await runGuard(['NOBODY']);
+    const result = await runGuard(userGuard, ['NOBODY']);
 
     expect(result).toBeInstanceOf(UrlTree);
     expect(TestBed.inject(Router).serializeUrl(result as UrlTree)).toBe(
       '/profile/vacation-requests',
     );
+  });
+
+  it('allows managers to open vacation request reviews', async () => {
+    expect(await runGuard(managerGuard, ['MANAGER'])).toBe(true);
   });
 });

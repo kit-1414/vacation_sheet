@@ -67,6 +67,10 @@ export class AuthStore {
     return this.canAdminister() || this.hasRole('USER');
   }
 
+  canReviewVacationRequests(): boolean {
+    return this.canAdminister() || this.hasRole('MANAGER');
+  }
+
   logout(): void {
     this.http.post<void>('/api/auth/logout', {}).subscribe(() => this.user.set(null));
   }

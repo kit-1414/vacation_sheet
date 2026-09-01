@@ -9,7 +9,9 @@ describe('AuthStore', () => {
   let http: HttpTestingController;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({ providers: [provideHttpClient(), provideHttpClientTesting()] });
+    TestBed.configureTestingModule({
+      providers: [provideHttpClient(), provideHttpClientTesting()],
+    });
     store = TestBed.inject(AuthStore);
     http = TestBed.inject(HttpTestingController);
   });
@@ -34,6 +36,7 @@ describe('AuthStore', () => {
     expect(store.canAdminister()).toBe(true);
     expect(store.canManageRelations()).toBe(true);
     expect(store.canManageVacationRequests()).toBe(true);
+    expect(store.canReviewVacationRequests()).toBe(true);
   });
 
   it('allows managers to manage relations but not administer', () => {
@@ -53,5 +56,6 @@ describe('AuthStore', () => {
     expect(store.canAdminister()).toBe(false);
     expect(store.canManageRelations()).toBe(true);
     expect(store.canManageVacationRequests()).toBe(false);
+    expect(store.canReviewVacationRequests()).toBe(true);
   });
 });

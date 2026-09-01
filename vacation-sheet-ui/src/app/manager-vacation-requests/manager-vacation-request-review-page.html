@@ -1,0 +1,115 @@
+<header class="page-header">
+  <div>
+    <p class="eyebrow">Рассмотрение заявлений</p>
+    <h1>Заявление с комментарием</h1>
+  </div>
+  <a mat-button routerLink="/profile/vacation-requests/review">К списку заявлений</a>
+</header>
+
+@if (loading()) {
+  <mat-spinner diameter="40" aria-label="Загрузка заявления"></mat-spinner>
+} @else if (item(); as item) {
+  <div class="review-layout">
+    <mat-card appearance="outlined">
+      <mat-card-header>
+        <mat-card-title>{{ item.request.title }}</mat-card-title>
+        <mat-card-subtitle>{{ item.request.author.email }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <dl>
+          <div>
+            <dt>Имя автора</dt>
+            <dd>{{ item.request.author.firstName || 'Не указано' }}</dd>
+          </div>
+          <div>
+            <dt>Фамилия автора</dt>
+            <dd>{{ item.request.author.lastName || 'Не указана' }}</dd>
+          </div>
+          <div>
+            <dt>Создано</dt>
+            <dd>{{ (item.request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd>
+          </div>
+          <div>
+            <dt>Изменено</dt>
+            <dd>{{ (item.request.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd>
+          </div>
+          <div>
+            <dt>Начало отпуска</dt>
+            <dd>{{ dateLabel(item.request.startDate) }}</dd>
+          </div>
+          <div>
+            <dt>Завершение отпуска</dt>
+            <dd>{{ dateLabel(item.request.endDate) }}</dd>
+          </div>
+          <div>
+            <dt>Тип отпуска</dt>
+            <dd>{{ typeLabel(item.request.vacationType) }}</dd>
+          </div>
+          <div class="wide">
+            <dt>Комментарий автора</dt>
+            <dd class="long-text">{{ item.request.userComments || 'Комментарий отсутствует' }}</dd>
+          </div>
+        </dl>
+
+        <section class="projects" aria-labelledby="author-projects-title">
+          <h2 id="author-projects-title">Проекты автора</h2>
+          @if (item.authorProjects.length) {
+            <ul>
+              @for (project of item.authorProjects; track project.id) {
+                <li>{{ project.name }}</li>
+              }
+            </ul>
+          } @else {
+            <p>Автор не состоит в проектах.</p>
+          }
+        </section>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card appearance="outlined" class="decision-card">
+      <mat-card-header><mat-card-title>Решение руководителя</mat-card-title></mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Состояние</mat-label>
+            <mat-select formControlName="requestState">
+              <mat-option value="READY">Готово к согласованию</mat-option>
+              <mat-option value="APPROVED">Одобрено</mat-option>
+              <mat-option value="REJECTED">Отклонено</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Комментарий руководителя</mat-label>
+            <textarea
+              matInput
+              formControlName="managerComment"
+              maxlength="2000"
+              rows="9"
+            ></textarea>
+            @if (form.controls.managerComment.hasError('maxlength')) {
+              <mat-error>Не более 2000 символов</mat-error>
+            }
+          </mat-form-field>
+
+          @if (form.controls.requestState.value === 'READY') {
+            <p class="warning">
+              При сохранении состояния «Готово» руководитель и комментарий будут очищены.
+            </p>
+          }
+
+          <div class="form-actions">
+            <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">
+              Сохранить
+            </button>
+            <a mat-button routerLink="/profile/vacation-requests/review">Отмена</a>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
+}
+
+@if (store.error(); as error) {
+  <p class="error">{{ error }}</p>
+}
