@@ -6,177 +6,189 @@
   <a mat-button routerLink="/profile">К профилю</a>
 </header>
 
-<mat-card appearance="outlined" class="filters-card">
-  <mat-card-content>
-    <section class="filters" aria-label="Фильтры заявлений">
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Email автора</mat-label>
-        <input
-          matInput
-          [value]="emailFilter()"
-          (input)="emailFilter.set($any($event.target).value)"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Имя автора</mat-label>
-        <input
-          matInput
-          [value]="firstNameFilter()"
-          (input)="firstNameFilter.set($any($event.target).value)"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Фамилия автора</mat-label>
-        <input
-          matInput
-          [value]="lastNameFilter()"
-          (input)="lastNameFilter.set($any($event.target).value)"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Состояния</mat-label>
-        <mat-select multiple [value]="stateFilter()" (valueChange)="stateFilter.set($event)">
-          <mat-option value="READY">Готово к согласованию</mat-option>
-          <mat-option value="APPROVED">Одобрено</mat-option>
-          <mat-option value="REJECTED">Отклонено</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Отпуск попадает в период с</mat-label>
-        <input
-          matInput
-          type="date"
-          [value]="periodStart()"
-          (input)="periodStart.set($any($event.target).value)"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Отпуск попадает в период по</mat-label>
-        <input
-          matInput
-          type="date"
-          [value]="periodEnd()"
-          (input)="periodEnd.set($any($event.target).value)"
-        />
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Проекты</mat-label>
-        <mat-select multiple [value]="projectFilter()" (valueChange)="projectFilter.set($event)">
-          @for (project of projectsStore.projects(); track project.id) {
-            <mat-option [value]="project.id">{{ project.name }}</mat-option>
-          }
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Сортировать по</mat-label>
-        <mat-select [value]="sortField()" (valueChange)="sortField.set($event)">
-          <mat-option value="email">Email</mat-option>
-          <mat-option value="firstName">Имени</mat-option>
-          <mat-option value="lastName">Фамилии</mat-option>
-          <mat-option value="ctime">Времени создания</mat-option>
-          <mat-option value="startDate">Дате начала</mat-option>
-          <mat-option value="endDate">Дате завершения</mat-option>
-          <mat-option value="requestState">Состоянию</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field appearance="outline" subscriptSizing="dynamic">
-        <mat-label>Направление</mat-label>
-        <mat-select [value]="sortDirection()" (valueChange)="sortDirection.set($event)">
-          <mat-option value="asc">По возрастанию</mat-option>
-          <mat-option value="desc">По убыванию</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </section>
-    @if (invalidPeriod()) {
-      <p class="validation-error">Конец интервала не может быть раньше начала.</p>
-    }
-  </mat-card-content>
-</mat-card>
+<div class="review-workspace">
+  <aside class="filters-pane">
+    <mat-card appearance="outlined" class="filters-card">
+      <mat-card-content>
+        <section class="filters" aria-label="Фильтры заявлений">
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Email автора</mat-label>
+            <input
+              matInput
+              [value]="emailFilter()"
+              (input)="emailFilter.set($any($event.target).value)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Имя автора</mat-label>
+            <input
+              matInput
+              [value]="firstNameFilter()"
+              (input)="firstNameFilter.set($any($event.target).value)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Фамилия автора</mat-label>
+            <input
+              matInput
+              [value]="lastNameFilter()"
+              (input)="lastNameFilter.set($any($event.target).value)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Состояния</mat-label>
+            <mat-select multiple [value]="stateFilter()" (valueChange)="stateFilter.set($event)">
+              <mat-option value="READY">Готово к согласованию</mat-option>
+              <mat-option value="APPROVED">Одобрено</mat-option>
+              <mat-option value="REJECTED">Отклонено</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Отпуск попадает в период с</mat-label>
+            <input
+              matInput
+              type="date"
+              [value]="periodStart()"
+              (input)="periodStart.set($any($event.target).value)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Отпуск попадает в период по</mat-label>
+            <input
+              matInput
+              type="date"
+              [value]="periodEnd()"
+              (input)="periodEnd.set($any($event.target).value)"
+            />
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Проекты</mat-label>
+            <mat-select
+              multiple
+              [value]="projectFilter()"
+              (valueChange)="projectFilter.set($event)"
+            >
+              @for (project of projectsStore.projects(); track project.id) {
+                <mat-option [value]="project.id">{{ project.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Сортировать по</mat-label>
+            <mat-select [value]="sortField()" (valueChange)="sortField.set($event)">
+              <mat-option value="email">Email</mat-option>
+              <mat-option value="firstName">Имени</mat-option>
+              <mat-option value="lastName">Фамилии</mat-option>
+              <mat-option value="ctime">Времени создания</mat-option>
+              <mat-option value="startDate">Дате начала</mat-option>
+              <mat-option value="endDate">Дате завершения</mat-option>
+              <mat-option value="requestState">Состоянию</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline" subscriptSizing="dynamic">
+            <mat-label>Направление</mat-label>
+            <mat-select [value]="sortDirection()" (valueChange)="sortDirection.set($event)">
+              <mat-option value="asc">По возрастанию</mat-option>
+              <mat-option value="desc">По убыванию</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </section>
+        @if (invalidPeriod()) {
+          <p class="validation-error">Конец интервала не может быть раньше начала.</p>
+        }
+      </mat-card-content>
+    </mat-card>
+  </aside>
 
-@if (store.loading()) {
-  <mat-spinner diameter="40" aria-label="Загрузка заявлений"></mat-spinner>
-} @else if (store.error(); as error) {
-  <p class="error">{{ error }}</p>
-} @else if (visibleRequests().length) {
-  <mat-card appearance="outlined">
-    <div class="table-wrap">
-      <table mat-table [dataSource]="visibleRequests()">
-        <ng-container matColumnDef="title"
-          ><th mat-header-cell *matHeaderCellDef>Заголовок</th>
-          <td mat-cell *matCellDef="let item">{{ item.request.title }}</td></ng-container
-        >
-        <ng-container matColumnDef="author"
-          ><th mat-header-cell *matHeaderCellDef>Автор</th>
-          <td mat-cell *matCellDef="let item">
-            <strong>{{ item.request.author.email }}</strong
-            ><br />{{ item.request.author.firstName || 'Без имени' }}
-            {{ item.request.author.lastName || '' }}
-          </td></ng-container
-        >
-        <ng-container matColumnDef="projects"
-          ><th mat-header-cell *matHeaderCellDef>Проекты</th>
-          <td mat-cell *matCellDef="let item">{{ item.authorProjects.length }}</td></ng-container
-        >
-        <ng-container matColumnDef="ctime"
-          ><th mat-header-cell *matHeaderCellDef>Создано</th>
-          <td mat-cell *matCellDef="let item">
-            {{ (item.request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}
-          </td></ng-container
-        >
-        <ng-container matColumnDef="dates"
-          ><th mat-header-cell *matHeaderCellDef>Период отпуска</th>
-          <td mat-cell *matCellDef="let item">
-            {{ dateLabel(item.request.startDate) }} – {{ dateLabel(item.request.endDate) }}
-          </td></ng-container
-        >
-        <ng-container matColumnDef="requestState"
-          ><th mat-header-cell *matHeaderCellDef>Состояние</th>
-          <td mat-cell *matCellDef="let item">
-            {{ stateLabel(item.request.requestState) }}
-          </td></ng-container
-        >
-        <ng-container matColumnDef="vacationType"
-          ><th mat-header-cell *matHeaderCellDef>Тип</th>
-          <td mat-cell *matCellDef="let item">
-            {{ typeLabel(item.request.vacationType) }}
-          </td></ng-container
-        >
-        <ng-container matColumnDef="quickReview">
-          <th mat-header-cell *matHeaderCellDef>Сменить состояние</th>
-          <td mat-cell *matCellDef="let item">
-            <div class="quick-review">
-              <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                <mat-select
-                  [value]="selectedState(item)"
-                  (valueChange)="setSelectedState(item.request.id, $event)"
-                >
-                  <mat-option value="READY">Готово</mat-option>
-                  <mat-option value="APPROVED">Одобрено</mat-option>
-                  <mat-option value="REJECTED">Отклонено</mat-option>
-                </mat-select>
-              </mat-form-field>
-              <button
-                mat-button
-                type="button"
-                [disabled]="store.saving()"
-                (click)="saveState(item)"
-              >
-                Сохранить
-              </button>
-            </div>
-          </td>
-        </ng-container>
-        <ng-container matColumnDef="review"
-          ><th mat-header-cell *matHeaderCellDef>Комментарий</th>
-          <td mat-cell *matCellDef="let item">
-            <a mat-button [routerLink]="[item.request.id]">Рассмотреть</a>
-          </td></ng-container
-        >
-        <tr mat-header-row *matHeaderRowDef="columns"></tr>
-        <tr mat-row *matRowDef="let row; columns: columns"></tr>
-      </table>
-    </div>
-  </mat-card>
-} @else {
-  <p class="empty">Заявлений с выбранными параметрами нет.</p>
-}
+  <section class="requests-pane" aria-label="Список заявлений">
+    @if (store.loading()) {
+      <mat-spinner diameter="40" aria-label="Загрузка заявлений"></mat-spinner>
+    } @else if (store.error(); as error) {
+      <p class="error">{{ error }}</p>
+    } @else if (visibleRequests().length) {
+      <mat-card appearance="outlined">
+        <div class="table-wrap">
+          <table mat-table [dataSource]="visibleRequests()">
+            <ng-container matColumnDef="title"
+              ><th mat-header-cell *matHeaderCellDef>Заголовок</th>
+              <td mat-cell *matCellDef="let item">{{ item.request.title }}</td></ng-container
+            >
+            <ng-container matColumnDef="author"
+              ><th mat-header-cell *matHeaderCellDef>Автор</th>
+              <td mat-cell *matCellDef="let item">
+                <strong>{{ item.request.author.email }}</strong
+                ><br />{{ item.request.author.firstName || 'Без имени' }}
+                {{ item.request.author.lastName || '' }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="projects"
+              ><th mat-header-cell *matHeaderCellDef>Проекты</th>
+              <td mat-cell *matCellDef="let item">
+                {{ item.authorProjects.length }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="ctime"
+              ><th mat-header-cell *matHeaderCellDef>Создано</th>
+              <td mat-cell *matCellDef="let item">
+                {{ (item.request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="dates"
+              ><th mat-header-cell *matHeaderCellDef>Период отпуска</th>
+              <td mat-cell *matCellDef="let item">
+                {{ dateLabel(item.request.startDate) }} – {{ dateLabel(item.request.endDate) }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="requestState"
+              ><th mat-header-cell *matHeaderCellDef>Состояние</th>
+              <td mat-cell *matCellDef="let item">
+                {{ stateLabel(item.request.requestState) }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="vacationType"
+              ><th mat-header-cell *matHeaderCellDef>Тип</th>
+              <td mat-cell *matCellDef="let item">
+                {{ typeLabel(item.request.vacationType) }}
+              </td></ng-container
+            >
+            <ng-container matColumnDef="quickReview">
+              <th mat-header-cell *matHeaderCellDef>Сменить состояние</th>
+              <td mat-cell *matCellDef="let item">
+                <div class="quick-review">
+                  <mat-form-field appearance="outline" subscriptSizing="dynamic">
+                    <mat-select
+                      [value]="selectedState(item)"
+                      (valueChange)="setSelectedState(item.request.id, $event)"
+                    >
+                      <mat-option value="READY">Готово</mat-option>
+                      <mat-option value="APPROVED">Одобрено</mat-option>
+                      <mat-option value="REJECTED">Отклонено</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <button
+                    mat-button
+                    type="button"
+                    [disabled]="store.saving()"
+                    (click)="saveState(item)"
+                  >
+                    Сохранить
+                  </button>
+                </div>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="review"
+              ><th mat-header-cell *matHeaderCellDef>Комментарий</th>
+              <td mat-cell *matCellDef="let item">
+                <a mat-button [routerLink]="[item.request.id]">Рассмотреть</a>
+              </td></ng-container
+            >
+            <tr mat-header-row *matHeaderRowDef="columns"></tr>
+            <tr mat-row *matRowDef="let row; columns: columns"></tr>
+          </table>
+        </div>
+      </mat-card>
+    } @else {
+      <p class="empty">Заявлений с выбранными параметрами нет.</p>
+    }
+  </section>
+</div>
