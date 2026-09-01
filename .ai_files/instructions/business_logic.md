@@ -139,11 +139,11 @@
     "requestState":  <READY | APPROVED | REJECTED> 
    }
 
-  При `update_manager_comment = false` текущее значение комментария руководителя сохраняется.
-  При `update_manager_comment = true` комментарий руководителя обновляется значением `manager_comment` из запроса.
-  Значение `manager_comment = NULL` при `update_manager_comment = true` очищает комментарий руководителя.
+  При `updateManagerComment = false` текущее значение комментария руководителя сохраняется.
+  При `updateManagerComment = true` комментарий руководителя обновляется значением `managerComment` из запроса.
+  Значение `managerComment = NULL` при `updateManagerComment = true` очищает комментарий руководителя.
   При переводе заявления в состояние READY руководитель и его комментарий очищаются независимо от значений
-  `manager_comment` и `update_manager_comment`.
+  `managerComment` и `updateManagerComment`.
 
   Метод получения заявления на рассмотрение по ID:
   - получает `vacation_request_id` в path;
