@@ -43,12 +43,22 @@ class VacationRequestServiceTest {
 	private val author = UserAccountEntity("user@example.com", "Test", "User", id = 1L)
 
 	@Test
-	fun `find by id rejects access to another user's request`() {
-		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns false
-		every { vacationRequestRepository.existsById(10L) } returns true
+	fun `find by id returns another user's request`() {
+		val anotherAuthor = UserAccountEntity("another@example.com", "Another", "User", id = 2L)
+		every { vacationRequestRepository.findByIdWithUsers(10L) } returns
+			entity(VacationRequestState.READY, anotherAuthor)
 
-		assertFailsWith<VacationRequestAccessDeniedException> { service.findById(10L, currentUser()) }
-		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsers(any()) }
+		val response = service.findById(10L)
+
+		assertEquals(2L, response.author.id)
+		verify(exactly = 0) { vacationRequestRepository.existsByIdAndAuthorId(any(), any()) }
+	}
+
+	@Test
+	fun `find by id rejects missing request`() {
+		every { vacationRequestRepository.findByIdWithUsers(10L) } returns null
+
+		assertFailsWith<ResourceNotFoundException> { service.findById(10L) }
 	}
 
 	@Test
@@ -77,6 +87,18 @@ class VacationRequestServiceTest {
 	}
 
 	@Test
+	fun `update rejects another user's request`() {
+		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns false
+		every { vacationRequestRepository.existsById(10L) } returns true
+
+		assertFailsWith<VacationRequestAccessDeniedException> {
+			service.update(10L, currentUser(), request(VacationRequestState.READY))
+		}
+		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsers(any()) }
+		verify(exactly = 0) { vacationRequestRepository.saveAndFlush(any()) }
+	}
+
+	@Test
 	fun `create rejects manager-only state`() {
 		assertFailsWith<InvalidVacationRequestException> {
 			service.create( request(VacationRequestState.APPROVED), currentUser())
@@ -94,6 +116,16 @@ class VacationRequestServiceTest {
 		service.delete(10L, currentUser())
 
 		verify(exactly = 1) { vacationRequestRepository.delete(entity) }
+	}
+
+	@Test
+	fun `delete rejects another user's request`() {
+		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns false
+		every { vacationRequestRepository.existsById(10L) } returns true
+
+		assertFailsWith<VacationRequestAccessDeniedException> { service.delete(10L, currentUser()) }
+		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsers(any()) }
+		verify(exactly = 0) { vacationRequestRepository.delete(any()) }
 	}
 
 	@Test
@@ -206,14 +238,17 @@ class VacationRequestServiceTest {
 		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsersForUpdate(any()) }
 	}
 
-	private fun entity(state: VacationRequestState) = VacationRequestEntity(
+	private fun entity(
+		state: VacationRequestState,
+		requestAuthor: UserAccountEntity = author,
+	) = VacationRequestEntity(
 		title = "Old",
 		requestState = state,
 		vacationType = VacationType.PAYMENT_VACATION,
 		startDate = LocalDate.of(2026, 9, 1),
 		endDate = LocalDate.of(2026, 9, 14),
 		userComments = null,
-		author = author,
+		author = requestAuthor,
 		id = 10L,
 	)
 

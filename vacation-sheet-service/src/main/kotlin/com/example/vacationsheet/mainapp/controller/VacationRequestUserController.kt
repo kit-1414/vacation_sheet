@@ -32,10 +32,10 @@ class VacationRequestUserController(
 	fun findAll(): List<VacationRequestDto> =
 		vacationRequestService.getRequestsByOwnerId(currentUserService.getCurrentUser().id)
 
-	@Operation(summary = "Get the current user's vacation request")
+	@Operation(summary = "Get a vacation request")
 	@GetMapping("/{id}")
 	fun findById(@PathVariable id: Long): VacationRequestDto =
-		vacationRequestService.findById(id, currentUserService.getCurrentUser())
+		vacationRequestService.findById(id)
 
 	@Operation(summary = "Create a vacation request for the current user")
 	@PostMapping

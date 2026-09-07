@@ -37,10 +37,7 @@ class VacationRequestService(
 		getRequestsByOwnerId(currentUser.id)
 
 	@Transactional(readOnly = true)
-	fun findById(id: Long, currentUser: CurrentUserDto): VacationRequestDto {
-		failIfNotCreator(id, currentUser)
-		return vacationRequestMapper.toDto(getById(id))
-	}
+	fun findById(id: Long): VacationRequestDto = vacationRequestMapper.toDto(getById(id))
 
 	@Transactional
 	fun create(request: VacationRequestRequestDto, currentUser: CurrentUserDto): VacationRequestDto {

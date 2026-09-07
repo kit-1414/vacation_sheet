@@ -107,10 +107,13 @@
   ##### Методы для пользователя
   для методов полтзователя на бэке реализовать отдельные методы
   /user/actions/vacation_request/* - для получения списка заявлений, создания, редактирования, удаления
-  для получения списка у сервиса заявлений должен быть метод - VacationRequestService.getRequestsByOwnerId(id): List<VacationRequest> 
+  для получения списка у сервиса заявлений должен быть метод - VacationRequestService.getRequestsByOwnerId(id): List<VacationRequest>
+  
+  на бэке 
+   - полчучение заявлениями по ID - доступно всем
+   - измемение заявления по ID - (обновление, удаление) нужна доп проверка что 
+     заявлени принадлежит текущему полтзователю.
 
-  на бэке при действиях с заявлениями по ID - получение, обновление, удаление нужна доп проверка что 
-  заявлени принадлежит текущему полтзователю.
   Соотв у сервиса заявлений VacationRequestService должен быть метод проверки авторста заявления
   VacationRequestService.checkIsCreator(requestVacationId, CurrentUserDto): Boolean
   VacationRequestService.failIfNotCreator(requestVacationId, CurrentUserDto) - 

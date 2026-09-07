@@ -151,6 +151,20 @@ class SecurityConfigTest {
 	}
 
 	@Test
+	fun `nobody can open vacation request by id`() {
+		mockMvc.perform(
+			get("/api/user/actions/vacation_request/1")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_NOBODY"))),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `unauthenticated vacation request by id returns 403`() {
+		mockMvc.perform(get("/api/user/actions/vacation_request/1"))
+			.andExpect(status().isForbidden)
+	}
+
+	@Test
 	fun `nobody cannot create vacation request`() {
 		mockMvc.perform(
 			post("/api/user/actions/vacation_request")
