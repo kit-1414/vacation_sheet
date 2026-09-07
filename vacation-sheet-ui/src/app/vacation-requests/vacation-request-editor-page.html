@@ -1,16 +1,26 @@
 <header class="page-header">
   <div>
     <p class="eyebrow">Заявления на отпуск</p>
-    <h1>{{ request() ? 'Редактировать заявление' : 'Добавить заявление' }}</h1>
+    <h1>{{ viewOnly ? 'Просмотреть заявление' : request() ? 'Редактировать заявление' : 'Добавить заявление' }}</h1>
   </div>
-  <a mat-button routerLink="/profile/vacation-requests">К списку заявлений</a>
+  <a mat-button [routerLink]="viewOnly ? '/profile/vacation-requests/review' : '/profile/vacation-requests'">К списку заявлений</a>
 </header>
 
 @if (loading()) {
   <mat-spinner diameter="40" aria-label="Загрузка заявления"></mat-spinner>
-} @else if (editable()) {
+} @else if (!store.error()) {
+  @if (readOnly() && !viewOnly) {
+    <p class="validation-error">Заявление в состоянии «{{ stateLabel(request()!.requestState) }}» нельзя изменить. Данные доступны только для просмотра.</p>
+  }
   <mat-card appearance="outlined">
     <mat-card-content>
+      @if (request(); as item) {
+        <p><strong>Автор:</strong> {{ item.author.email }} · {{ item.author.firstName || 'Имя не указано' }} {{ item.author.lastName || '' }}</p>
+        <p><strong>Создано:</strong> {{ (item.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
+        <p><strong>Изменено:</strong> {{ (item.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
+        <p><strong>Руководитель:</strong> {{ item.manager?.email || 'Не назначен' }}</p>
+        <p><strong>Комментарий руководителя:</strong> {{ item.managerComments || 'Отсутствует' }}</p>
+      }
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="wide">
           <mat-label>Заголовок</mat-label>
@@ -79,10 +89,12 @@
         </mat-form-field>
 
         <div class="form-actions wide">
-          <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">
-            Сохранить
-          </button>
-          <a mat-button routerLink="/profile/vacation-requests">Отмена</a>
+          @if (!readOnly()) {
+            <button mat-flat-button type="submit" [disabled]="form.invalid || store.saving()">
+              Сохранить
+            </button>
+          }
+          <a mat-button [routerLink]="viewOnly ? '/profile/vacation-requests/review' : '/profile/vacation-requests'">{{ readOnly() ? 'Назад' : 'Отмена' }}</a>
         </div>
       </form>
     </mat-card-content>

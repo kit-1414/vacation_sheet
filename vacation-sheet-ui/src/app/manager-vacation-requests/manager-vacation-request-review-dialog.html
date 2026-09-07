@@ -2,12 +2,16 @@
 
 <mat-dialog-content>
   <div class="request-summary">
-    <p><strong>Автор:</strong> {{ data.request.author.email }}</p>
+    <p><strong>Автор:</strong> {{ data.request.author.email }} · {{ data.request.author.firstName || 'Имя не указано' }} {{ data.request.author.lastName || '' }}</p>
+    <p><strong>Создано:</strong> {{ (data.request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
+    <p><strong>Изменено:</strong> {{ (data.request.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
     <p>
       <strong>Период:</strong> {{ data.request.startDate | date: 'dd.MM.yyyy' }} –
       {{ data.request.endDate | date: 'dd.MM.yyyy' }}
     </p>
     <p><strong>Комментарий автора:</strong> {{ data.request.userComments || 'Отсутствует' }}</p>
+    <p><strong>Тип отпуска:</strong> {{ data.request.vacationType === 'PAYMENT_VACATION' ? 'Оплачиваемый отпуск' : 'За свой счёт' }}</p>
+    <p><strong>Текущий руководитель:</strong> {{ data.request.manager?.email || 'Не назначен' }}</p>
     <div>
       <strong>Проекты:</strong>
       @if (data.authorProjects.length) {

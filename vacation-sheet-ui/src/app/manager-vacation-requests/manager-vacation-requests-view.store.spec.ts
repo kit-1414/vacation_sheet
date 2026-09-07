@@ -5,6 +5,8 @@ import { ManagerVacationRequestsStore } from './manager-vacation-requests.store'
 import { ManagerVacationRequestsViewStore } from './manager-vacation-requests-view.store';
 
 describe('ManagerVacationRequestsViewStore', () => {
+  afterEach(() => TestBed.resetTestingModule());
+
   it('keeps filters, sorting and pagination in the root service instance', () => {
     TestBed.configureTestingModule({
       providers: [
@@ -26,5 +28,20 @@ describe('ManagerVacationRequestsViewStore', () => {
     expect(restored.sortDirection()).toBe('asc');
     expect(restored.pageIndex()).toBe(2);
     expect(restored.pageSize()).toBe(50);
+  });
+
+  it('rejects invalid calendar dates in the period filter', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        ManagerVacationRequestsViewStore,
+        { provide: ManagerVacationRequestsStore, useValue: { requests: signal([]) } },
+      ],
+    });
+    const view = TestBed.inject(ManagerVacationRequestsViewStore);
+
+    view.periodStart.set('2026-02-30');
+
+    expect(view.invalidDates()).toBe(true);
+    expect(view.visibleRequests()).toEqual([]);
   });
 });

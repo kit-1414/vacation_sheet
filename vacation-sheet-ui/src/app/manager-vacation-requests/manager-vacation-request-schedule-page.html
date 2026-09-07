@@ -1,6 +1,6 @@
 <header class="page-header">
   <div>
-    <p class="eyebrow">Рассмотрение заявлений</p>
+    <p class="eyebrow">Все заявления на отпуск</p>
     <h1>График отпусков</h1>
   </div>
   <a mat-button routerLink="/profile/vacation-requests/review">Вернуться к списку</a>
@@ -89,8 +89,10 @@
                 [style.grid-row]="bar.track + 1"
                 [matTooltip]="barTooltip(bar)"
                 matTooltipClass="schedule-tooltip"
-                (click)="openReview(bar.item, $event)"
-                (contextmenu)="openReview(bar.item, $event)"
+                [matMenuTriggerFor]="requestActions"
+                #menuTrigger="matMenuTrigger"
+                (click)="selectItem(bar.item)"
+                (contextmenu)="openContextMenu(bar.item, $event, menuTrigger)"
               >
                 {{ bar.item.request.title }}
               </button>
@@ -100,6 +102,16 @@
       }
     </div>
   </div>
+  <mat-menu #requestActions="matMenu">
+    <button mat-menu-item type="button" [disabled]="!auth.canReviewVacationRequests()" (click)="openReview()">
+      Рассмотреть заявление
+    </button>
+    @if (selectedItem(); as item) {
+      <button mat-menu-item type="button" (click)="openDetails()">
+        {{ canEdit(item) ? 'Редактировать' : 'Просмотреть' }}
+      </button>
+    }
+  </mat-menu>
 } @else {
   <p class="empty">Нет заявлений для отображения с текущими фильтрами.</p>
 }

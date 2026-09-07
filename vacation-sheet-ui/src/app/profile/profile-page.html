@@ -4,12 +4,10 @@
     <h1>Личный кабинет</h1>
   </div>
   <div class="page-actions">
-    <a mat-flat-button routerLink="/profile/vacation-requests">Заявления на отпуск</a>
-    @if (auth.canReviewVacationRequests()) {
-      <a mat-stroked-button routerLink="/profile/vacation-requests/review">
-        Рассмотрение заявлений
-      </a>
-    }
+    <a mat-flat-button routerLink="/profile/vacation-requests">Мои заявления на отпуск</a>
+    <a mat-stroked-button routerLink="/profile/vacation-requests/review">
+      Все заявления на отпуск
+    </a>
   </div>
 </header>
 

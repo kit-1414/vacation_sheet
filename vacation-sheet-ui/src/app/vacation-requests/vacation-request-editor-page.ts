@@ -1,12 +1,6 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  ReactiveFormsModule,
-  ValidationErrors,
-  ValidatorFn,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,39 +10,18 @@ import { MatSelectModule } from '@angular/material/select';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AuthStore } from '../auth.store';
+import { dateRangeValidator, strictDateValidator } from './vacation-request-date.validators';
 import {
   VacationRequest,
   VacationRequestPayload,
+  VacationRequestState,
   VacationRequestsStore,
 } from './vacation-requests.store';
-
-export const strictDateValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(control.value as string);
-  if (!match) return { invalidDate: true };
-
-  const year = Number(match[1]);
-  const month = Number(match[2]);
-  const day = Number(match[3]);
-  if (year === 0 || month < 1 || month > 12) return { invalidDate: true };
-
-  const leapYear = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
-  const daysInMonth = [31, leapYear ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  return day >= 1 && day <= daysInMonth[month - 1] ? null : { invalidDate: true };
-};
-
-export const dateRangeValidator: ValidatorFn = (
-  control: AbstractControl,
-): ValidationErrors | null => {
-  const startDate = control.get('startDate')?.value as string | undefined;
-  const endDate = control.get('endDate')?.value as string | undefined;
-  return startDate && endDate && endDate < startDate ? { dateRange: true } : null;
-};
 
 @Component({
   selector: 'app-vacation-request-editor-page',
   imports: [
+    DatePipe,
     MatButtonModule,
     MatCardModule,
     MatFormFieldModule,
@@ -69,15 +42,13 @@ export class VacationRequestEditorPage implements OnInit {
   protected readonly store = inject(VacationRequestsStore);
   protected readonly request = signal<VacationRequest | null>(null);
   protected readonly loading = signal(false);
-  protected readonly editable = signal(true);
+  protected readonly readOnly = signal(false);
+  protected readonly viewOnly = this.route.snapshot.data['viewOnly'] === true;
 
   protected readonly form = this.formBuilder.nonNullable.group(
     {
       title: ['', [Validators.required, Validators.maxLength(50)]],
-      requestState: this.formBuilder.nonNullable.control<VacationRequestPayload['requestState']>(
-        'DRAFT',
-        Validators.required,
-      ),
+      requestState: this.formBuilder.nonNullable.control<VacationRequestState>('DRAFT', Validators.required),
       vacationType: this.formBuilder.nonNullable.control<VacationRequestPayload['vacationType']>(
         'PAYMENT_VACATION',
         Validators.required,
@@ -96,21 +67,12 @@ export class VacationRequestEditorPage implements OnInit {
     const requestId = Number(id);
     if (!Number.isSafeInteger(requestId) || requestId <= 0) {
       this.store.error.set('Некорректный идентификатор заявления');
-      this.editable.set(false);
       return;
     }
 
     this.loading.set(true);
     this.store.loadOne(requestId).subscribe({
       next: (request) => {
-        if (request.requestState !== 'DRAFT' && request.requestState !== 'READY') {
-          this.store.error.set(
-            'Редактировать можно только черновик или готовое к согласованию заявление',
-          );
-          this.editable.set(false);
-          this.loading.set(false);
-          return;
-        }
         this.request.set(request);
         this.form.setValue({
           title: request.title,
@@ -120,19 +82,33 @@ export class VacationRequestEditorPage implements OnInit {
           endDate: request.endDate,
           userComments: request.userComments ?? '',
         });
+        if (
+          this.viewOnly ||
+          request.author.id !== this.auth.user()?.id ||
+          !this.isEditableState(request.requestState)
+        ) {
+          this.readOnly.set(true);
+          this.form.disable();
+        }
         this.loading.set(false);
       },
       error: () => {
         this.store.error.set('Не удалось загрузить заявление');
-        this.editable.set(false);
         this.loading.set(false);
       },
     });
   }
 
   protected submit(): void {
-    if (!this.auth.canManageVacationRequests() || this.form.invalid || this.store.saving()) return;
+    if (
+      this.readOnly() ||
+      !this.auth.canManageVacationRequests() ||
+      this.form.invalid ||
+      this.store.saving()
+    )
+      return;
     const value = this.form.getRawValue();
+    if (!this.isEditableState(value.requestState)) return;
     const payload: VacationRequestPayload = {
       title: value.title,
       requestState: value.requestState,
@@ -148,5 +124,20 @@ export class VacationRequestEditorPage implements OnInit {
     } else {
       this.store.create(payload, onSuccess);
     }
+  }
+
+  protected stateLabel(state: VacationRequestState): string {
+    return {
+      DRAFT: 'Черновик',
+      READY: 'Готово к согласованию',
+      APPROVED: 'Одобрено',
+      REJECTED: 'Отклонено',
+    }[state];
+  }
+
+  private isEditableState(
+    state: VacationRequestState,
+  ): state is VacationRequestPayload['requestState'] {
+    return state === 'DRAFT' || state === 'READY';
   }
 }

@@ -1,6 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 
-import { dateRangeValidator, strictDateValidator } from './vacation-request-editor-page';
+import { dateRangeValidator, strictDateValidator } from './vacation-request-date.validators';
 
 describe('strictDateValidator', () => {
   it.each(['92026-03-01', '2026-13-01', '2026-04-31', '2025-02-29', '0000-01-01'])(

@@ -11,6 +11,7 @@ import { MatSortModule, Sort } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { RouterLink } from '@angular/router';
 
+import { AuthStore } from '../auth.store';
 import { ProjectsStore } from '../projects/projects.store';
 import { VacationRequestState, VacationType } from '../vacation-requests/vacation-requests.store';
 import {
@@ -45,6 +46,7 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected readonly store = inject(ManagerVacationRequestsStore);
   protected readonly view = inject(ManagerVacationRequestsViewStore);
   protected readonly projectsStore = inject(ProjectsStore);
+  protected readonly auth = inject(AuthStore);
   protected readonly pendingStates = signal<Record<number, ManagerVacationRequestState>>({});
   protected readonly columns = [
     'title',
@@ -59,6 +61,7 @@ export class ManagerVacationRequestsPage implements OnInit {
     'vacationType',
     'quickReview',
     'review',
+    'details',
   ];
 
   ngOnInit(): void {
@@ -78,6 +81,7 @@ export class ManagerVacationRequestsPage implements OnInit {
   }
 
   protected saveState(item: ManagerVacationRequest): void {
+    if (!this.auth.canReviewVacationRequests()) return;
     this.store.review(
       item.request.id,
       {
@@ -121,5 +125,13 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected dateLabel(date: string): string {
     const [year, month, day] = date.split('-');
     return `${day}.${month}.${year}`;
+  }
+
+  protected isOwner(item: ManagerVacationRequest): boolean {
+    return this.auth.user()?.id === item.request.author.id;
+  }
+
+  protected canEdit(item: ManagerVacationRequest): boolean {
+    return this.isOwner(item) && this.auth.canManageVacationRequests();
   }
 }

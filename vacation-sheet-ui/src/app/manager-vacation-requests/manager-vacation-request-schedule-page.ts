@@ -1,21 +1,16 @@
-import {
-  AfterViewInit,
-  Component,
-  ElementRef,
-  OnInit,
-  computed,
-  inject,
-  signal,
-  viewChild,
-} from '@angular/core';
+import { Component, ElementRef, OnInit, computed, effect, inject, signal, viewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule, MatMenuTrigger } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 
+import { AuthStore } from '../auth.store';
+import { VacationRequestDetailsDialog } from '../vacation-requests/vacation-request-details-dialog';
+import { VacationRequest } from '../vacation-requests/vacation-requests.store';
 import { VacationRequestState, VacationType } from '../vacation-requests/vacation-requests.store';
 import { ManagerVacationRequestReviewDialog } from './manager-vacation-request-review-dialog';
 import {
@@ -37,6 +32,7 @@ import { ManagerVacationRequestsViewStore } from './manager-vacation-requests-vi
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     MatTooltipModule,
     RouterLink,
@@ -44,12 +40,14 @@ import { ManagerVacationRequestsViewStore } from './manager-vacation-requests-vi
   templateUrl: './manager-vacation-request-schedule-page.html',
   styleUrl: './manager-vacation-request-schedule-page.scss',
 })
-export class ManagerVacationRequestSchedulePage implements OnInit, AfterViewInit {
+export class ManagerVacationRequestSchedulePage implements OnInit {
   private readonly dialog = inject(MatDialog);
   private readonly timelineScroll = viewChild<ElementRef<HTMLDivElement>>('timelineScroll');
+  protected readonly auth = inject(AuthStore);
   protected readonly store = inject(ManagerVacationRequestsStore);
   protected readonly view = inject(ManagerVacationRequestsViewStore);
   protected readonly daysAround = signal(183);
+  protected readonly selectedItem = signal<ManagerVacationRequest | null>(null);
   protected readonly today = todayIso();
   protected readonly invalidDays = computed(
     () => !Number.isInteger(this.daysAround()) || this.daysAround() < 1 || this.daysAround() > 366,
@@ -68,28 +66,63 @@ export class ManagerVacationRequestSchedulePage implements OnInit, AfterViewInit
       calendar[calendar.length - 1].date,
     );
   });
+  private readonly centerTimeline = effect(() => {
+    this.rows();
+    setTimeout(() => this.scrollToToday());
+  });
 
   ngOnInit(): void {
     if (!this.store.requests().length) this.store.load();
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => this.scrollToToday());
-  }
-
   protected changeDays(value: string): void {
     this.daysAround.set(Number(value));
-    setTimeout(() => this.scrollToToday());
   }
 
-  protected openReview(item: ManagerVacationRequest, event: MouseEvent): void {
+  protected selectItem(item: ManagerVacationRequest): void {
+    this.selectedItem.set(item);
+  }
+
+  protected openContextMenu(
+    item: ManagerVacationRequest,
+    event: MouseEvent,
+    trigger: MatMenuTrigger,
+  ): void {
     event.preventDefault();
     event.stopPropagation();
+    this.selectedItem.set(item);
+    trigger.openMenu();
+  }
+
+  protected openReview(): void {
+    const item = this.selectedItem();
+    if (!item || !this.auth.canReviewVacationRequests()) return;
     this.dialog.open(ManagerVacationRequestReviewDialog, {
       data: item,
       width: 'min(42rem, calc(100vw - 2rem))',
       maxWidth: '100vw',
     });
+  }
+
+  protected openDetails(): void {
+    const item = this.selectedItem();
+    if (!item) return;
+    const dialogRef = this.dialog.open(VacationRequestDetailsDialog, {
+      data: { item, editable: this.canEdit(item) },
+      width: 'min(48rem, calc(100vw - 2rem))',
+      maxWidth: '100vw',
+    });
+    dialogRef.afterClosed().subscribe((request: VacationRequest | undefined) => {
+      if (request) this.store.replaceRequest(request);
+    });
+  }
+
+  protected canEdit(item: ManagerVacationRequest): boolean {
+    return (
+      this.auth.canManageVacationRequests() &&
+      this.auth.user()?.id === item.request.author.id &&
+      item.request.requestState === 'READY'
+    );
   }
 
   protected barTooltip(bar: ScheduleBar): string {

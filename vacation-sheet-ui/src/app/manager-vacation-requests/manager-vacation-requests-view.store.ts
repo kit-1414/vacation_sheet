@@ -1,5 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 
+import { isValidIsoDate } from '../vacation-requests/vacation-request-date.validators';
 import { filterManagerVacationRequests } from './manager-vacation-request-filter';
 import {
   ManagerVacationRequest,
@@ -28,12 +29,19 @@ export class ManagerVacationRequestsViewStore {
   readonly pageSize = signal(10);
   readonly pageSizeOptions = [10, 50, 100, 300];
 
-  readonly invalidPeriod = computed(() =>
-    Boolean(this.periodStart() && this.periodEnd() && this.periodStart() > this.periodEnd()),
+  readonly invalidDates = computed(
+    () =>
+      (Boolean(this.periodStart()) && !isValidIsoDate(this.periodStart())) ||
+      (Boolean(this.periodEnd()) && !isValidIsoDate(this.periodEnd())),
+  );
+  readonly invalidPeriod = computed(
+    () =>
+      !this.invalidDates() &&
+      Boolean(this.periodStart() && this.periodEnd() && this.periodStart() > this.periodEnd()),
   );
 
   readonly visibleRequests = computed(() => {
-    if (this.invalidPeriod()) return [];
+    if (this.invalidDates() || this.invalidPeriod()) return [];
     const direction = this.sortDirection() === 'asc' ? 1 : -1;
     return filterManagerVacationRequests(this.requestsStore.requests(), {
       email: this.emailFilter(),

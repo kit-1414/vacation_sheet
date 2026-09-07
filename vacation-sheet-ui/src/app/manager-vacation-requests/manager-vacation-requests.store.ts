@@ -71,6 +71,14 @@ export class ManagerVacationRequestsStore {
     });
   }
 
+  replaceRequest(request: VacationRequest): void {
+    this.requests.update((requests) =>
+      requests.map((item) =>
+        item.request.id === request.id ? { ...item, request } : item,
+      ),
+    );
+  }
+
   private fail(message: string): void {
     this.error.set(message);
     this.loading.set(false);

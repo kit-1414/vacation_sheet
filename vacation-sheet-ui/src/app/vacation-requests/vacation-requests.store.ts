@@ -75,7 +75,11 @@ export class VacationRequestsStore {
     });
   }
 
-  update(id: number, payload: VacationRequestPayload, onSuccess: () => void): void {
+  update(
+    id: number,
+    payload: VacationRequestPayload,
+    onSuccess: (request: VacationRequest) => void,
+  ): void {
     this.saving.set(true);
     this.error.set(null);
     this.http.put<VacationRequest>(`${this.apiUrl}/${id}`, payload).subscribe({
@@ -84,7 +88,7 @@ export class VacationRequestsStore {
           requests.map((item) => (item.id === request.id ? request : item)),
         );
         this.saving.set(false);
-        onSuccess();
+        onSuccess(request);
       },
       error: () => this.fail('Не удалось обновить заявление'),
     });

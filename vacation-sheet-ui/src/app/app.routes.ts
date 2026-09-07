@@ -66,8 +66,15 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'profile/vacation-requests/:id/view',
+    data: { viewOnly: true },
+    loadComponent: () =>
+      import('./vacation-requests/vacation-request-editor-page').then(
+        (module) => module.VacationRequestEditorPage,
+      ),
+  },
+  {
     path: 'profile/vacation-requests/review',
-    canActivate: [managerGuard],
     loadComponent: () =>
       import('./manager-vacation-requests/manager-vacation-requests-page').then(
         (module) => module.ManagerVacationRequestsPage,
@@ -75,7 +82,6 @@ export const routes: Routes = [
   },
   {
     path: 'profile/vacation-requests/review/schedule',
-    canActivate: [managerGuard],
     loadComponent: () =>
       import('./manager-vacation-requests/manager-vacation-request-schedule-page').then(
         (module) => module.ManagerVacationRequestSchedulePage,

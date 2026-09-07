@@ -84,4 +84,13 @@ describe('ManagerVacationRequestsStore', () => {
     expect(store.requests()).toEqual([updated]);
     expect(onSuccess).toHaveBeenCalledWith(updated);
   });
+
+  it('replaces a request while preserving author projects', () => {
+    store.requests.set([item]);
+    const updatedRequest = { ...item.request, title: 'Updated vacation' };
+
+    store.replaceRequest(updatedRequest);
+
+    expect(store.requests()).toEqual([{ ...item, request: updatedRequest }]);
+  });
 });
