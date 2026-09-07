@@ -7,7 +7,10 @@ import jakarta.validation.constraints.Size
 data class ProjectRequestDto(
 	@field:NotBlank
 	@field:Size(max = 100)
-	@field:Pattern(regexp = "^[A-Za-z0-9]+$", message = "Name must contain only alphanumeric characters")
+	@field:Pattern(
+		regexp = "^[\\p{L}\\p{N}._-]+$",
+		message = "Name must contain only letters, numbers, '.', '_' or '-'",
+	)
 	val name: String,
 
 	@field:Size(max = 1000)

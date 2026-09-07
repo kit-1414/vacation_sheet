@@ -34,7 +34,14 @@ export class ProjectEditorPage implements OnInit {
   protected readonly loading = signal(false);
 
   protected readonly form = this.formBuilder.nonNullable.group({
-    name: ['', [Validators.required, Validators.maxLength(100), Validators.pattern(/^[A-Za-z0-9]+$/)]],
+    name: [
+      '',
+      [
+        Validators.required,
+        Validators.maxLength(100),
+        Validators.pattern(/^[\p{L}\p{N}._-]+$/u),
+      ],
+    ],
     description: ['', Validators.maxLength(1000)],
   });
 
