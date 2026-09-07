@@ -43,7 +43,7 @@ describe('ManagerVacationRequestsStore', () => {
   it('loads vacation requests for review', () => {
     store.load();
 
-    const request = http.expectOne('/api/manager/actions/vacation_request');
+    const request = http.expectOne('/api/vacation_request');
     expect(request.request.method).toBe('GET');
     request.flush([item]);
 

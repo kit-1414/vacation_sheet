@@ -28,7 +28,8 @@ export interface ManagerReviewPayload {
 @Injectable({ providedIn: 'root' })
 export class ManagerVacationRequestsStore {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = '/api/manager/actions/vacation_request';
+  private readonly listApiUrl = '/api/vacation_request';
+  private readonly actionApiUrl = '/api/manager/actions/vacation_request';
 
   readonly requests = signal<ManagerVacationRequest[]>([]);
   readonly loading = signal(false);
@@ -38,7 +39,7 @@ export class ManagerVacationRequestsStore {
   load(): void {
     this.loading.set(true);
     this.error.set(null);
-    this.http.get<ManagerVacationRequest[]>(this.apiUrl).subscribe({
+    this.http.get<ManagerVacationRequest[]>(this.listApiUrl).subscribe({
       next: (requests) => {
         this.requests.set(requests);
         this.loading.set(false);
@@ -48,7 +49,7 @@ export class ManagerVacationRequestsStore {
   }
 
   loadOne(id: number): Observable<ManagerVacationRequest> {
-    return this.http.get<ManagerVacationRequest>(`${this.apiUrl}/${id}`);
+    return this.http.get<ManagerVacationRequest>(`${this.actionApiUrl}/${id}`);
   }
 
   review(
@@ -58,7 +59,7 @@ export class ManagerVacationRequestsStore {
   ): void {
     this.saving.set(true);
     this.error.set(null);
-    this.http.put<ManagerVacationRequest>(`${this.apiUrl}/${id}`, payload).subscribe({
+    this.http.put<ManagerVacationRequest>(`${this.actionApiUrl}/${id}`, payload).subscribe({
       next: (request) => {
         this.requests.update((requests) =>
           requests.map((item) => (item.request.id === request.request.id ? request : item)),

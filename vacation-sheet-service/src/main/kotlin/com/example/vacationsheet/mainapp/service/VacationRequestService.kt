@@ -68,8 +68,8 @@ class VacationRequestService(
 	}
 
 	@Transactional(readOnly = true)
-	fun getRequestsForManager(): List<ManagerVacationRequestDto> =
-		toManagerDtos(vacationRequestRepository.findAllByStatesWithUsers(managerStates))
+	fun getAllRequests(): List<ManagerVacationRequestDto> =
+		toManagerDtos(vacationRequestRepository.findAllExceptStateWithUsers(VacationRequestState.DRAFT))
 
 	@Transactional(readOnly = true)
 	fun findByIdForManager(id: Long): ManagerVacationRequestDto {

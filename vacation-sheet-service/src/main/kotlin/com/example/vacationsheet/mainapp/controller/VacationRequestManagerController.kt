@@ -23,10 +23,6 @@ class VacationRequestManagerController(
 	private val vacationRequestService: VacationRequestService,
 	private val currentUserService: CurrentUserService,
 ) {
-	@Operation(summary = "List vacation requests available for review")
-	@GetMapping
-	fun findAll(): List<ManagerVacationRequestDto> = vacationRequestService.getRequestsForManager()
-
 	@Operation(summary = "Get a vacation request available for review")
 	@GetMapping("/{id}")
 	fun findById(@PathVariable id: Long): ManagerVacationRequestDto =

@@ -129,19 +129,17 @@ class VacationRequestServiceTest {
 	}
 
 	@Test
-	fun `manager list includes non-draft requests and author projects`() {
+	fun `all requests list includes non-draft requests and author projects`() {
 		val entity = entity(VacationRequestState.READY)
 		val project = ProjectEntity("Project", null, id = 20L).also { it.members.add(author) }
-		every { vacationRequestRepository.findAllByStatesWithUsers(any()) } returns listOf(entity)
+		every { vacationRequestRepository.findAllExceptStateWithUsers(VacationRequestState.DRAFT) } returns listOf(entity)
 		every { projectRepository.findAllWithMembersByMemberIds(setOf(1L)) } returns listOf(project)
 
-		val response = service.getRequestsForManager()
+		val response = service.getAllRequests()
 
 		assertEquals("Project", response.single().authorProjects.single().name)
 		verify(exactly = 1) {
-			vacationRequestRepository.findAllByStatesWithUsers(
-				setOf(VacationRequestState.READY, VacationRequestState.APPROVED, VacationRequestState.REJECTED),
-			)
+			vacationRequestRepository.findAllExceptStateWithUsers(VacationRequestState.DRAFT)
 		}
 	}
 

@@ -43,6 +43,7 @@ Compose переопределяет JDBC URL, чтобы бэкенд подк�
 - `DELETE /api/projects/{projectId}/users/{userId}`: отвязка пользователя от проекта
 - `PUT /api/projects/{projectId}/managers/{userId}`: назначение руководителя проекта
 - `DELETE /api/projects/{projectId}/managers/{userId}`: удаление руководителя проекта
+- `GET /api/vacation_request`: получение всех заявлений на отпуск, кроме черновиков, с проектами авторов
 - `GET /actuator/health`: health check контейнера
 - `GET /v3/api-docs`: сгенерированное описание API
 - `GET /swagger-ui.html`: страница Swagger UI

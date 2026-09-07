@@ -23,9 +23,11 @@ interface VacationRequestRepository : JpaRepository<VacationRequestEntity, Long>
 
 	@Query(
 		"select request from VacationRequestEntity request join fetch request.author " +
-			"left join fetch request.manager where request.requestState in :states order by request.ctime desc",
+			"left join fetch request.manager where request.requestState <> :excludedState order by request.ctime desc",
 	)
-	fun findAllByStatesWithUsers(@Param("states") states: Set<VacationRequestState>): List<VacationRequestEntity>
+	fun findAllExceptStateWithUsers(
+		@Param("excludedState") excludedState: VacationRequestState,
+	): List<VacationRequestEntity>
 
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	@Query(

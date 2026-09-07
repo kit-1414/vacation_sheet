@@ -4,6 +4,7 @@ import com.example.vacationsheet.mainapp.controller.AuthController
 import com.example.vacationsheet.mainapp.controller.LoginController
 import com.example.vacationsheet.mainapp.controller.ProjectController
 import com.example.vacationsheet.mainapp.controller.UserController
+import com.example.vacationsheet.mainapp.controller.VacationRequestController
 import com.example.vacationsheet.mainapp.controller.VacationRequestUserController
 import com.example.vacationsheet.mainapp.controller.VacationRequestManagerController
 import com.example.vacationsheet.mainapp.dto.CurrentUserDto
@@ -36,6 +37,7 @@ import org.mockito.BDDMockito.given
 		LoginController::class,
 		ProjectController::class,
 		UserController::class,
+		VacationRequestController::class,
 		VacationRequestUserController::class,
 		VacationRequestManagerController::class,
 	],
@@ -191,31 +193,27 @@ class SecurityConfigTest {
 	}
 
 	@Test
-	fun `manager can list vacation requests for review`() {
-		given(vacationRequestService.getRequestsForManager()).willReturn(emptyList())
+	fun `nobody can list all non-draft vacation requests`() {
+		given(vacationRequestService.getAllRequests()).willReturn(emptyList())
 
+		mockMvc.perform(
+			get("/api/vacation_request")
+				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_NOBODY"))),
+		).andExpect(status().isOk)
+	}
+
+	@Test
+	fun `unauthenticated all vacation requests returns 403`() {
+		mockMvc.perform(get("/api/vacation_request"))
+			.andExpect(status().isForbidden)
+	}
+
+	@Test
+	fun `manager vacation request list endpoint is removed`() {
 		mockMvc.perform(
 			get("/api/manager/actions/vacation_request")
 				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_MANAGER"))),
-		).andExpect(status().isOk)
-	}
-
-	@Test
-	fun `admin can list vacation requests for review`() {
-		given(vacationRequestService.getRequestsForManager()).willReturn(emptyList())
-
-		mockMvc.perform(
-			get("/api/manager/actions/vacation_request")
-				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_ADMIN"))),
-		).andExpect(status().isOk)
-	}
-
-	@Test
-	fun `user cannot list vacation requests for review`() {
-		mockMvc.perform(
-			get("/api/manager/actions/vacation_request")
-				.with(oauth2Login().authorities(SimpleGrantedAuthority("ROLE_USER"))),
-		).andExpect(status().isForbidden)
+		).andExpect(status().isNotFound)
 	}
 
 	@Test
