@@ -84,6 +84,21 @@ h1 {
 .schedule-table {
   --employee-width: 16rem;
   --day-width: 2rem;
+
+  position: relative;
+}
+
+.today-marker {
+  position: absolute;
+  z-index: 1;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--employee-width) + var(--today-index) * var(--day-width));
+  width: var(--day-width);
+  border-inline: 2px solid color-mix(in srgb, var(--mat-sys-primary) 55%, transparent);
+  background: color-mix(in srgb, var(--mat-sys-primary-container) 55%, transparent);
+  box-sizing: border-box;
+  pointer-events: none;
 }
 
 .schedule-row {

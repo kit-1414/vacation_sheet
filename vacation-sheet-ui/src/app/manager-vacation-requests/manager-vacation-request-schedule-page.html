@@ -38,8 +38,10 @@
     <div
       class="schedule-table"
       [style.--day-count]="calendar().length"
+      [style.--today-index]="effectiveDays()"
       [style.width.px]="scheduleWidth()"
     >
+      <div class="today-marker" aria-hidden="true"></div>
       <div class="schedule-row month-row">
         <div class="employee-cell header-cell">Сотрудник</div>
         <div class="calendar-grid month-grid">

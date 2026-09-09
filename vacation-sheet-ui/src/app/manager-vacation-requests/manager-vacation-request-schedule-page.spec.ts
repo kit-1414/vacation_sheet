@@ -12,8 +12,10 @@ import {
 import { ManagerVacationRequestsViewStore } from './manager-vacation-requests-view.store';
 
 describe('ManagerVacationRequestSchedulePage', () => {
-  it('allows editing only for an owned ready request', () => {
-    const item: ManagerVacationRequest = {
+  let item: ManagerVacationRequest;
+
+  beforeEach(() => {
+    item = {
       request: {
         id: 10,
         title: 'Vacation',
@@ -45,11 +47,14 @@ describe('ManagerVacationRequestSchedulePage', () => {
         },
         {
           provide: ManagerVacationRequestsStore,
-          useValue: { requests: signal([]), loading: signal(false), error: signal(null), load: vi.fn() },
+          useValue: { requests: signal([item]), loading: signal(false), error: signal(null), load: vi.fn() },
         },
-        { provide: ManagerVacationRequestsViewStore, useValue: { visibleRequests: signal([]) } },
+        { provide: ManagerVacationRequestsViewStore, useValue: { visibleRequests: signal([item]) } },
       ],
     });
+  });
+
+  it('allows editing only for an owned ready request', () => {
     const fixture = TestBed.createComponent(ManagerVacationRequestSchedulePage);
     const component = fixture.componentInstance as unknown as {
       canEdit: (value: ManagerVacationRequest) => boolean;
@@ -65,5 +70,14 @@ describe('ManagerVacationRequestSchedulePage', () => {
         request: { ...item.request, author: { ...item.request.author, id: 2 } },
       }),
     ).toBe(false);
+  });
+
+  it('renders a full-height marker at the current day column', () => {
+    const fixture = TestBed.createComponent(ManagerVacationRequestSchedulePage);
+    fixture.detectChanges();
+    const marker = fixture.nativeElement.querySelector('.today-marker') as HTMLElement | null;
+    const table = fixture.nativeElement.querySelector('.schedule-table') as HTMLElement | null;
+    expect(marker).not.toBeNull();
+    expect(table?.style.getPropertyValue('--today-index')).toBe('183');
   });
 });
