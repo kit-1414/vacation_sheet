@@ -13,6 +13,14 @@
   <aside class="filters-pane">
     <mat-card appearance="outlined" class="filters-card">
       <mat-card-content>
+        <button
+          mat-flat-button
+          type="button"
+          class="current-vacations"
+          (click)="view.showCurrentVacations()"
+        >
+          Текущие отпуска
+        </button>
         <section class="filters" aria-label="Фильтры заявлений">
           <mat-form-field appearance="outline" subscriptSizing="dynamic">
             <mat-label>Email автора</mat-label>

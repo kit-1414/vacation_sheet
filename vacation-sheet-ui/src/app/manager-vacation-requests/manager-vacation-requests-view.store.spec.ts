@@ -44,4 +44,37 @@ describe('ManagerVacationRequestsViewStore', () => {
     expect(view.invalidDates()).toBe(true);
     expect(view.visibleRequests()).toEqual([]);
   });
+
+  it('shows current approved vacations without changing sorting or pagination', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        ManagerVacationRequestsViewStore,
+        { provide: ManagerVacationRequestsStore, useValue: { requests: signal([]) } },
+      ],
+    });
+    const view = TestBed.inject(ManagerVacationRequestsViewStore);
+    view.emailFilter.set('user@example.com');
+    view.firstNameFilter.set('Test');
+    view.lastNameFilter.set('User');
+    view.stateFilter.set(['READY', 'REJECTED']);
+    view.periodStart.set('2026-01-01');
+    view.periodEnd.set('2026-12-31');
+    view.projectFilter.set([1, 2]);
+    view.setSort('lastName', 'asc');
+    view.setPage(3, 50);
+
+    view.showCurrentVacations('2026-09-09');
+
+    expect(view.emailFilter()).toBe('');
+    expect(view.firstNameFilter()).toBe('');
+    expect(view.lastNameFilter()).toBe('');
+    expect(view.stateFilter()).toEqual(['APPROVED']);
+    expect(view.periodStart()).toBe('2026-09-09');
+    expect(view.periodEnd()).toBe('2026-09-09');
+    expect(view.projectFilter()).toEqual([]);
+    expect(view.sortField()).toBe('lastName');
+    expect(view.sortDirection()).toBe('asc');
+    expect(view.pageIndex()).toBe(3);
+    expect(view.pageSize()).toBe(50);
+  });
 });

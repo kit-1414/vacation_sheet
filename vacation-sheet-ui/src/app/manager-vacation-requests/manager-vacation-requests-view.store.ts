@@ -2,6 +2,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { isValidIsoDate } from '../vacation-requests/vacation-request-date.validators';
 import { filterManagerVacationRequests } from './manager-vacation-request-filter';
+import { todayIso } from './manager-vacation-schedule';
 import {
   ManagerVacationRequest,
   ManagerVacationRequestState,
@@ -73,6 +74,16 @@ export class ManagerVacationRequestsViewStore {
   setPage(pageIndex: number, pageSize: number): void {
     this.pageIndex.set(pageIndex);
     this.pageSize.set(pageSize);
+  }
+
+  showCurrentVacations(today = todayIso()): void {
+    this.emailFilter.set('');
+    this.firstNameFilter.set('');
+    this.lastNameFilter.set('');
+    this.stateFilter.set(['APPROVED']);
+    this.periodStart.set(today);
+    this.periodEnd.set(today);
+    this.projectFilter.set([]);
   }
 
   private sortValue(item: ManagerVacationRequest): string {
