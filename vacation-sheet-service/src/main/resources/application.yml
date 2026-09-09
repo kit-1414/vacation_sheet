@@ -6,9 +6,9 @@ spring:
   application:
     name: vacation-sheet-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/vacation_sheet_db
-    username: postgres
-    password: postgres
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/vacation_sheet_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${POSTGRES_PASSWORD:replace-me}
   jpa:
     open-in-view: false
     hibernate:
@@ -20,10 +20,9 @@ spring:
       client:
         registration:
           yandex:
-            client-id: 2e08121a2d624f80b793ead6eeb9a365
-            client-secret: 09e6fc1c4bcd43b69aaa1f427ef31d0f
-#            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-            redirect-uri: "http://localhost:8055/login/oauth2/code/yandex"
+            client-id: ${YANDEX_CLIENT_ID:replace-me}
+            client-secret: ${YANDEX_CLIENT_SECRET:replace-me}
+            redirect-uri: ${YANDEX_REDIRECT_URI:http://localhost:8055/login/oauth2/code/yandex}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_basic
             scope:

@@ -8,7 +8,13 @@
 
 ## Локальный запуск
 
-Укажите Yandex OAuth `client-id` и `client-secret` в `vacation-sheet-service/src/main/resources/application.yml`, затем запустите:
+Создайте локальный файл переменных окружения из шаблона и укажите в нём параметры PostgreSQL и Yandex OAuth:
+
+```shell
+cp .env.example .env
+```
+
+Затем запустите:
 
 ```shell
 docker compose up --build
@@ -18,7 +24,25 @@ docker compose up --build
 
 После входа доступны страницы проектов и пользователей. Проекты можно создавать, редактировать, удалять и связывать с зарегистрированными пользователями.
 
-Для ограничения входа задайте `app.security.allowed-email-domain`. Пустая строка разрешает все домены.
+Для ограничения входа задайте `ALLOWED_EMAIL_DOMAIN` в `.env`. Пустая строка разрешает все домены.
+
+## Публикация и production-запуск
+
+Pull request в ветку `main` запускает проверки и публикует два образа в GitHub Container Registry:
+
+- `ghcr.io/kit-1414/vacation_sheet-service:pr-<номер PR>`
+- `ghcr.io/kit-1414/vacation_sheet-ui:pr-<номер PR>`
+
+На сервере авторизуйтесь в GHCR, подготовьте production-переменные и запустите Compose:
+
+```shell
+docker login ghcr.io -u kit-1414
+cp .env.prod.example .env.prod
+docker compose --env-file .env.prod -f docker-compose-prod.yml pull
+docker compose --env-file .env.prod -f docker-compose-prod.yml up -d
+```
+
+В `.env.prod` установите `IMAGE_TAG=pr-<номер PR>`, публичный HTTPS URL приложения, OAuth-параметры и стойкий пароль PostgreSQL. Файл `.env.prod` исключён из Git.
 
 ## Проверки
 

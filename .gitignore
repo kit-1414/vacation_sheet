@@ -8,3 +8,7 @@ vacation-sheet-service/build/
 vacation-sheet-ui/.angular/
 vacation-sheet-ui/dist/
 vacation-sheet-ui/node_modules/
+# .env
+# .env.*
+# !.env.example
+# !.env.prod.example
