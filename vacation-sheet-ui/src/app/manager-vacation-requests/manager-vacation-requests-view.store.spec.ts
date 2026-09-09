@@ -77,4 +77,37 @@ describe('ManagerVacationRequestsViewStore', () => {
     expect(view.pageIndex()).toBe(3);
     expect(view.pageSize()).toBe(50);
   });
+
+  it('resets all filters without changing sorting or pagination', () => {
+    TestBed.configureTestingModule({
+      providers: [
+        ManagerVacationRequestsViewStore,
+        { provide: ManagerVacationRequestsStore, useValue: { requests: signal([]) } },
+      ],
+    });
+    const view = TestBed.inject(ManagerVacationRequestsViewStore);
+    view.emailFilter.set('user@example.com');
+    view.firstNameFilter.set('Test');
+    view.lastNameFilter.set('User');
+    view.stateFilter.set(['APPROVED']);
+    view.periodStart.set('2026-09-01');
+    view.periodEnd.set('2026-09-30');
+    view.projectFilter.set([1]);
+    view.setSort('email', 'asc');
+    view.setPage(2, 100);
+
+    view.resetFilters();
+
+    expect(view.emailFilter()).toBe('');
+    expect(view.firstNameFilter()).toBe('');
+    expect(view.lastNameFilter()).toBe('');
+    expect(view.stateFilter()).toEqual([]);
+    expect(view.periodStart()).toBe('');
+    expect(view.periodEnd()).toBe('');
+    expect(view.projectFilter()).toEqual([]);
+    expect(view.sortField()).toBe('email');
+    expect(view.sortDirection()).toBe('asc');
+    expect(view.pageIndex()).toBe(2);
+    expect(view.pageSize()).toBe(100);
+  });
 });

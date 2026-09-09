@@ -57,7 +57,12 @@ h1 {
   padding-top: 0.5rem;
 }
 
-.current-vacations {
+.filter-actions {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.filter-actions button {
   width: 100%;
 }
 

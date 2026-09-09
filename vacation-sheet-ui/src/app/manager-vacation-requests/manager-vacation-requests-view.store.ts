@@ -76,14 +76,21 @@ export class ManagerVacationRequestsViewStore {
     this.pageSize.set(pageSize);
   }
 
-  showCurrentVacations(today = todayIso()): void {
+  resetFilters(): void {
     this.emailFilter.set('');
     this.firstNameFilter.set('');
     this.lastNameFilter.set('');
+    this.stateFilter.set([]);
+    this.periodStart.set('');
+    this.periodEnd.set('');
+    this.projectFilter.set([]);
+  }
+
+  showCurrentVacations(today = todayIso()): void {
+    this.resetFilters();
     this.stateFilter.set(['APPROVED']);
     this.periodStart.set(today);
     this.periodEnd.set(today);
-    this.projectFilter.set([]);
   }
 
   private sortValue(item: ManagerVacationRequest): string {
