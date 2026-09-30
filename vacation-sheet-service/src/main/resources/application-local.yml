@@ -1,9 +1,11 @@
   # add to hosts
   # 127.0.0.1 vacation-sheet.local vacation-sheet-serice vacation-sheet-ui
+spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/vacation_sheet_db
     username: postgres
     password: postgres
+
   security:
     oauth2:
       client:
