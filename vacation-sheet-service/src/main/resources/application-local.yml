@@ -1,0 +1,12 @@
+  datasource:
+    url: jdbc:postgresql://localhost:5432/vacation_sheet_db
+    username: postgres
+    password: postgres
+  security:
+    oauth2:
+      client:
+        registration:
+          yandex:
+            client-id: 2e08121a2d624f80b793ead6eeb9a365
+            client-secret: 09e6fc1c4bcd43b69aaa1f427ef31d0f
+            redirect-uri: http://localhost:8055/login/oauth2/code/yandex

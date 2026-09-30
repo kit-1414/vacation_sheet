@@ -36,7 +36,7 @@ spring:
             user-name-attribute: id
 
 server:
-  port: 8055
+  port:  ${APP_PORT_NUM:8055}
 
   forward-headers-strategy: framework
   servlet:
