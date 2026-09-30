@@ -12,7 +12,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - ./docker-deploy/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:Z  # TODO ?
+#      - ./docker-deploy/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:Z  # TODO ?
       - postgres-data:/var/lib/postgresql/data:Z
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
@@ -41,7 +41,8 @@ services:
       APP_FRONT_PORT_NUM: ${APP_FRONT_PORT_NUM:-4200}
       APP_SECURITY_ALLOWED_EMAIL_DOMAIN: ${ALLOWED_EMAIL_DOMAIN:-}
     ports:
-      - ${APP_BACK_PORT_NUM:-8055}:${APP_BACK_PORT_NUM:-8055}
+#      - ${APP_BACK_PORT_NUM:-8055}:${APP_BACK_PORT_NUM:-8055}
+       - 8055:8055
     depends_on:
       postgres:
         condition: service_healthy
