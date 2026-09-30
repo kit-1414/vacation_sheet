@@ -1,4 +1,4 @@
-name: Verify and publish PR images
+name: Verify and publish release images
 
 on:
   push:
@@ -6,15 +6,34 @@ on:
       - 'release_v_*'
 
 concurrency:
-  group: publish-pr-images-${{ github.event.pull_request.number }}
+  group: publish-release-images-${{ github.ref_name }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 jobs:
+  validate-release-tag:
+    name: Validate release tag
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Ensure tag commit belongs to main
+        shell: bash
+        run: |
+          git fetch --no-tags origin main
+          if ! git merge-base --is-ancestor "${GITHUB_SHA}^{commit}" FETCH_HEAD; then
+            echo "Tag ${GITHUB_REF_NAME} does not point to a commit from main" >&2
+            exit 1
+          fi
+
   backend-tests:
     name: Test backend
+    needs: validate-release-tag
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
@@ -36,6 +55,7 @@ jobs:
 
   frontend-tests:
     name: Test frontend
+    needs: validate-release-tag
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -62,7 +82,6 @@ jobs:
 
   publish-images:
     name: Publish ${{ matrix.image }}
-    if: github.event.pull_request.head.repo.full_name == github.repository
     needs:
       - backend-tests
       - frontend-tests
@@ -99,8 +118,7 @@ jobs:
         with:
           images: ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}
           tags: |
-            type=ref,event=pr
-            type=raw,value=sha-${{ github.event.pull_request.head.sha }}
+            type=raw,value=${{ github.ref_name }}
 
       - name: Build and publish image
         uses: docker/build-push-action@v6
