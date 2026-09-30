@@ -22,7 +22,7 @@ spring:
           yandex:
             client-id: ${YANDEX_CLIENT_ID:replace-me}
             client-secret: ${YANDEX_CLIENT_SECRET:replace-me}
-            redirect-uri: ${YANDEX_REDIRECT_URI:http://localhost:8055/login/oauth2/code/yandex}
+            redirect-uri: ${YANDEX_REDIRECT_URI:http://localhost-zz:8055/login/oauth2/code/yandex}
             authorization-grant-type: authorization_code
             client-authentication-method: client_secret_basic
             scope:

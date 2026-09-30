@@ -37,8 +37,6 @@ services:
       YANDEX_CLIENT_SECRET: ${YANDEX_CLIENT_SECRET:-09e6fc1c4bcd43b69aaa1f427ef31d0f} # TODO ?
       YANDEX_REDIRECT_URI: ${YANDEX_REDIRECT_URI:-http://vacation-sheet.local:8055/login/oauth2/code/yandex}
       APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://vacation-sheet.local:4200}
-      APP_BACK_PORT_NUM: ${APP_BACK_PORT_NUM:-8055}
-      APP_FRONT_PORT_NUM: ${APP_FRONT_PORT_NUM:-4200}
       APP_SECURITY_ALLOWED_EMAIL_DOMAIN: ${ALLOWED_EMAIL_DOMAIN:-}
     ports:
 #      - ${APP_BACK_PORT_NUM:-8055}:${APP_BACK_PORT_NUM:-8055}
