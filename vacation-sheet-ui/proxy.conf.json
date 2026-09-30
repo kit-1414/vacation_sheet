@@ -1,14 +1,14 @@
 {
   "/api": {
-    "target": "http://vacation-sheet.local:8055",
+    "target": "http://localhost:8055",
     "secure": false
   },
   "/oauth2": {
-    "target": "http://vacation-sheet.local:8055",
+    "target": "http://localhost:8055",
     "secure": false
   },
   "/login": {
-    "target": "http://vacation-sheet.local:8055",
+    "target": "http://localhost:8055",
     "secure": false
   }
 }
