@@ -28,7 +28,7 @@ services:
       dockerfile: vacation-sheet-service/Dockerfile
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-vacation_sheet_db}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-vacation_sheet}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-postgres}
 #      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD must be set}
 #      YANDEX_CLIENT_ID: ${YANDEX_CLIENT_ID:?YANDEX_CLIENT_ID must be set}
 #      YANDEX_CLIENT_SECRET: ${YANDEX_CLIENT_SECRET:?YANDEX_CLIENT_SECRET must be set}
