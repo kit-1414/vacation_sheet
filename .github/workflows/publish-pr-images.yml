@@ -1,13 +1,9 @@
 name: Verify and publish PR images
 
 on:
-  pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - reopened
-      - synchronize
+  push:
+    tags:
+      - 'release_v_*'
 
 concurrency:
   group: publish-pr-images-${{ github.event.pull_request.number }}
