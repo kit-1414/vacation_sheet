@@ -28,10 +28,10 @@ docker compose up --build
 
 ## Публикация и production-запуск
 
-Pull request в ветку `main` запускает проверки и публикует два образа в GitHub Container Registry:
+Создание Git-тега с именем по шаблону `release_v_*` запускает проверки и публикует два образа в GitHub Container Registry. Тег должен указывать на коммит из ветки `main`:
 
-- `ghcr.io/kit-1414/vacation_sheet-service:pr-<номер PR>`
-- `ghcr.io/kit-1414/vacation_sheet-ui:pr-<номер PR>`
+- `ghcr.io/kit-1414/vacation_sheet-service:<Git-тег>`
+- `ghcr.io/kit-1414/vacation_sheet-ui:<Git-тег>`
 
 На сервере авторизуйтесь в GHCR, подготовьте production-переменные и запустите Compose:
 
@@ -42,7 +42,7 @@ docker compose --env-file .env.prod -f docker-compose-prod.yml pull
 docker compose --env-file .env.prod -f docker-compose-prod.yml up -d
 ```
 
-В `.env.prod` установите `IMAGE_TAG=pr-<номер PR>`, публичный HTTPS URL приложения, OAuth-параметры и стойкий пароль PostgreSQL. Файл `.env.prod` исключён из Git.
+В `.env.prod` установите `IMAGE_TAG=<Git-тег>`, например `IMAGE_TAG=release_v_1.2.3`, публичный HTTPS URL приложения, OAuth-параметры и стойкий пароль PostgreSQL. Файл `.env.prod` исключён из Git.
 
 ## Проверки
 
