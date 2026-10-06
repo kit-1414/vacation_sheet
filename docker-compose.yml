@@ -22,7 +22,7 @@ services:
 
   vacation-sheet-service:
 #    uncomment image and comment build - one only allow
-#    image: ghcr.io/kit-1414/vacation_sheet-service:release_v_1.2.3
+#    image: ghcr.io/kit-1414/vacation_sheet-service:release_v_1.0
     build:
       context: .
       dockerfile: vacation-sheet-service/Dockerfile
@@ -51,6 +51,8 @@ services:
       retries: 12
 
   vacation-sheet-ui:
+#    uncomment image and comment build - one only allow
+#    image: ghcr.io/kit-1414/vacation-sheet_ui:release_v_1.0
     build:
       context: vacation-sheet-ui
     ports:
