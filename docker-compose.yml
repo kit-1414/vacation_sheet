@@ -35,8 +35,8 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-postgres}  # TODO ?
       YANDEX_CLIENT_ID: ${YANDEX_CLIENT_ID:-2e08121a2d624f80b793ead6eeb9a365} # TODO ?
       YANDEX_CLIENT_SECRET: ${YANDEX_CLIENT_SECRET:-09e6fc1c4bcd43b69aaa1f427ef31d0f} # TODO ?
-      YANDEX_REDIRECT_URI: ${YANDEX_REDIRECT_URI:-http://vacation-sheet.local:8055/login/oauth2/code/yandex}
-      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://vacation-sheet.local:4200}
+      YANDEX_REDIRECT_URI: ${YANDEX_REDIRECT_URI:-http://localhost:8055/login/oauth2/code/yandex}
+      APP_FRONTEND_URL: ${APP_FRONTEND_URL:-http://localhost:4200}
       APP_SECURITY_ALLOWED_EMAIL_DOMAIN: ${ALLOWED_EMAIL_DOMAIN:-}
     ports:
 #      - ${APP_BACK_PORT_NUM:-8055}:${APP_BACK_PORT_NUM:-8055}
