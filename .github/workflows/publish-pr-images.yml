@@ -120,7 +120,9 @@ jobs:
           tags: |
             type=raw,value=${{ github.ref_name }}
 
-      # Example: ghcr.io/kit-1414/vacation_sheet-service:release_v_1.2.3
+      # Examples: 
+      #   - backend  - ghcr.io/kit-1414/vacation_sheet-service:release_v_1.2.3
+      #   - frontend - ghcr.io/kit-1414/vacation_sheet-ui:release_v_1.2.3
       - name: Print image name
         run: echo "Publishing image ghcr.io/${{ github.repository_owner }}/${{ matrix.image }}:${{ github.ref_name }}"
 
