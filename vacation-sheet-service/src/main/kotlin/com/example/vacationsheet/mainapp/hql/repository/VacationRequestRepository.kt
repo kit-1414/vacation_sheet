@@ -2,39 +2,29 @@ package com.example.vacationsheet.mainapp.hql.repository
 
 import com.example.vacationsheet.mainapp.hql.model.VacationRequestEntity
 import com.example.vacationsheet.mainapp.hql.model.VacationRequestState
-import jakarta.persistence.LockModeType
 import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.Lock
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
 
 interface VacationRequestRepository : JpaRepository<VacationRequestEntity, Long> {
 	@Query(
 		"select request from VacationRequestEntity request join fetch request.author " +
-			"left join fetch request.manager where request.author.id = :ownerId order by request.ctime desc",
+			"where request.author.id = :ownerId order by request.ctime desc",
 	)
 	fun findAllByOwnerId(@Param("ownerId") ownerId: Long): List<VacationRequestEntity>
 
 	@Query(
-		"select request from VacationRequestEntity request join fetch request.author " +
-			"left join fetch request.manager where request.id = :id",
+		"select request from VacationRequestEntity request join fetch request.author where request.id = :id",
 	)
 	fun findByIdWithUsers(@Param("id") id: Long): VacationRequestEntity?
 
 	@Query(
 		"select request from VacationRequestEntity request join fetch request.author " +
-			"left join fetch request.manager where request.requestState <> :excludedState order by request.ctime desc",
+			"where request.requestState <> :excludedState order by request.ctime desc",
 	)
 	fun findAllExceptStateWithUsers(
 		@Param("excludedState") excludedState: VacationRequestState,
 	): List<VacationRequestEntity>
-
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	@Query(
-		"select request from VacationRequestEntity request join fetch request.author " +
-			"left join fetch request.manager where request.id = :id",
-	)
-	fun findByIdWithUsersForUpdate(@Param("id") id: Long): VacationRequestEntity?
 
 	fun existsByIdAndAuthorId(id: Long, authorId: Long): Boolean
 }

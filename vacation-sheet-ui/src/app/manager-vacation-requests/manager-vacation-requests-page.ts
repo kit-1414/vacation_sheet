@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -16,7 +16,6 @@ import { ProjectsStore } from '../projects/projects.store';
 import { VacationRequestState, VacationType } from '../vacation-requests/vacation-requests.store';
 import {
   ManagerVacationRequest,
-  ManagerVacationRequestState,
   ManagerVacationRequestsStore,
 } from './manager-vacation-requests.store';
 import {
@@ -47,7 +46,6 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected readonly view = inject(ManagerVacationRequestsViewStore);
   protected readonly projectsStore = inject(ProjectsStore);
   protected readonly auth = inject(AuthStore);
-  protected readonly pendingStates = signal<Record<number, ManagerVacationRequestState>>({});
   protected readonly columns = [
     'title',
     'email',
@@ -59,42 +57,12 @@ export class ManagerVacationRequestsPage implements OnInit {
     'endDate',
     'requestState',
     'vacationType',
-    'quickReview',
-    'review',
     'details',
   ];
 
   ngOnInit(): void {
     this.store.load();
     this.projectsStore.load();
-  }
-
-  protected selectedState(item: ManagerVacationRequest): ManagerVacationRequestState {
-    return (
-      this.pendingStates()[item.request.id] ??
-      (item.request.requestState as ManagerVacationRequestState)
-    );
-  }
-
-  protected setSelectedState(id: number, state: ManagerVacationRequestState): void {
-    this.pendingStates.update((states) => ({ ...states, [id]: state }));
-  }
-
-  protected saveState(item: ManagerVacationRequest): void {
-    if (!this.auth.canReviewVacationRequests()) return;
-    this.store.review(
-      item.request.id,
-      {
-        managerComment: null,
-        updateManagerComment: false,
-        requestState: this.selectedState(item),
-      },
-      (updated) =>
-        this.setSelectedState(
-          updated.request.id,
-          updated.request.requestState as ManagerVacationRequestState,
-        ),
-    );
   }
 
   protected changeSort(sort: Sort): void {
@@ -112,7 +80,7 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected stateLabel(state: VacationRequestState): string {
     return {
       DRAFT: 'Черновик',
-      READY: 'Готово к согласованию',
+      READY: 'Готово',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',
     }[state];

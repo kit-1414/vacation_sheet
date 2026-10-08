@@ -129,7 +129,7 @@ export class VacationRequestEditorPage implements OnInit {
   protected stateLabel(state: VacationRequestState): string {
     return {
       DRAFT: 'Черновик',
-      READY: 'Готово к согласованию',
+      READY: 'Готово',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',
     }[state];

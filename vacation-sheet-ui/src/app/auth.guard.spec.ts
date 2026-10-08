@@ -52,7 +52,7 @@ describe('userGuard', () => {
     );
   });
 
-  it('allows managers to open vacation request reviews', async () => {
+  it('allows managers to manage project relations', async () => {
     expect(await runGuard(managerGuard, ['MANAGER'])).toBe(true);
   });
 });

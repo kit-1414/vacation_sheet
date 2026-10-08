@@ -18,9 +18,7 @@ describe('VacationRequestEditorPage', () => {
       startDate: '2026-09-10',
       endDate: '2026-09-20',
       userComments: null,
-      managerComments: 'Approved',
       author: { id: 1, email: 'user@example.com', firstName: 'Test', lastName: 'User' },
-      manager: null,
       ctime: null,
       utime: null,
     };
@@ -67,9 +65,7 @@ describe('VacationRequestEditorPage', () => {
       startDate: '2026-09-10',
       endDate: '2026-09-20',
       userComments: null,
-      managerComments: null,
       author: { id: 2, email: 'other@example.com', firstName: null, lastName: null },
-      manager: null,
       ctime: null,
       utime: null,
     };

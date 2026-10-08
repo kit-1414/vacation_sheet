@@ -53,7 +53,7 @@
               [value]="view.stateFilter()"
               (valueChange)="view.stateFilter.set($event)"
             >
-              <mat-option value="READY">Готово к согласованию</mat-option>
+              <mat-option value="READY">Готово</mat-option>
               <mat-option value="APPROVED">Одобрено</mat-option>
               <mat-option value="REJECTED">Отклонено</mat-option>
             </mat-select>
@@ -171,45 +171,6 @@
               ><th mat-header-cell *matHeaderCellDef>Тип</th>
               <td mat-cell *matCellDef="let item">
                 {{ typeLabel(item.request.vacationType) }}
-              </td></ng-container
-            >
-            <ng-container matColumnDef="quickReview">
-              <th mat-header-cell *matHeaderCellDef>Сменить состояние</th>
-              <td mat-cell *matCellDef="let item">
-                @if (auth.canReviewVacationRequests()) {
-                  <div class="quick-review">
-                    <mat-form-field appearance="outline" subscriptSizing="dynamic">
-                      <mat-select
-                        [value]="selectedState(item)"
-                        (valueChange)="setSelectedState(item.request.id, $event)"
-                      >
-                        <mat-option value="READY">Готово</mat-option>
-                        <mat-option value="APPROVED">Одобрено</mat-option>
-                        <mat-option value="REJECTED">Отклонено</mat-option>
-                      </mat-select>
-                    </mat-form-field>
-                    <button
-                      mat-button
-                      type="button"
-                      [disabled]="store.saving()"
-                      (click)="saveState(item)"
-                    >
-                      Сохранить
-                    </button>
-                  </div>
-                } @else {
-                  <span>Недоступно</span>
-                }
-              </td>
-            </ng-container>
-            <ng-container matColumnDef="review"
-              ><th mat-header-cell *matHeaderCellDef>Комментарий</th>
-              <td mat-cell *matCellDef="let item">
-                @if (auth.canReviewVacationRequests()) {
-                  <a mat-button [routerLink]="[item.request.id]">Рассмотреть</a>
-                } @else {
-                  <button mat-button type="button" disabled>Рассмотреть</button>
-                }
               </td></ng-container
             >
             <ng-container matColumnDef="details">

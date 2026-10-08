@@ -20,9 +20,7 @@ export interface VacationRequest {
   startDate: string;
   endDate: string;
   userComments: string | null;
-  managerComments: string | null;
   author: VacationRequestUser;
-  manager: VacationRequestUser | null;
   ctime: string | null;
   utime: string | null;
 }

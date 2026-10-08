@@ -2,7 +2,6 @@ package com.example.vacationsheet.mainapp.service
 
 import com.example.vacationsheet.mainapp.dto.VacationRequestRequestDto
 import com.example.vacationsheet.mainapp.dto.CurrentUserDto
-import com.example.vacationsheet.mainapp.dto.VacationRequestManagerActionDto
 import com.example.vacationsheet.mainapp.exception.InvalidVacationRequestException
 import com.example.vacationsheet.mainapp.exception.ResourceNotFoundException
 import com.example.vacationsheet.mainapp.exception.VacationRequestAccessDeniedException
@@ -72,49 +71,6 @@ class VacationRequestService(
 		toManagerDtos(vacationRequestRepository.findAllExceptStateWithUsers(VacationRequestState.DRAFT))
 
 	@Transactional(readOnly = true)
-	fun findByIdForManager(id: Long): ManagerVacationRequestDto {
-		val entity = getById(id)
-		if (entity.requestState !in managerStates) {
-			throw ResourceNotFoundException("Vacation request $id was not found")
-		}
-		return toManagerDtos(listOf(entity)).single()
-	}
-
-	@Transactional
-	fun review(
-		id: Long,
-		currentUser: CurrentUserDto,
-		action: VacationRequestManagerActionDto,
-	): ManagerVacationRequestDto {
-		if (action.requestState !in managerStates) {
-			throw InvalidVacationRequestException("Managers can only set READY, APPROVED or REJECTED state")
-		}
-		val entity = vacationRequestRepository.findByIdWithUsersForUpdate(id)
-			?: throw ResourceNotFoundException("Vacation request $id was not found")
-		if (entity.requestState !in managerStates) {
-			throw VacationRequestModificationNotAllowedException(
-				"Vacation request $id cannot be reviewed in state ${entity.requestState}",
-			)
-		}
-
-		entity.requestState = action.requestState
-		if (action.requestState == VacationRequestState.READY) {
-			entity.manager = null
-			entity.managerComments = null
-		} else {
-			entity.manager = userAccountRepository.findById(currentUser.id).orElseThrow {
-				ResourceNotFoundException("User ${currentUser.id} was not found")
-			}
-			if (action.updateManagerComment) {
-				entity.managerComments = action.managerComment?.ifEmpty { null }
-			}
-		}
-
-		return vacationRequestRepository.saveAndFlush(entity)
-			.let { toManagerDtos(listOf(it)).single() }
-	}
-
-	@Transactional(readOnly = true)
 	fun checkIsCreator(requestVacationId: Long, currentUser: CurrentUserDto): Boolean =
 		vacationRequestRepository.existsByIdAndAuthorId(requestVacationId, currentUser.id)
 
@@ -169,10 +125,5 @@ class VacationRequestService(
 	private companion object {
 		val logger = LoggerFactory.getLogger(VacationRequestService::class.java)
 		val userStates = setOf(VacationRequestState.DRAFT, VacationRequestState.READY)
-		val managerStates = setOf(
-			VacationRequestState.READY,
-			VacationRequestState.APPROVED,
-			VacationRequestState.REJECTED,
-		)
 	}
 }

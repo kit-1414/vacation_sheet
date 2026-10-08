@@ -18,8 +18,6 @@
         <p><strong>Автор:</strong> {{ item.author.email }} · {{ item.author.firstName || 'Имя не указано' }} {{ item.author.lastName || '' }}</p>
         <p><strong>Создано:</strong> {{ (item.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
         <p><strong>Изменено:</strong> {{ (item.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</p>
-        <p><strong>Руководитель:</strong> {{ item.manager?.email || 'Не назначен' }}</p>
-        <p><strong>Комментарий руководителя:</strong> {{ item.managerComments || 'Отсутствует' }}</p>
       }
       <form [formGroup]="form" (ngSubmit)="submit()">
         <mat-form-field appearance="outline" class="wide">
@@ -44,7 +42,7 @@
           <mat-label>Состояние</mat-label>
           <mat-select formControlName="requestState">
             <mat-option value="DRAFT">Черновик</mat-option>
-            <mat-option value="READY">Готово к согласованию</mat-option>
+            <mat-option value="READY">Готово</mat-option>
           </mat-select>
         </mat-form-field>
 

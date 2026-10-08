@@ -42,16 +42,9 @@ class VacationRequestEntity(
 	@Column(name = "user_comments", length = 2000)
 	var userComments: String?,
 
-	@Column(name = "manager_comments", length = 2000)
-	var managerComments: String? = null,
-
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@JoinColumn(name = "author_id", nullable = false)
 	val author: UserAccountEntity,
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "manager_id")
-	var manager: UserAccountEntity? = null,
 
 	@Column(nullable = false, updatable = false)
 	@field:CreatedDate

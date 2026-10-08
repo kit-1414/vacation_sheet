@@ -30,7 +30,6 @@ class SecurityConfig {
 					"/actuator/health/**",
 					"/error",
 				).permitAll()
-					.requestMatchers("/api/manager/actions/vacation_request/*").hasAnyRole("MANAGER", "ADMIN")
 					.requestMatchers(HttpMethod.GET, "/api/**").authenticated()
 					.requestMatchers(HttpMethod.POST, "/api/user/actions/vacation_request").hasAnyRole("USER", "ADMIN")
 					.requestMatchers(HttpMethod.PUT, "/api/user/actions/vacation_request/*",).hasAnyRole("USER", "ADMIN")

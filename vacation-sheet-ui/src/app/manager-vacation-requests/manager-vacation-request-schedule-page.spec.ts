@@ -24,9 +24,7 @@ describe('ManagerVacationRequestSchedulePage', () => {
         startDate: '2026-09-10',
         endDate: '2026-09-20',
         userComments: null,
-        managerComments: null,
         author: { id: 1, email: 'user@example.com', firstName: null, lastName: null },
-        manager: null,
         ctime: null,
         utime: null,
       },
@@ -42,7 +40,6 @@ describe('ManagerVacationRequestSchedulePage', () => {
           useValue: {
             user: signal({ id: 1 }),
             canManageVacationRequests: () => true,
-            canReviewVacationRequests: () => false,
           },
         },
         {

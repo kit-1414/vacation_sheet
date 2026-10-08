@@ -21,8 +21,6 @@ class VacationRequestMapperTest {
 		val entity = mapper.toEntity(request(), author)
 
 		assertEquals(author, entity.author)
-		assertNull(entity.manager)
-		assertNull(entity.managerComments)
 		assertNull(entity.ctime)
 		assertNull(entity.utime)
 	}
@@ -31,7 +29,6 @@ class VacationRequestMapperTest {
 	fun `update preserves server managed fields`() {
 		val creationTime = time(1)
 		val updateTime = time(2)
-		val manager = UserAccountEntity("manager@example.com", "Test", "Manager", id = 2L)
 		val entity = VacationRequestEntity(
 			title = "Old",
 			requestState = VacationRequestState.DRAFT,
@@ -39,9 +36,7 @@ class VacationRequestMapperTest {
 			startDate = LocalDate.of(2026, 8, 20),
 			endDate = LocalDate.of(2026, 8, 21),
 			userComments = null,
-			managerComments = "Manager comment",
 			author = author,
-			manager = manager,
 			ctime = creationTime,
 			utime = updateTime,
 		)
@@ -49,8 +44,6 @@ class VacationRequestMapperTest {
 		mapper.updateEntity(request(), entity)
 
 		assertEquals(author, entity.author)
-		assertEquals(manager, entity.manager)
-		assertEquals("Manager comment", entity.managerComments)
 		assertEquals(creationTime, entity.ctime)
 		assertEquals(updateTime, entity.utime)
 	}

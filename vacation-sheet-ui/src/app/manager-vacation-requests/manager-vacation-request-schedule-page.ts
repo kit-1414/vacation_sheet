@@ -12,7 +12,6 @@ import { AuthStore } from '../auth.store';
 import { VacationRequestDetailsDialog } from '../vacation-requests/vacation-request-details-dialog';
 import { VacationRequest } from '../vacation-requests/vacation-requests.store';
 import { VacationRequestState, VacationType } from '../vacation-requests/vacation-requests.store';
-import { ManagerVacationRequestReviewDialog } from './manager-vacation-request-review-dialog';
 import {
   buildCalendar,
   buildCalendarMonths,
@@ -92,16 +91,6 @@ export class ManagerVacationRequestSchedulePage implements OnInit {
     event.stopPropagation();
     this.selectedItem.set(item);
     trigger.openMenu();
-  }
-
-  protected openReview(): void {
-    const item = this.selectedItem();
-    if (!item || !this.auth.canReviewVacationRequests()) return;
-    this.dialog.open(ManagerVacationRequestReviewDialog, {
-      data: item,
-      width: 'min(42rem, calc(100vw - 2rem))',
-      maxWidth: '100vw',
-    });
   }
 
   protected openDetails(): void {

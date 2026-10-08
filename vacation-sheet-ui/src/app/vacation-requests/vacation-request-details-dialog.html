@@ -4,7 +4,6 @@
     <div><dt>Автор</dt><dd>{{ request.author.email }} · {{ request.author.firstName || 'Имя не указано' }} {{ request.author.lastName || '' }}</dd></div>
     <div><dt>Создано</dt><dd>{{ (request.ctime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd></div>
     <div><dt>Изменено</dt><dd>{{ (request.utime | date: 'dd.MM.yyyy HH:mm') || 'Не указано' }}</dd></div>
-    <div><dt>Комментарий руководителя</dt><dd>{{ request.managerComments || 'Отсутствует' }}</dd></div>
     <div><dt>Проекты автора</dt><dd>{{ projectsLabel() }}</dd></div>
   </dl>
 
@@ -24,7 +23,7 @@
       <mat-label>Состояние</mat-label>
       <mat-select formControlName="requestState">
         <mat-option value="DRAFT">Черновик</mat-option>
-        <mat-option value="READY">Готово к согласованию</mat-option>
+        <mat-option value="READY">Готово</mat-option>
         @if (!data.editable) {
           <mat-option value="APPROVED">Одобрено</mat-option>
           <mat-option value="REJECTED">Отклонено</mat-option>

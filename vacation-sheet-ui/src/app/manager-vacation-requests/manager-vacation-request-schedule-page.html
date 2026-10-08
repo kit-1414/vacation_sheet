@@ -105,9 +105,6 @@
     </div>
   </div>
   <mat-menu #requestActions="matMenu">
-    <button mat-menu-item type="button" [disabled]="!auth.canReviewVacationRequests()" (click)="openReview()">
-      Рассмотреть заявление
-    </button>
     @if (selectedItem(); as item) {
       <button mat-menu-item type="button" (click)="openDetails()">
         {{ canEdit(item) ? 'Редактировать' : 'Просмотреть' }}

@@ -87,14 +87,6 @@ export const routes: Routes = [
         (module) => module.ManagerVacationRequestSchedulePage,
       ),
   },
-  {
-    path: 'profile/vacation-requests/review/:id',
-    canActivate: [managerGuard],
-    loadComponent: () =>
-      import('./manager-vacation-requests/manager-vacation-request-review-page').then(
-        (module) => module.ManagerVacationRequestReviewPage,
-      ),
-  },
   { path: '', pathMatch: 'full', redirectTo: 'projects' },
   { path: '**', redirectTo: 'projects' },
 ];

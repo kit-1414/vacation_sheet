@@ -8,10 +8,10 @@ describe('vacation request routes', () => {
     ).toBeUndefined();
   });
 
-  it('keeps manager review protected and exposes a read-only route', () => {
+  it('removes manager review and exposes a read-only route', () => {
     expect(
-      routes.find((route) => route.path === 'profile/vacation-requests/review/:id')?.canActivate,
-    ).toBeDefined();
+      routes.find((route) => route.path === 'profile/vacation-requests/review/:id'),
+    ).toBeUndefined();
     expect(routes.find((route) => route.path === 'profile/vacation-requests/:id/view')?.data).toEqual({
       viewOnly: true,
     });

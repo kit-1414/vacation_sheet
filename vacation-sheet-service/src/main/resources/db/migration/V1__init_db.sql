@@ -42,15 +42,12 @@ CREATE TABLE vacation_requests (
                                    start_date DATE NOT NULL,
                                    end_date DATE NOT NULL CHECK (end_date >= start_date),
                                    user_comments VARCHAR(2000),
-                                   manager_comments VARCHAR(2000),
                                    author_id BIGINT NOT NULL REFERENCES user_accounts(id) ON DELETE CASCADE,
-                                   manager_id BIGINT REFERENCES user_accounts(id) ON DELETE SET NULL,
                                    ctime TIMESTAMP WITH TIME ZONE NOT NULL,
                                    utime TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE INDEX vacation_requests_author_id_idx ON vacation_requests(author_id);
-CREATE INDEX vacation_requests_manager_id_idx ON vacation_requests(manager_id);
 CREATE INDEX vacation_requests_request_state_idx ON vacation_requests(request_state);
 CREATE INDEX vacation_requests_vacation_type_idx ON vacation_requests(vacation_type);
 CREATE INDEX vacation_requests_start_date_idx ON vacation_requests(start_date);

@@ -2,7 +2,6 @@ package com.example.vacationsheet.mainapp.service
 
 import com.example.vacationsheet.mainapp.dto.CurrentUserDto
 import com.example.vacationsheet.mainapp.dto.VacationRequestRequestDto
-import com.example.vacationsheet.mainapp.dto.VacationRequestManagerActionDto
 import com.example.vacationsheet.mainapp.exception.InvalidVacationRequestException
 import com.example.vacationsheet.mainapp.exception.ResourceNotFoundException
 import com.example.vacationsheet.mainapp.exception.VacationRequestAccessDeniedException
@@ -99,7 +98,7 @@ class VacationRequestServiceTest {
 	}
 
 	@Test
-	fun `create rejects manager-only state`() {
+	fun `create rejects read-only state`() {
 		assertFailsWith<InvalidVacationRequestException> {
 			service.create( request(VacationRequestState.APPROVED), currentUser())
 		}
@@ -141,99 +140,6 @@ class VacationRequestServiceTest {
 		verify(exactly = 1) {
 			vacationRequestRepository.findAllExceptStateWithUsers(VacationRequestState.DRAFT)
 		}
-	}
-
-	@Test
-	fun `manager cannot open draft request`() {
-		every { vacationRequestRepository.findByIdWithUsers(10L) } returns entity(VacationRequestState.DRAFT)
-
-		assertFailsWith<ResourceNotFoundException> { service.findByIdForManager(10L) }
-		verify(exactly = 0) { projectRepository.findAllWithMembersByMemberIds(any()) }
-	}
-
-	@Test
-	fun `manager changes state and preserves comment when update flag is false`() {
-		val entity = entity(VacationRequestState.READY).also { it.managerComments = "Keep this comment" }
-		every { vacationRequestRepository.findByIdWithUsersForUpdate(10L) } returns entity
-		every { userAccountRepository.findById(1L) } returns java.util.Optional.of(author)
-		every { vacationRequestRepository.saveAndFlush(entity) } returns entity
-		every { projectRepository.findAllWithMembersByMemberIds(setOf(1L)) } returns emptyList()
-
-		val response = service.review(
-			10L,
-			currentUser(),
-			VacationRequestManagerActionDto(null, false, VacationRequestState.APPROVED),
-		)
-
-		assertEquals(VacationRequestState.APPROVED, response.request.requestState)
-		assertEquals("Keep this comment", response.request.managerComments)
-		assertEquals(1L, response.request.manager?.id)
-	}
-
-	@Test
-	fun `manager clears comment when update flag is true and comment is null`() {
-		val entity = entity(VacationRequestState.APPROVED).also { it.managerComments = "Old comment" }
-		every { vacationRequestRepository.findByIdWithUsersForUpdate(10L) } returns entity
-		every { userAccountRepository.findById(1L) } returns java.util.Optional.of(author)
-		every { vacationRequestRepository.saveAndFlush(entity) } returns entity
-		every { projectRepository.findAllWithMembersByMemberIds(setOf(1L)) } returns emptyList()
-
-		val response = service.review(
-			10L,
-			currentUser(),
-			VacationRequestManagerActionDto(null, true, VacationRequestState.REJECTED),
-		)
-
-		assertEquals(VacationRequestState.REJECTED, response.request.requestState)
-		assertEquals(null, response.request.managerComments)
-	}
-
-	@Test
-	fun `returning request to ready clears manager and comment`() {
-		val entity = entity(VacationRequestState.REJECTED).also {
-			it.manager = author
-			it.managerComments = "Rejected"
-		}
-		every { vacationRequestRepository.findByIdWithUsersForUpdate(10L) } returns entity
-		every { vacationRequestRepository.saveAndFlush(entity) } returns entity
-		every { projectRepository.findAllWithMembersByMemberIds(setOf(1L)) } returns emptyList()
-
-		val response = service.review(
-			10L,
-			currentUser(),
-			VacationRequestManagerActionDto("Ignored", true, VacationRequestState.READY),
-		)
-
-		assertEquals(VacationRequestState.READY, response.request.requestState)
-		assertEquals(null, response.request.manager)
-		assertEquals(null, response.request.managerComments)
-		verify(exactly = 0) { userAccountRepository.findById(any()) }
-	}
-
-	@Test
-	fun `manager cannot review draft request`() {
-		every { vacationRequestRepository.findByIdWithUsersForUpdate(10L) } returns entity(VacationRequestState.DRAFT)
-
-		assertFailsWith<VacationRequestModificationNotAllowedException> {
-			service.review(
-				10L,
-				currentUser(),
-				VacationRequestManagerActionDto(null, false, VacationRequestState.APPROVED),
-			)
-		}
-		verify(exactly = 0) { vacationRequestRepository.saveAndFlush(any()) }
-	}
-
-	@Test
-	fun `manager cannot set draft state`() {
-		assertFailsWith<InvalidVacationRequestException> {
-			service.review(
-				10L,
-				currentUser(),
-				VacationRequestManagerActionDto(null, false, VacationRequestState.DRAFT),
-			)
-		}
-		verify(exactly = 0) { vacationRequestRepository.findByIdWithUsersForUpdate(any()) }
 	}
 
 	private fun entity(

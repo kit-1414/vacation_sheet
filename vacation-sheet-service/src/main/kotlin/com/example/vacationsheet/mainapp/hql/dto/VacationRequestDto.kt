@@ -13,9 +13,7 @@ data class VacationRequestDto(
 	val startDate: LocalDate,
 	val endDate: LocalDate,
 	val userComments: String?,
-	val managerComments: String?,
 	val author: UserAccountDto,
-	val manager: UserAccountDto?,
 	val ctime: OffsetDateTime?,
 	val utime: OffsetDateTime?,
 )

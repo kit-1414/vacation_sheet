@@ -83,7 +83,6 @@ class JpaAuditingIntegrationTest {
 	@Test
 	fun `vacation request persists relationships and audit times`() {
 		val author = userAccountRepository.saveAndFlush(UserAccountEntity("author@example.com", "Test", "Author"))
-		val manager = userAccountRepository.saveAndFlush(UserAccountEntity("manager@example.com", "Test", "Manager"))
 		val saved = vacationRequestRepository.saveAndFlush(
 			VacationRequestEntity(
 				title = "Vacation",
@@ -93,21 +92,12 @@ class JpaAuditingIntegrationTest {
 				endDate = LocalDate.of(2026, 9, 14),
 				userComments = null,
 				author = author,
-				manager = manager,
 			),
 		)
 		val requestId = requireNotNull(saved.id)
 		val authorId = requireNotNull(author.id)
-		val managerId = requireNotNull(manager.id)
 		assertNotNull(saved.ctime)
 		assertNotNull(saved.utime)
-
-		entityManager.clear()
-		userAccountRepository.delete(userAccountRepository.findById(managerId).orElseThrow())
-		userAccountRepository.flush()
-		entityManager.clear()
-
-		assertEquals(null, vacationRequestRepository.findByIdWithUsers(requestId)?.manager)
 
 		entityManager.clear()
 		userAccountRepository.delete(userAccountRepository.findById(authorId).orElseThrow())

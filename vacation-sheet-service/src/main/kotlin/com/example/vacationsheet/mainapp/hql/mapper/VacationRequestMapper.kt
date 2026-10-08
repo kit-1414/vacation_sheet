@@ -39,9 +39,7 @@ class VacationRequestMapper(
 		startDate = entity.startDate,
 		endDate = entity.endDate,
 		userComments = entity.userComments,
-		managerComments = entity.managerComments,
 		author = userAccountMapper.toDto(entity.author),
-		manager = entity.manager?.let(userAccountMapper::toDto),
 		ctime = entity.ctime,
 		utime = entity.utime,
 	)

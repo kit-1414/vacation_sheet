@@ -80,17 +80,6 @@ mat-paginator {
   border-top: 1px solid var(--mat-sys-outline-variant);
 }
 
-.quick-review {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-  min-width: 16rem;
-}
-
-.quick-review mat-form-field {
-  flex: 1;
-}
-
 .validation-error,
 .error {
   color: var(--mat-sys-error);

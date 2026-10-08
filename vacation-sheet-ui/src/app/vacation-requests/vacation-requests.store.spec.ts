@@ -23,9 +23,7 @@ describe('VacationRequestsStore', () => {
   const vacationRequest: VacationRequest = {
     id: 1,
     ...payload,
-    managerComments: null,
     author: { id: 2, email: 'user@example.com', firstName: 'Test', lastName: 'User' },
-    manager: null,
     ctime: '2026-09-01T10:00:00Z',
     utime: '2026-09-01T10:00:00Z',
   };
