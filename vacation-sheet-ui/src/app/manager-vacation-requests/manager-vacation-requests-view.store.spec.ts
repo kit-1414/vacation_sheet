@@ -16,6 +16,7 @@ describe('ManagerVacationRequestsViewStore', () => {
     });
     const view = TestBed.inject(ManagerVacationRequestsViewStore);
 
+    expect(view.stateFilter()).toEqual(['PREVIEW', 'READY', 'IN_PROGRESS', 'APPROVED']);
     view.emailFilter.set('user@example.com');
     view.stateFilter.set(['REJECTED']);
     view.setSort('lastName', 'asc');

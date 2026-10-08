@@ -86,6 +86,18 @@ class VacationRequestServiceTest {
 	}
 
 	@Test
+	fun `update rejects an in-progress request`() {
+		val entity = entity(VacationRequestState.IN_PROGRESS)
+		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns true
+		every { vacationRequestRepository.findByIdWithUsers(10L) } returns entity
+
+		assertFailsWith<VacationRequestModificationNotAllowedException> {
+			service.update(10L, currentUser(), request(VacationRequestState.DRAFT))
+		}
+		verify(exactly = 0) { vacationRequestRepository.saveAndFlush(any()) }
+	}
+
+	@Test
 	fun `update rejects another user's request`() {
 		every { vacationRequestRepository.existsByIdAndAuthorId(10L, 1L) } returns false
 		every { vacationRequestRepository.existsById(10L) } returns true
@@ -98,9 +110,17 @@ class VacationRequestServiceTest {
 	}
 
 	@Test
-	fun `create rejects read-only state`() {
+	fun `create rejects read-only state Approved`() {
 		assertFailsWith<InvalidVacationRequestException> {
 			service.create( request(VacationRequestState.APPROVED), currentUser())
+		}
+		verify(exactly = 0) { userAccountRepository.findById(any()) }
+	}
+
+	@Test
+	fun `create rejects read-only state IN_PROGRESS`() {
+		assertFailsWith<InvalidVacationRequestException> {
+			service.create(request(VacationRequestState.IN_PROGRESS), currentUser())
 		}
 		verify(exactly = 0) { userAccountRepository.findById(any()) }
 	}

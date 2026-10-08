@@ -4,6 +4,7 @@ enum class VacationRequestState {
 	DRAFT,
 	PREVIEW,
 	READY,
+	IN_PROGRESS,
 	APPROVED,
 	REJECTED,
 }

@@ -59,7 +59,7 @@ describe('ManagerVacationRequestSchedulePage', () => {
 
     expect(component.canEdit(item)).toBe(true);
     expect(
-      component.canEdit({ ...item, request: { ...item.request, requestState: 'APPROVED' } }),
+      component.canEdit({ ...item, request: { ...item.request, requestState: 'IN_PROGRESS' } }),
     ).toBe(false);
     expect(
       component.canEdit({
@@ -76,5 +76,6 @@ describe('ManagerVacationRequestSchedulePage', () => {
     const table = fixture.nativeElement.querySelector('.schedule-table') as HTMLElement | null;
     expect(marker).not.toBeNull();
     expect(table?.style.getPropertyValue('--today-index')).toBe('183');
+    expect(fixture.nativeElement.textContent).toContain('Рассмотрение');
   });
 });

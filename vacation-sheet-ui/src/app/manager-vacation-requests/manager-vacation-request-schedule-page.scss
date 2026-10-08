@@ -58,9 +58,12 @@ h1 {
   border-radius: 0.25rem;
 }
 
-.legend i[data-state='READY'],
-.vacation-bar[data-state='READY'] {
-  background: #1769c2;
+[data-state='READY'] {
+  background: #0277bd;
+}
+
+[data-state='IN_PROGRESS'] {
+  background: #0d47a1;
 }
 
 .legend i[data-state='PREVIEW'],

@@ -20,7 +20,12 @@ export class ManagerVacationRequestsViewStore {
   readonly emailFilter = signal('');
   readonly firstNameFilter = signal('');
   readonly lastNameFilter = signal('');
-  readonly stateFilter = signal<ManagerVacationRequestState[]>(['READY', 'APPROVED']);
+  readonly stateFilter = signal<ManagerVacationRequestState[]>([
+    'PREVIEW',
+    'READY',
+    'IN_PROGRESS',
+    'APPROVED',
+  ]);
   readonly periodStart = signal('');
   readonly periodEnd = signal('');
   readonly projectFilter = signal<number[]>([]);

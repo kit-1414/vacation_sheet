@@ -90,6 +90,7 @@ export class VacationRequestsPage implements OnInit {
       DRAFT: 'Черновик',
       PREVIEW: 'Предпросмотр',
       READY: 'Готово',
+      IN_PROGRESS: 'Рассмотрение',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',
     }[state];

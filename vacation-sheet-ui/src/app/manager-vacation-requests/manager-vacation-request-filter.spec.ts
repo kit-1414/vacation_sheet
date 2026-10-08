@@ -1,10 +1,13 @@
-import { ManagerVacationRequest } from './manager-vacation-requests.store';
+import {
+  ManagerVacationRequest,
+  ManagerVacationRequestState,
+} from './manager-vacation-requests.store';
 import { filterManagerVacationRequests } from './manager-vacation-request-filter';
 
 describe('filterManagerVacationRequests', () => {
   const request = (
     id: number,
-    state: 'PREVIEW' | 'READY' | 'APPROVED' | 'REJECTED',
+    state: ManagerVacationRequestState,
     startDate: string,
     endDate: string,
     projectIds: number[],
@@ -31,20 +34,21 @@ describe('filterManagerVacationRequests', () => {
     request(2, 'APPROVED', '2026-09-20', '2026-09-30', [2]),
     request(3, 'REJECTED', '2026-10-01', '2026-10-10', [3]),
     request(4, 'PREVIEW', '2026-08-01', '2026-08-10', [4]),
+    request(5, 'IN_PROGRESS', '2026-08-11', '2026-08-20', [5]),
   ];
 
-  it('uses READY and APPROVED as the initial state filter', () => {
+  it('uses the configured initial state filter', () => {
     const result = filterManagerVacationRequests(requests, {
       email: '',
       firstName: '',
       lastName: '',
-      states: ['READY', 'APPROVED'],
+      states: ['PREVIEW', 'READY', 'IN_PROGRESS', 'APPROVED'],
       periodStart: '',
       periodEnd: '',
       projectIds: [],
     });
 
-    expect(result.map((item) => item.request.id)).toEqual([1, 2]);
+    expect(result.map((item) => item.request.id)).toEqual([1, 2, 4, 5]);
   });
 
   it('matches vacations intersecting an open or closed interval', () => {

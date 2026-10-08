@@ -9,11 +9,11 @@ import { VacationRequestEditorPage } from './vacation-request-editor-page';
 import { VacationRequestsStore } from './vacation-requests.store';
 
 describe('VacationRequestEditorPage', () => {
-  it('opens an approved request in read-only mode', async () => {
+  it('opens an in-progress request in read-only mode', async () => {
     const request = {
       id: 10,
       title: 'Vacation',
-      requestState: 'APPROVED' as const,
+      requestState: 'IN_PROGRESS' as const,
       vacationType: 'PAYMENT_VACATION' as const,
       startDate: '2026-09-10',
       endDate: '2026-09-20',
@@ -53,6 +53,7 @@ describe('VacationRequestEditorPage', () => {
 
     expect(component.readOnly()).toBe(true);
     expect(component.form.disabled).toBe(true);
+    expect(fixture.nativeElement.textContent).toContain('Рассмотрение');
     expect(fixture.nativeElement.textContent).toContain('нельзя изменить');
   });
 
