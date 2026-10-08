@@ -110,7 +110,7 @@ export class ManagerVacationRequestSchedulePage implements OnInit {
     return (
       this.auth.canManageVacationRequests() &&
       this.auth.user()?.id === item.request.author.id &&
-      item.request.requestState === 'READY'
+      (item.request.requestState === 'PREVIEW' || item.request.requestState === 'READY')
     );
   }
 
@@ -123,9 +123,13 @@ export class ManagerVacationRequestSchedulePage implements OnInit {
   }
 
   protected stateLabel(state: VacationRequestState): string {
-    return { DRAFT: 'Черновик', READY: 'Готово', APPROVED: 'Одобрено', REJECTED: 'Отклонено' }[
-      state
-    ];
+    return {
+      DRAFT: 'Черновик',
+      PREVIEW: 'Предпросмотр',
+      READY: 'Готово',
+      APPROVED: 'Одобрено',
+      REJECTED: 'Отклонено',
+    }[state];
   }
 
   protected typeLabel(type: VacationType): string {

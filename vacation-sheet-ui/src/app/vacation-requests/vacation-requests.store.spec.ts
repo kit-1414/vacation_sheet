@@ -68,12 +68,13 @@ describe('VacationRequestsStore', () => {
     const updated = {
       ...vacationRequest,
       title: 'Обновлённый отпуск',
-      requestState: 'READY' as const,
+      requestState: 'PREVIEW' as const,
     };
-    store.update(1, { ...payload, title: updated.title, requestState: 'READY' }, onSuccess);
+    store.update(1, { ...payload, title: updated.title, requestState: 'PREVIEW' }, onSuccess);
 
     const request = http.expectOne('/api/user/actions/vacation_request/1');
     expect(request.request.method).toBe('PUT');
+    expect(request.request.body.requestState).toBe('PREVIEW');
     request.flush(updated);
 
     expect(store.requests()).toEqual([updated]);

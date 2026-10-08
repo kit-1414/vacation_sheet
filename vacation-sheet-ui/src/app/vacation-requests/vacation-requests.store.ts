@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 
-export type VacationRequestState = 'DRAFT' | 'READY' | 'APPROVED' | 'REJECTED';
+export type VacationRequestState = 'DRAFT' | 'PREVIEW' | 'READY' | 'APPROVED' | 'REJECTED';
 export type VacationType = 'PAYMENT_VACATION' | 'FREE_VACATION';
 
 export interface VacationRequestUser {
@@ -27,7 +27,7 @@ export interface VacationRequest {
 
 export interface VacationRequestPayload {
   title: string;
-  requestState: Extract<VacationRequestState, 'DRAFT' | 'READY'>;
+  requestState: Extract<VacationRequestState, 'DRAFT' | 'PREVIEW' | 'READY'>;
   vacationType: VacationType;
   startDate: string;
   endDate: string;

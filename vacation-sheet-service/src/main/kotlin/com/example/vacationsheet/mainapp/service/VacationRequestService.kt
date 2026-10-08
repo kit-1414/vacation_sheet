@@ -102,7 +102,7 @@ class VacationRequestService(
 
 	private fun validateUserRequest(request: VacationRequestRequestDto) {
 		if (request.requestState !in userStates) {
-			throw InvalidVacationRequestException("Users can only set DRAFT or READY state")
+			throw InvalidVacationRequestException("Users can only set DRAFT, PREVIEW or READY state")
 		}
 		if (request.endDate.isBefore(request.startDate)) {
 			throw InvalidVacationRequestException("End date must not be before start date")
@@ -124,6 +124,10 @@ class VacationRequestService(
 
 	private companion object {
 		val logger = LoggerFactory.getLogger(VacationRequestService::class.java)
-		val userStates = setOf(VacationRequestState.DRAFT, VacationRequestState.READY)
+		val userStates = setOf(
+			VacationRequestState.DRAFT,
+			VacationRequestState.PREVIEW,
+			VacationRequestState.READY,
+		)
 	}
 }

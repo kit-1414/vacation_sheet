@@ -23,6 +23,7 @@
       <mat-label>Состояние</mat-label>
       <mat-select formControlName="requestState">
         <mat-option value="DRAFT">Черновик</mat-option>
+        <mat-option value="PREVIEW">Предпросмотр</mat-option>
         <mat-option value="READY">Готово</mat-option>
         @if (!data.editable) {
           <mat-option value="APPROVED">Одобрено</mat-option>

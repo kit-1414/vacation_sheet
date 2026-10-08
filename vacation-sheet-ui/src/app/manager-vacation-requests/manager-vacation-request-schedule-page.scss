@@ -63,6 +63,11 @@ h1 {
   background: #1769c2;
 }
 
+.legend i[data-state='PREVIEW'],
+.vacation-bar[data-state='PREVIEW'] {
+  background: #e67e22;
+}
+
 .legend i[data-state='APPROVED'],
 .vacation-bar[data-state='APPROVED'] {
   background: #238636;

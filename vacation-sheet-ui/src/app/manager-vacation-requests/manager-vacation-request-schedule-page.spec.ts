@@ -19,7 +19,7 @@ describe('ManagerVacationRequestSchedulePage', () => {
       request: {
         id: 10,
         title: 'Vacation',
-        requestState: 'READY',
+        requestState: 'PREVIEW',
         vacationType: 'PAYMENT_VACATION',
         startDate: '2026-09-10',
         endDate: '2026-09-20',
@@ -51,7 +51,7 @@ describe('ManagerVacationRequestSchedulePage', () => {
     });
   });
 
-  it('allows editing only for an owned ready request', () => {
+  it('allows editing only for an owned editable request', () => {
     const fixture = TestBed.createComponent(ManagerVacationRequestSchedulePage);
     const component = fixture.componentInstance as unknown as {
       canEdit: (value: ManagerVacationRequest) => boolean;

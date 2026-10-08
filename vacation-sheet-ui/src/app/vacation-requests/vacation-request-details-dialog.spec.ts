@@ -13,7 +13,7 @@ describe('VacationRequestDetailsDialog', () => {
       request: {
         id: 10,
         title: 'Vacation',
-        requestState: 'APPROVED',
+        requestState: 'PREVIEW',
         vacationType: 'PAYMENT_VACATION',
         startDate: '2026-09-10',
         endDate: '2026-09-20',

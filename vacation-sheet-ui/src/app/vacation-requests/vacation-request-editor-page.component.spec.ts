@@ -56,16 +56,16 @@ describe('VacationRequestEditorPage', () => {
     expect(fixture.nativeElement.textContent).toContain('нельзя изменить');
   });
 
-  it('opens another user ready request in read-only mode', async () => {
+  it('opens an owned preview request in edit mode', async () => {
     const request = {
       id: 10,
       title: 'Vacation',
-      requestState: 'READY' as const,
+      requestState: 'PREVIEW' as const,
       vacationType: 'PAYMENT_VACATION' as const,
       startDate: '2026-09-10',
       endDate: '2026-09-20',
       userComments: null,
-      author: { id: 2, email: 'other@example.com', firstName: null, lastName: null },
+      author: { id: 1, email: 'user@example.com', firstName: null, lastName: null },
       ctime: null,
       utime: null,
     };
@@ -98,7 +98,7 @@ describe('VacationRequestEditorPage', () => {
       form: FormGroup;
     };
 
-    expect(component.readOnly()).toBe(true);
-    expect(component.form.disabled).toBe(true);
+    expect(component.readOnly()).toBe(false);
+    expect(component.form.enabled).toBe(true);
   });
 });

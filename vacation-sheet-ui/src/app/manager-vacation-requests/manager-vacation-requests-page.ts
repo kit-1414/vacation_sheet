@@ -80,6 +80,7 @@ export class ManagerVacationRequestsPage implements OnInit {
   protected stateLabel(state: VacationRequestState): string {
     return {
       DRAFT: 'Черновик',
+      PREVIEW: 'Предпросмотр',
       READY: 'Готово',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',

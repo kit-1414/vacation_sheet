@@ -4,7 +4,7 @@ import { filterManagerVacationRequests } from './manager-vacation-request-filter
 describe('filterManagerVacationRequests', () => {
   const request = (
     id: number,
-    state: 'READY' | 'APPROVED' | 'REJECTED',
+    state: 'PREVIEW' | 'READY' | 'APPROVED' | 'REJECTED',
     startDate: string,
     endDate: string,
     projectIds: number[],
@@ -30,6 +30,7 @@ describe('filterManagerVacationRequests', () => {
     request(1, 'READY', '2026-09-01', '2026-09-10', [1]),
     request(2, 'APPROVED', '2026-09-20', '2026-09-30', [2]),
     request(3, 'REJECTED', '2026-10-01', '2026-10-10', [3]),
+    request(4, 'PREVIEW', '2026-08-01', '2026-08-10', [4]),
   ];
 
   it('uses READY and APPROVED as the initial state filter', () => {

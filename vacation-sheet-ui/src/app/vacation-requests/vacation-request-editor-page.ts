@@ -129,6 +129,7 @@ export class VacationRequestEditorPage implements OnInit {
   protected stateLabel(state: VacationRequestState): string {
     return {
       DRAFT: 'Черновик',
+      PREVIEW: 'Предпросмотр',
       READY: 'Готово',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',
@@ -138,6 +139,6 @@ export class VacationRequestEditorPage implements OnInit {
   private isEditableState(
     state: VacationRequestState,
   ): state is VacationRequestPayload['requestState'] {
-    return state === 'DRAFT' || state === 'READY';
+    return state === 'DRAFT' || state === 'PREVIEW' || state === 'READY';
   }
 }

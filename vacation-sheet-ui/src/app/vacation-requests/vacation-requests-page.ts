@@ -75,7 +75,9 @@ export class VacationRequestsPage implements OnInit {
   protected canModify(request: VacationRequest): boolean {
     return (
       this.auth.canManageVacationRequests() &&
-      (request.requestState === 'DRAFT' || request.requestState === 'READY')
+      (request.requestState === 'DRAFT' ||
+        request.requestState === 'PREVIEW' ||
+        request.requestState === 'READY')
     );
   }
 
@@ -86,6 +88,7 @@ export class VacationRequestsPage implements OnInit {
   protected stateLabel(state: VacationRequestState): string {
     return {
       DRAFT: 'Черновик',
+      PREVIEW: 'Предпросмотр',
       READY: 'Готово',
       APPROVED: 'Одобрено',
       REJECTED: 'Отклонено',

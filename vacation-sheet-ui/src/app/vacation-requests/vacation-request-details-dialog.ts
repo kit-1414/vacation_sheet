@@ -64,7 +64,12 @@ export class VacationRequestDetailsDialog {
   protected submit(): void {
     if (!this.data.editable || this.form.invalid || this.requestsStore.saving()) return;
     const value = this.form.getRawValue();
-    if (value.requestState !== 'DRAFT' && value.requestState !== 'READY') return;
+    if (
+      value.requestState !== 'DRAFT' &&
+      value.requestState !== 'PREVIEW' &&
+      value.requestState !== 'READY'
+    )
+      return;
     const payload: VacationRequestPayload = {
       title: value.title,
       requestState: value.requestState,
